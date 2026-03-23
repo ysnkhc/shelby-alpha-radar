@@ -1,34 +1,32 @@
-# Shelby Alpha Radar
+# 🚨 Real-Time Shelby Alpha Radar
 
-**Real-time discovery layer for the Shelby network.**
+Shelby Alpha Radar is a live intelligence layer for the Shelby network.
 
-Shelby Alpha Radar continuously indexes blob activity on the Shelby testnet, detects behavioral anomalies across wallets, and surfaces high-signal events through a live feed. It transforms raw on-chain data into actionable intelligence.
+It detects behavioral patterns across wallets and surfaces high-signal events in real-time — before they become obvious.
+
+Instead of searching blobs, you see what's happening on Shelby as it happens.
 
 ![Alpha Radar UI](frontend/screenshot.png)
 
+### Example signals:
+
+- 🔴 5 wallets uploaded .json within 2 minutes
+- 🔴 Wallet activity surged 5x vs its average
+- 🔴 New wallet uploaded 4 blobs in 3 minutes
+
 ---
 
-## Key Features
+## Why this matters
 
-- **Real-Time Blob Indexing** — Crawls the Shelby testnet, detects `BlobWrittenEvent`, and stores metadata with full RPC retrieval
-- **Behavioral Pattern Detection** — Identifies cross-wallet coordination, velocity spikes, first-time bursts, dormant reactivation, and rare file types
-- **Alpha Signal Engine** — Scores and prioritizes signals (HIGH / MEDIUM / LOW) with contextual explanations
-- **Live SSE Feed** — Server-Sent Events stream pushes signals to connected clients instantly
-- **Priority-Based Alerts** — Filter by priority level or watch specific wallets
-- **Signal Grouping** — Aggregates related patterns into actionable summaries with trend indicators
+Shelby is a new data layer.
 
-## Example Signals
+This radar helps detect:
 
-```
-🔴 HIGH  [10] "5 wallets uploaded .json files within 2 minutes"
-          → Coordinated uploads may indicate shared pipelines
+- Emerging usage patterns
+- Coordinated behavior
+- Early network activity
 
-🔴 HIGH  [8]  "Wallet activity surged 5x vs average — 12 uploads in last hour"
-          → Velocity spikes may indicate automated scripts
-
-🔵 LOW   [5]  "First-ever .bin file uploaded on Shelby"
-          → New file types may represent novel use cases
-```
+It acts as a discovery engine for Shelby before trends become visible.
 
 ## Architecture
 
