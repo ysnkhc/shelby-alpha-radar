@@ -1,7 +1,5 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import fastifyStatic from "@fastify/static";
-import { join } from "node:path";
 import { env } from "../config/env.js";
 import { logger } from "../config/logger.js";
 import { blobRoutes } from "./routes/blobs.js";
@@ -31,7 +29,7 @@ export async function createServer() {
   });
 
   // ── Plugins ─────────────────────────────────────────────────
-  await app.register(cors, { origin: true }); // Allow all origins for dev
+  await app.register(cors, { origin: true });
   await app.register(errorHandler);
   await app.register(rateLimiter, { max: 100, windowMs: 60_000 });
 
@@ -49,13 +47,6 @@ export async function createServer() {
   await app.register(intelligenceRoutes);
   await app.register(alphaRoutes);
   await app.register(liveRoutes);
-
-  // ── Static files (Alpha Radar UI) ─────────────────────────
-  await app.register(fastifyStatic, {
-    root: join(process.cwd(), "public"),
-    prefix: "/",
-    decorateReply: false,
-  });
 
   return app;
 }
