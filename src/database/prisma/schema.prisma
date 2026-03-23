@@ -1,0 +1,74 @@
+// Shelby Indexer — Prisma Schema
+// Core data model for blob indexing and search + crawler state.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Core blob record — one entry per unique blob discovered on the Shelby network.
+model Blob {
+  id          Int       @id @default(autoincrement())
+  blobId      String    @unique @map("blob_id")
+  wallet      String
+  size        BigInt    @default(0)
+  contentType String?   @map("content_type")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  indexedAt   DateTime  @default(now()) @map("indexed_at")
+
+  /// One-to-one relation: each blob has at most one metadata record.
+  metadata    BlobMetadata?
+
+  @@index([wallet])
+  @@index([createdAt])
+  @@map("blobs")
+}
+
+/// Extended metadata extracted from a blob after processing.
+/// Full-text search index on title + description is added via raw SQL migration.
+model BlobMetadata {
+  id          Int      @id @default(autoincrement())
+  blobId      String   @unique @map("blob_id")
+  title       String?
+  description String?
+  tags        String[] @default([])
+  fileType    String?  @map("file_type")
+
+  /// Relation back to the parent blob.
+  blob        Blob     @relation(fields: [blobId], references: [blobId], onDelete: Cascade)
+
+  @@map("blob_metadata")
+}
+
+/// Crawler state persistence — stores key-value pairs for resumable scanning.
+model CrawlerState {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("crawler_state")
+}
+
+/// High-signal events detected from blob activity patterns.
+/// Populated by the alpha detection module during blob processing.
+model AlphaEvent {
+  id          Int      @id @default(autoincrement())
+  owner       String
+  blobName    String?  @map("blob_name")
+  signalType  String   @map("signal_type")
+  score       Int
+  priority    String   @default("LOW")
+  explanation String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([owner])
+  @@index([score])
+  @@index([priority])
+  @@index([createdAt])
+  @@map("alpha_events")
+}

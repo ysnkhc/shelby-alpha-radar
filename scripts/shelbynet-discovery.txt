@@ -1,0 +1,514 @@
+﻿ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  Shelby Indexer ÔÇö Event Discovery Script
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  RPC:            https://api.shelbynet.shelby.xyz/v1
+  Blocks to scan: 50
+  Shelby module:  0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a
+
+­ƒôè Latest block: 1354887
+­ƒôè Scanning blocks 1354838 ÔåÆ 1354887
+
+
+­ƒöì Scanning block 1354838/1354887...
+
+ÔöÇÔöÇ Block 1354838 | Tx 0xe19a3d15694710ÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@cf4df082408b24635e55b4e054cd723582c468e3766cabce92af6396765c34a4/baodautu (1).png","chunkset_count":1,"creation_micros":"1773890596764281","owner":"0xcf4df082408b24635e55b4e054cd723582cÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"23","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"699"}
+
+­ƒöì Scanning block 1354839/1354887...
+­ƒöì Scanning block 1354840/1354887...
+­ƒöì Scanning block 1354841/1354887...
+
+ÔöÇÔöÇ Block 1354841 | Tx 0x220604acafb545ÔÇª ÔöÇÔöÇ
+   Function: 0x1::aptos_account::transfer_fungible_assets
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"77999997","store":"0x6b23a9d90fa573125efe2238a6f2c6f1f115206484c9a5dd99dbfd252fa7f9ba"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"77999997","store":"0xa84479c16730abb224fb327f583fd0e189d19e5b0380a81d07272c42bdd28f02"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"7","io_gas_units":"11","storage_fee_octas":"104680","storage_fee_refund_octas":"0","total_charge_gas_units":"1064"}
+
+­ƒöì Scanning block 1354842/1354887...
+­ƒöì Scanning block 1354843/1354887...
+­ƒöì Scanning block 1354844/1354887...
+
+ÔöÇÔöÇ Block 1354844 | Tx 0x4d2d3b068e2bd0ÔÇª ÔöÇÔöÇ
+   Function: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::mint
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0x72debcf5675a177796321cf594b116cebde44fe673ab7daecbf0feae6ddb34b9"}
+   ­ƒôî Event: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::Mint
+      Addr:  0x0
+      Data:  {"amount":"1000000000","to":"0xfeea6c2a4d70fa677bf8223de71de8ed6d7cb16ac5887c8d9ad0cd1c50b27f68"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"4","io_gas_units":"6","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"10"}
+
+
+ÔöÇÔöÇ Block 1354844 | Tx 0x470046532a1975ÔÇª ÔöÇÔöÇ
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"100100000","store":"0x12a924f71137501cc60d967ecb0aec1e17583b91c38e0fd58f7e9bedd7d5aed9"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"100000000","store":"0x12a924f71137501cc60d967ecb0aec1e17583b91c38e0fd58f7e9bedd7d5aed9"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"100000000","store":"0xa93660a92a59d945953b135f29c18beb85973b1d71fae82403719adfec58207c"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"6","io_gas_units":"10","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"15"}
+
+­ƒöì Scanning block 1354845/1354887...
+­ƒöì Scanning block 1354846/1354887...
+­ƒöì Scanning block 1354847/1354887...
+
+ÔöÇÔöÇ Block 1354847 | Tx 0x398de2c0edee04ÔÇª ÔöÇÔöÇ
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"100100000","store":"0x12a924f71137501cc60d967ecb0aec1e17583b91c38e0fd58f7e9bedd7d5aed9"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"100000000","store":"0x12a924f71137501cc60d967ecb0aec1e17583b91c38e0fd58f7e9bedd7d5aed9"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"100000000","store":"0x3fa684c63bd683e82eb6dff34f73c3b645b4ef7ba5b47711979b8f308f6240b3"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"6","io_gas_units":"10","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"15"}
+
+­ƒöì Scanning block 1354848/1354887...
+­ƒöì Scanning block 1354849/1354887...
+­ƒöì Scanning block 1354850/1354887...
+­ƒöì Scanning block 1354851/1354887...
+
+ÔöÇÔöÇ Block 1354851 | Tx 0xb140817e99366cÔÇª ÔöÇÔöÇ
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000100000","store":"0x8c5ddd2129e03d34190a522a3c2fa927f3e91b8b0e5d5fa03ed3054df66ffbc"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0x8c5ddd2129e03d34190a522a3c2fa927f3e91b8b0e5d5fa03ed3054df66ffbc"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0x21aaa3d621863eebd6274ffac5bd6de0224dc6cc70e3363d9e78f2fbe40c264c"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"6","io_gas_units":"12","storage_fee_octas":"53240","storage_fee_refund_octas":"0","total_charge_gas_units":"550"}
+
+­ƒöì Scanning block 1354852/1354887...
+­ƒöì Scanning block 1354853/1354887...
+­ƒöì Scanning block 1354854/1354887...
+
+ÔöÇÔöÇ Block 1354854 | Tx 0x2da2e7d7831117ÔÇª ÔöÇÔöÇ
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000100000","store":"0x12a924f71137501cc60d967ecb0aec1e17583b91c38e0fd58f7e9bedd7d5aed9"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0x12a924f71137501cc60d967ecb0aec1e17583b91c38e0fd58f7e9bedd7d5aed9"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0xbebeb8372010bd8b5809b4503d98cc6cbbdebcc3a6dce6ccd143a75449330bec"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"6","io_gas_units":"12","storage_fee_octas":"53240","storage_fee_refund_octas":"0","total_charge_gas_units":"550"}
+
+­ƒöì Scanning block 1354855/1354887...
+­ƒöì Scanning block 1354856/1354887...
+­ƒöì Scanning block 1354857/1354887...
+
+ÔöÇÔöÇ Block 1354857 | Tx 0x2d804e4f451fa0ÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@44d0bee68ef59ff0d81e7d0153b835612a9c971acefd2012c3febbeaf7fa2ae8/in8rki02u7bhh19x.csv","chunkset_count":1,"creation_micros":"1773890611447294","owner":"0x44d0bee68ef59ff0d81e7d0153b8356ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"23","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"700"}
+
+
+ÔöÇÔöÇ Block 1354857 | Tx 0x0eddfa3abb7c13ÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@0e69e8e145d96db331e094be366cbdca762c33ca905fc3d506d0a68791d8f05d/files/91d8f05d_mmwwnwwy_8bd1ed.txt","chunkset_count":1,"creation_micros":"1773890612261345","owner":"0xe69e8e145d96db331ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"23","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"700"}
+
+
+ÔöÇÔöÇ Block 1354857 | Tx 0xcce5ddc5fdf2ddÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@a9e0ffcc52a5696535d8c38be18071a5d2a7499f9e24e59d1f6f0e0a75d93fbe/oqfe23wzmmbavflf.txt","chunkset_count":1,"creation_micros":"1773890611615267","owner":"0xa9e0ffcc52a5696535d8c38be18071aÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"22","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"699"}
+
+
+ÔöÇÔöÇ Block 1354857 | Tx 0x30ca9c8d633e7aÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@3d5c3d3e04fa8936b3be1dad468a5b82d79ce871fcb3a0823174e2bf72abf7d8/j3khmcer9rzvmy6m.csv","chunkset_count":1,"creation_micros":"1773890610969955","owner":"0x3d5c3d3e04fa8936b3be1dad468a5b8ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"22","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"699"}
+
+­ƒöì Scanning block 1354858/1354887...
+­ƒöì Scanning block 1354859/1354887...
+­ƒöì Scanning block 1354860/1354887...
+
+ÔöÇÔöÇ Block 1354860 | Tx 0x1ce0cdfa0368c5ÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@62cd6b2daf13d6fe1cf419e7d90553bc3716b4c2be16ec487bca25028373e0a9/o74lqr6zrp2kp9k7.json","chunkset_count":1,"creation_micros":"1773890612124612","owner":"0x62cd6b2daf13d6fe1cf419e7d90553ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"22","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"699"}
+
+­ƒöì Scanning block 1354861/1354887...
+­ƒöì Scanning block 1354862/1354887...
+­ƒöì Scanning block 1354863/1354887...
+
+ÔöÇÔöÇ Block 1354863 | Tx 0xaf713e316a86e1ÔÇª ÔöÇÔöÇ
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000100000","store":"0xf98ecefee9df06e58fae27ac81b55c543610534de06f41ccad8da4ce0b67bd8c"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0xf98ecefee9df06e58fae27ac81b55c543610534de06f41ccad8da4ce0b67bd8c"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0x4e80afd2802014ff675aa93b663f74e7b60a882bf09f9216becc22c2d97dd1c4"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"6","io_gas_units":"10","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"15"}
+
+­ƒöì Scanning block 1354864/1354887...
+­ƒöì Scanning block 1354865/1354887...
+­ƒöì Scanning block 1354866/1354887...
+
+ÔöÇÔöÇ Block 1354866 | Tx 0x97b18d3f0f9c9aÔÇª ÔöÇÔöÇ
+   Function: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::mint
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0xae318f78a2bf8706e86999a86e0b0043ff7f1af37cc4a68da3799c959285a9eb"}
+   ­ƒôî Event: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::Mint
+      Addr:  0x0
+      Data:  {"amount":"1000000000","to":"0x6b75bd888e444761566a934ae7bd94eed66609a8c04a810ebf6e7fa0b543105d"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"4","io_gas_units":"6","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"10"}
+
+
+ÔöÇÔöÇ Block 1354866 | Tx 0x8aa72784735bb6ÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@99d584ec24a1d1c62cdabe63f1b932445b9782a287f774ee780a1860dd4c4ee1/files/dd4c4ee1_mmwwo430_b8dcb4.jpg","chunkset_count":1,"creation_micros":"1773890612720175","owner":"0x99d584ec24a1d1c62ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"23","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"699"}
+
+­ƒöì Scanning block 1354867/1354887...
+­ƒöì Scanning block 1354868/1354887...
+­ƒöì Scanning block 1354869/1354887...
+
+ÔöÇÔöÇ Block 1354869 | Tx 0x1a89dfc861879dÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::register_multiple_blobs
+   ­ƒôî Event: 0x1::randomness::RandomnessGeneratedEvent
+      Addr:  0x0
+      Data:  {"dummy_field":false}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"1536","store":"0xa5963512df383d629b1ea72c1a9ce95208c196a05a64f3873df8eeb4cefc3020"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1536","store":"0xd7801b4fad1aaa203d29338c3e90ef430fde1806c0115bed7efbd20e008d7d9d"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"19968","store":"0xa5963512df383d629b1ea72c1a9ce95208c196a05a64f3873df8eeb4cefc3020"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"19968","store":"0xa838a9bc37a0b7978fa477387fd6cde47be08415ae8a75d366a36118a57f3da9"}
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobRegisteredEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_commitment":"0x20e41cecbd940d1fb946e8a251758c6a9513461ed4c156f93ecc1584bd4a453e","blob_name":"@a000789bf8ec544d79b19c8496d4198cac05969646e9bb74cc48f91397c66b06/gtgjhjeiyqfk3iem.md","blob_size":ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"17","io_gas_units":"21","storage_fee_octas":"53280","storage_fee_refund_octas":"0","total_charge_gas_units":"570"}
+
+­ƒöì Scanning block 1354870/1354887...
+­ƒöì Scanning block 1354871/1354887...
+­ƒöì Scanning block 1354872/1354887...
+
+ÔöÇÔöÇ Block 1354872 | Tx 0xedbb95f7ebc91eÔÇª ÔöÇÔöÇ
+   Function: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::mint
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0xa203f3df1b2af00ca5ad744b7f9ae4b6c7cbf828a670c421d124067b40e48f86"}
+   ­ƒôî Event: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::Mint
+      Addr:  0x0
+      Data:  {"amount":"1000000000","to":"0x9449432b39b6653e0cf67bfa8cbd925d69d624a7979345af95a6ce49762ce353"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"4","io_gas_units":"6","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"10"}
+
+­ƒöì Scanning block 1354873/1354887...
+­ƒöì Scanning block 1354874/1354887...
+­ƒöì Scanning block 1354875/1354887...
+
+ÔöÇÔöÇ Block 1354875 | Tx 0xb207b74a8ce456ÔÇª ÔöÇÔöÇ
+   Function: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::mint
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0x35b0490d5ed503652d476b7668a6960390a5b77025a6d4f94176d2f6dfeb0eb8"}
+   ­ƒôî Event: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::Mint
+      Addr:  0x0
+      Data:  {"amount":"1000000000","to":"0x807c5c8e7f084a74898d165057016042b03cdd5239a81d623426896e39d1a544"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"5","io_gas_units":"8","storage_fee_octas":"55520","storage_fee_refund_octas":"0","total_charge_gas_units":"567"}
+
+­ƒöì Scanning block 1354876/1354887...
+­ƒöì Scanning block 1354877/1354887...
+­ƒöì Scanning block 1354878/1354887...
+
+ÔöÇÔöÇ Block 1354878 | Tx 0x74e7c8ec4a9ad2ÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@6a744492a249cda08acccde111d55e4aa38d844031cb51936e7424d5458fa434/B├ío C├┤ng an Nghß╗ç An (1).jpg","chunkset_count":1,"creation_micros":"1773890596764281","owner":"0x6a744492a249cda08acccde1ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"23","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"700"}
+
+
+ÔöÇÔöÇ Block 1354878 | Tx 0x87339787a0b00aÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@1c18a094b705ba58387d03ca2c12a7d8b9935701f68cd84565c72ac5965d87d5/vwhx0yb7bv485qvq.csv","chunkset_count":1,"creation_micros":"1773890614109637","owner":"0x1c18a094b705ba58387d03ca2c12a7dÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"23","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"700"}
+
+­ƒöì Scanning block 1354879/1354887...
+­ƒöì Scanning block 1354880/1354887...
+­ƒöì Scanning block 1354881/1354887...
+
+ÔöÇÔöÇ Block 1354881 | Tx 0x632adf2c85aff3ÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@6977544c56275df57422ecc8e9cdc554c3690c109759c92c558cefa85060c81d/2tjoamo54aklyovh.csv","chunkset_count":1,"creation_micros":"1773890614721209","owner":"0x6977544c56275df57422ecc8e9cdc55ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"23","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"700"}
+
+
+ÔöÇÔöÇ Block 1354881 | Tx 0xe3f279dd410beeÔÇª ÔöÇÔöÇ
+   Function: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::mint
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0xbe5ecd7a5bbb7a069a66a952ffc2795f2aae1a0362f7c72218e56c17923e7724"}
+   ­ƒôî Event: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::Mint
+      Addr:  0x0
+      Data:  {"amount":"1000000000","to":"0x902d54affe35516d054a216d59e65788e1a4298680f21eb62346a0ad4050242b"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"4","io_gas_units":"6","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"10"}
+
+
+ÔöÇÔöÇ Block 1354881 | Tx 0x4295bff2438169ÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::register_multiple_blobs
+   ­ƒôî Event: 0x1::randomness::RandomnessGeneratedEvent
+      Addr:  0x0
+      Data:  {"dummy_field":false}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"1536","store":"0xc1b0dcfe4cb625067bf087c7a94c00c5e0a1093862a913a3e95fabcdc00143e9"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1536","store":"0xd7801b4fad1aaa203d29338c3e90ef430fde1806c0115bed7efbd20e008d7d9d"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"19968","store":"0xc1b0dcfe4cb625067bf087c7a94c00c5e0a1093862a913a3e95fabcdc00143e9"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"19968","store":"0xa838a9bc37a0b7978fa477387fd6cde47be08415ae8a75d366a36118a57f3da9"}
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobRegisteredEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_commitment":"0xe32a863004b99a3c1b4dad47d146928e6ccd4de6fc1217c5c27f1bdaedd8341e","blob_name":"@c955af2ce5f244e4ec55d104618f1a8b388a1d9e2d2282c3c1aa25410e3025dc/qmvyg3rhz7cyow2f.bin","blob_size"ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"18","io_gas_units":"20","storage_fee_octas":"53320","storage_fee_refund_octas":"0","total_charge_gas_units":"571"}
+
+
+ÔöÇÔöÇ Block 1354881 | Tx 0x9bffa8f14b8b93ÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@160035d2e31911f9b982eaa039ea7045f0e3028b0794c88d788d8f3ab41505ad/mbbz8w56j7314313.txt","chunkset_count":1,"creation_micros":"1773890614894673","owner":"0x160035d2e31911f9b982eaa039ea704ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"23","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"700"}
+
+
+ÔöÇÔöÇ Block 1354881 | Tx 0x6187fafb29acd4ÔÇª ÔöÇÔöÇ
+   Function: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::mint
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"1000000000","store":"0xf0015b026c8c0de0d23961a288f7ddf661f94d58f6d489353a7a75ede2c06858"}
+   ­ƒôî Event: 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::Mint
+      Addr:  0x0
+      Data:  {"amount":"1000000000","to":"0x915cdc639c6928c10c9834329a0242a0244f3cb54562a1d3caca5e07c6d1d389"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"4","io_gas_units":"6","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"10"}
+
+
+ÔöÇÔöÇ Block 1354881 | Tx 0x9fdca33e013340ÔÇª ÔöÇÔöÇ
+   Function: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::add_blob_acknowledgements
+   ­ƒôî Event: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent ­ƒƒó SHELBY MODULE
+      Addr:  0x0
+      Data:  {"blob_name":"@d1fddf48136356121949fe5c77e177f7252aaf2a9b018d30b6dcf30eaa95c69f/yfbrprum7n7k8zve.csv","chunkset_count":1,"creation_micros":"1773890613355254","owner":"0xd1fddf48136356121949fe5c77e177fÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"677","io_gas_units":"23","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"700"}
+
+­ƒöì Scanning block 1354882/1354887...
+­ƒöì Scanning block 1354883/1354887...
+­ƒöì Scanning block 1354884/1354887...
+
+ÔöÇÔöÇ Block 1354884 | Tx 0xf551a2c4a12495ÔÇª ÔöÇÔöÇ
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"100100000","store":"0x8c5ddd2129e03d34190a522a3c2fa927f3e91b8b0e5d5fa03ed3054df66ffbc"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"100000000","store":"0x8c5ddd2129e03d34190a522a3c2fa927f3e91b8b0e5d5fa03ed3054df66ffbc"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"100000000","store":"0x4027eb1380115f02820b5638bde05ce3b9874090ebd96b806d22c69d872eaf60"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"6","io_gas_units":"10","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"15"}
+
+­ƒöì Scanning block 1354885/1354887...
+­ƒöì Scanning block 1354886/1354887...
+­ƒöì Scanning block 1354887/1354887...
+
+
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  SCAN SUMMARY
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  Blocks scanned:       50
+  Blocks with txns:     50
+  Total transactions:   127
+  User transactions:    27
+  Total events:         83
+  Unique event types:   7
+
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  ALL EVENT TYPES (by frequency)
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  [27x] 0x1::transaction_fee::FeeStatement
+        Accounts: 0x0
+        Keywords: storage
+  [23x] 0x1::fungible_asset::Deposit
+        Accounts: 0x0
+        Keywords: store
+  [12x] 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent
+        Accounts: 0x0
+        Keywords: blob, data, name
+  [11x] 0x1::fungible_asset::Withdraw
+        Accounts: 0x0
+        Keywords: store
+  [6x] 0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f::shelby_usd::Mint
+        Accounts: 0x0
+        Keywords: shelby
+  [2x] 0x1::randomness::RandomnessGeneratedEvent
+        Accounts: 0x0
+  [2x] 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobRegisteredEvent
+        Accounts: 0x0
+        Keywords: blob, register, data, size, name, commit
+
+
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  ­ƒöÄ POTENTIAL SHELBY EVENTS
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+
+  ­ƒƒó CANDIDATE: 0x1::transaction_fee::FeeStatement
+     Count:      27
+     Accounts:   0x0
+     Keywords:   storage
+     Tx hashes:  0xe19a3d156947107dee7ca067fe579de657b34ac355b0ae5fca403a9b32e815ce, 0x220604acafb5456271d5e7ff7fab379751c03f4777f7e8639c333b5f4f5d1f5f, 0x4d2d3b068e2bd005db52a801b6ccbe669808625a21409d4159261abdeae3a241
+     Sample data:
+       {"execution_gas_units":"677","io_gas_units":"23","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"699"}
+       {"execution_gas_units":"7","io_gas_units":"11","storage_fee_octas":"104680","storage_fee_refund_octas":"0","total_charge_gas_units":"1064"}
+       {"execution_gas_units":"4","io_gas_units":"6","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"10"}
+
+  ­ƒƒó CANDIDATE: 0x1::fungible_asset::Deposit
+     Count:      23
+     Accounts:   0x0
+     Keywords:   store
+     Tx hashes:  0x220604acafb5456271d5e7ff7fab379751c03f4777f7e8639c333b5f4f5d1f5f, 0x4d2d3b068e2bd005db52a801b6ccbe669808625a21409d4159261abdeae3a241, 0x470046532a19750912dd49a7251a23f389d56c645a8e7d6135abe74ad9364bfe
+     Sample data:
+       {"amount":"77999997","store":"0xa84479c16730abb224fb327f583fd0e189d19e5b0380a81d07272c42bdd28f02"}
+       {"amount":"1000000000","store":"0x72debcf5675a177796321cf594b116cebde44fe673ab7daecbf0feae6ddb34b9"}
+       {"amount":"100100000","store":"0x12a924f71137501cc60d967ecb0aec1e17583b91c38e0fd58f7e9bedd7d5aed9"}
+
+  ­ƒƒó CANDIDATE: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobWrittenEvent
+     Count:      12
+     Accounts:   0x0
+     Keywords:   blob, data, name
+     Tx hashes:  0xe19a3d156947107dee7ca067fe579de657b34ac355b0ae5fca403a9b32e815ce, 0x2d804e4f451fa0eefc1fa5dbef7a25961f2dcf52f441d165a44525e5eadf969e, 0x0eddfa3abb7c13ce62200ca951d1d8930a51bfb0fe59791b22f4f84b677f0b08
+     Sample data:
+       {"blob_name":"@cf4df082408b24635e55b4e054cd723582c468e3766cabce92af6396765c34a4/baodautu (1).png","chunkset_count":1,"creation_micros":"1773890596764281","owner":"0xcf4df082408b24635e55b4e054cd723582cÔÇª
+       {"blob_name":"@44d0bee68ef59ff0d81e7d0153b835612a9c971acefd2012c3febbeaf7fa2ae8/in8rki02u7bhh19x.csv","chunkset_count":1,"creation_micros":"1773890611447294","owner":"0x44d0bee68ef59ff0d81e7d0153b8356ÔÇª
+       {"blob_name":"@0e69e8e145d96db331e094be366cbdca762c33ca905fc3d506d0a68791d8f05d/files/91d8f05d_mmwwnwwy_8bd1ed.txt","chunkset_count":1,"creation_micros":"1773890612261345","owner":"0xe69e8e145d96db331ÔÇª
+
+  ­ƒƒó CANDIDATE: 0x1::fungible_asset::Withdraw
+     Count:      11
+     Accounts:   0x0
+     Keywords:   store
+     Tx hashes:  0x220604acafb5456271d5e7ff7fab379751c03f4777f7e8639c333b5f4f5d1f5f, 0x470046532a19750912dd49a7251a23f389d56c645a8e7d6135abe74ad9364bfe, 0x398de2c0edee04249709977f84aa887f41ced9b99d617e1fcb46c25dfbfd665d
+     Sample data:
+       {"amount":"77999997","store":"0x6b23a9d90fa573125efe2238a6f2c6f1f115206484c9a5dd99dbfd252fa7f9ba"}
+       {"amount":"100000000","store":"0x12a924f71137501cc60d967ecb0aec1e17583b91c38e0fd58f7e9bedd7d5aed9"}
+       {"amount":"100000000","store":"0x12a924f71137501cc60d967ecb0aec1e17583b91c38e0fd58f7e9bedd7d5aed9"}
+
+  ­ƒƒó CANDIDATE: 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a::blob_metadata::BlobRegisteredEvent
+     Count:      2
+     Accounts:   0x0
+     Keywords:   blob, register, data, size, name, commit
+     Tx hashes:  0x1a89dfc861879d2165b91886f2634d08ceba9f4a4875bcf82da5c841e82b9e11, 0x4295bff24381694f5ed77c7b7c2baa6e44f96916897afdbfc5e1fe931d8d630f
+     Sample data:
+       {"blob_commitment":"0x20e41cecbd940d1fb946e8a251758c6a9513461ed4c156f93ecc1584bd4a453e","blob_name":"@a000789bf8ec544d79b19c8496d4198cac05969646e9bb74cc48f91397c66b06/gtgjhjeiyqfk3iem.md","blob_size":ÔÇª
+       {"blob_commitment":"0xe32a863004b99a3c1b4dad47d146928e6ccd4de6fc1217c5c27f1bdaedd8341e","blob_name":"@c955af2ce5f244e4ec55d104618f1a8b388a1d9e2d2282c3c1aa25410e3025dc/qmvyg3rhz7cyow2f.bin","blob_size"ÔÇª
+
+
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  UNIQUE MODULE ADDRESSES (from event types)
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+     0x1
+  ­ƒƒó 0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a ÔåÉ SHELBY MODULE
+     0x249f5c642a63885ff88a5113b3ba0079840af5a1357706f8c7f3bfc5dd12511f
+
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  Discovery complete.
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+

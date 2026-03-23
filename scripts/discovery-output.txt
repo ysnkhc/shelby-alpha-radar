@@ -1,0 +1,1528 @@
+﻿ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  Shelby Indexer ÔÇö Event Discovery Script
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  RPC:            https://fullnode.mainnet.aptoslabs.com/v1
+  Blocks to scan: 20
+  Shelby module:  0x85fdb9a176ab8ef1d9d9c1b60d60b3924f0800ac1de1cc2085fb0b8bb4988e6a
+
+­ƒôè Latest block: 669773196
+­ƒôè Scanning blocks 669773177 ÔåÆ 669773196
+
+
+­ƒöì Scanning block 669773177/669773196...
+
+ÔöÇÔöÇ Block 669773177 | Tx 0x67a6176befe12eÔÇª ÔöÇÔöÇ
+   Function: 0x487e905f899ccb6d46fdaec56ba1e0c4cf119862a16c409904b8c78fab1f5e8a::router::swap
+   ­ƒôî Event: 0xa611a8ba7261ed1f4d3afe4ac2166fc9f3180103e3296772d593a1e2720c7405::stable::Fees
+      Addr:  0x0
+      Data:  {"amounts":["0","0","6519"],"pool_addr":"0x76e7c1ad414f50274b371e51b7a272cf774c7027c2e4433b9f82ab47a6e5527b"}
+   ­ƒôî Event: 0xa611a8ba7261ed1f4d3afe4ac2166fc9f3180103e3296772d593a1e2720c7405::stable::Swapped
+      Addr:  0x0
+      Data:  {"bought_id":"2","buyer":"0x42a0829341631a3bd1d40337ac60223b52ff6e307a077730130b55733ba674bd","pool_addr":"0x76e7c1ad414f50274b371e51b7a272cf774c7027c2e4433b9f82ab47a6e5527b","sold_id":"1","stored_balÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"65023926","store":"0x19761828256266bc4090e5fdd763e321479836564d3b32a01b240fa771f6a613"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"65023926","store":"0x8984a9c273ecf1c4d4c05357daa4961c260653c3b2b305cb9ca331a6df23433a"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"65023926","store":"0x8c0abd2d2cf673792fca6f4eab473dab1d07c3887d4a6b20b728942977bf08b7"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"65030251","store":"0x78ab01aae37065c6197b5e007c19882c0b396ba93fdd99eefec52c1fb319ed5b"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"65030251","store":"0x52eb213a62b79674b6764ab515fea2e399508539f5de4cab439603967e564aee"}
+   ­ƒôî Event: 0xe5c5befe31ce06bc1f2fd31210988aac08af6d821b039935557a6f14c03471be::stablecoin::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"65030251","store":"0x52eb213a62b79674b6764ab515fea2e399508539f5de4cab439603967e564aee","store_owner":"0x57edaae7ac6e3813b057a675c05f155c0296f6757050e213dda7d8941b79609d"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"65030251","store":"0x3e52e8c69440d66c1224fd4dc092791117110934c9f029e1c705d412116986ef"}
+   ­ƒôî Event: 0xe5c5befe31ce06bc1f2fd31210988aac08af6d821b039935557a6f14c03471be::stablecoin::Deposit
+      Addr:  0x0
+      Data:  {"amount":"65030251","store":"0x3e52e8c69440d66c1224fd4dc092791117110934c9f029e1c705d412116986ef","store_owner":"0x42a0829341631a3bd1d40337ac60223b52ff6e307a077730130b55733ba674bd"}
+   ­ƒôî Event: 0x487e905f899ccb6d46fdaec56ba1e0c4cf119862a16c409904b8c78fab1f5e8a::router::Swapped
+      Addr:  0x0
+      Data:  {"amount_in":"65023926","amount_out":"65030251","asset_in_index":"1","asset_out_index":"2","assets":["0x5fabd1b12e39967a3c24e91b7b8f67719a6dacee74f3c8b9fb7d93e855437d2","0x357b0b74bc833e95a115ad226048ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"22","io_gas_units":"59","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"81"}
+
+­ƒöì Scanning block 669773178/669773196...
+
+ÔöÇÔöÇ Block 669773178 | Tx 0xcc428d39ab30ffÔÇª ÔöÇÔöÇ
+   Function: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_scripts::cancel_and_place_multiple_orders
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7
+      Data:  {"custodian_id":"2","market_id":"15","order_id":"1378517252533852078245746483","reason":3,"user":"0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"27000","market_id":"15"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"2756892","market_id":"15"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"2756892","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"2756892","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"15","order_id":"1378517252533852078245746483","order_type":4,"profile_address":"0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7
+      Data:  {"custodian_id":"2","market_id":"15","order_id":"1378517270987211080195970898","reason":3,"user":"0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"41000","market_id":"15"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"4188208","market_id":"15"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"4188208","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"4188208","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"15","order_id":"1378517270987211080195970898","order_type":4,"profile_address":"0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7
+      Data:  {"custodian_id":"2","market_id":"15","order_id":"1378517289430999589340649329","reason":3,"user":"0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"55000","market_id":"15"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"5620764","market_id":"15"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"5620764","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"5620764","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"15","order_id":"1378517289430999589340649329","order_type":4,"profile_address":"0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"2756546","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"2756546","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"27000","market_id":"15"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"2756546","market_id":"15"}
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7
+      Data:  {"custodian_id":"2","integrator":"0xaf9b81752b066f81e01c7dbbcbace0a573de51930a654160535b9ec7cc847fd3","market_id":"15","order_id":"1378517473898440326436165418","price":"71466","remaining_size":"27","ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"15","order_id":"1378517473898440326436165418","order_type":4,"price":"7146600000000","profile_address":"0xf2916dd3b437342ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"4187623","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"4187623","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"41000","market_id":"15"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"4187623","market_id":"15"}
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7
+      Data:  {"custodian_id":"2","integrator":"0xaf9b81752b066f81e01c7dbbcbace0a573de51930a654160535b9ec7cc847fd3","market_id":"15","order_id":"1378517492348139964710590280","price":"71496","remaining_size":"41","ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"15","order_id":"1378517492348139964710590280","order_type":4,"price":"7149600000000","profile_address":"0xf2916dd3b437342ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"5619979","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"5619979","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"55000","market_id":"15"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"5619979","market_id":"15"}
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7
+      Data:  {"custodian_id":"2","integrator":"0xaf9b81752b066f81e01c7dbbcbace0a573de51930a654160535b9ec7cc847fd3","market_id":"15","order_id":"1378517510788269110179469159","price":"71527","remaining_size":"55","ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"15","order_id":"1378517510788269110179469159","order_type":4,"price":"7152700000000","profile_address":"0xf2916dd3b437342ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"134","io_gas_units":"30","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"164"}
+
+­ƒöì Scanning block 669773179/669773196...
+
+ÔöÇÔöÇ Block 669773179 | Tx 0xdee33fc5506dc9ÔÇª ÔöÇÔöÇ
+   Function: 0x1::aptos_account::batch_transfer_fungible_assets
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"4999976240","store":"0x1e28cf5b16c0fd89b71c7798319da8973503a04f6d8869ade75beb95f1e782e0"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"4999976240","store":"0x90b7ab8b39d45fa1c25699dd473ba5225a6d484ea7c56eac87f6add31b619773"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"5","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"14"}
+
+­ƒöì Scanning block 669773180/669773196...
+
+ÔöÇÔöÇ Block 669773180 | Tx 0x36d7c74899fb18ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["2217500000"],"ask_sizes":["500000000"],"bid_prices":["2216100000"],"bid_sizes":["500000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_pricesÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"32","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"50"}
+
+
+ÔöÇÔöÇ Block 669773180 | Tx 0x7e0fe06b3ed407ÔÇª ÔöÇÔöÇ
+   Function: 0x664f1da7f6256b26a7808e0e5b02e747c4c6450e92b602740a2a5514bba91e52::game::increase_boss_killed
+   ­ƒôî Event: 0x664f1da7f6256b26a7808e0e5b02e747c4c6450e92b602740a2a5514bba91e52::game::CattosEvent
+      Addr:  0x0
+      Data:  {"boost_purchased_amount":"0","boost_purchased_new_total":"325000000","boost_purchased_valid_until":"1757263648","boost_type_id":0,"boss_killed_amount":"10","boss_killed_increase_applied":"10","boss_kÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"5","io_gas_units":"4","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"8"}
+
+­ƒöì Scanning block 669773181/669773196...
+
+ÔöÇÔöÇ Block 669773181 | Tx 0xf83f5494d3a04eÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["41607000"],"ask_sizes":["100000000"],"bid_prices":["41585000"],"bid_sizes":["100000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_prices":[]ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"32","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"50"}
+
+­ƒöì Scanning block 669773182/669773196...
+
+ÔöÇÔöÇ Block 669773182 | Tx 0x2259216980aa86ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["653870000"],"ask_sizes":["10000000"],"bid_prices":["653310000"],"bid_sizes":["10000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_prices":[]ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"32","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"49"}
+
+­ƒöì Scanning block 669773183/669773196...
+
+ÔöÇÔöÇ Block 669773183 | Tx 0x669ec09f65472fÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["41607000","41615000","41624000","41634000","41645000","41655000","41666000","41676000","41687000","41697000","41708000","41718000","41729000","41739000","41750000","ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"23","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"31"}
+
+
+ÔöÇÔöÇ Block 669773183 | Tx 0x57d3c7877a81c8ÔÇª ÔöÇÔöÇ
+   Function: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_scripts::cancel_and_place_multiple_orders
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8
+      Data:  {"custodian_id":"1","market_id":"14","order_id":"1423352598957766320804856786","reason":3,"user":"0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"14","order_id":"1423352598957766320804856786","order_type":6,"profile_address":"0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8
+      Data:  {"custodian_id":"1","market_id":"14","order_id":"1423352617407184492692505553","reason":3,"user":"0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"14","order_id":"1423352617407184492692505553","order_type":6,"profile_address":"0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8
+      Data:  {"custodian_id":"1","market_id":"14","order_id":"1423352635849847557196874704","reason":3,"user":"0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"14","order_id":"1423352635849847557196874704","order_type":6,"profile_address":"0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8
+      Data:  {"custodian_id":"1","integrator":"0x4478fa5a4d5ef4012e6afb78901e808bcf7cc56c5dbed11a9ce2783595c70e2f","market_id":"14","order_id":"1423352654299406380673532883","price":"979","remaining_size":"410856"ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"5","market_id":"14","order_id":"1423352654299406380673532883","order_type":6,"price":"97900000000","profile_address":"0x5656ed0928a29985cÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8
+      Data:  {"custodian_id":"1","integrator":"0x4478fa5a4d5ef4012e6afb78901e808bcf7cc56c5dbed11a9ce2783595c70e2f","market_id":"14","order_id":"1423352672743335326658855890","price":"978","remaining_size":"410856"ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"5","market_id":"14","order_id":"1423352672743335326658855890","order_type":6,"price":"97800000000","profile_address":"0x5656ed0928a29985cÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8
+      Data:  {"custodian_id":"1","integrator":"0x4478fa5a4d5ef4012e6afb78901e808bcf7cc56c5dbed11a9ce2783595c70e2f","market_id":"14","order_id":"1423352691194160701631366097","price":"977","remaining_size":"410856"ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"5","market_id":"14","order_id":"1423352691194160701631366097","order_type":6,"price":"97700000000","profile_address":"0x5656ed0928a29985cÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"62","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"79"}
+
+
+ÔöÇÔöÇ Block 669773183 | Tx 0xe582e33bd1d0f7ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_order_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::OrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","cancellation_reason":{"vec":[]},"client_order_id":{"vec":[]},"details":"","is_bid":false,"is_taker":true,"market":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938046bdc20448ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"17","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"26"}
+
+­ƒöì Scanning block 669773184/669773196...
+­ƒöì Scanning block 669773185/669773196...
+­ƒöì Scanning block 669773186/669773196...
+
+ÔöÇÔöÇ Block 669773186 | Tx 0x80f0305ff6e28aÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_order_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::OrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","cancellation_reason":{"vec":[]},"client_order_id":{"vec":["44ffe41ae6e04f93bed8cfbee9f199b0"]},"details":"","is_bid":false,"is_taker":true,"market":"0x5e0e16f34adfb4b316f8d532d68aÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::OrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","cancellation_reason":{"vec":[]},"client_order_id":{"vec":["44ffe41ae6e04f93bed8cfbee9f199b0"]},"details":"","is_bid":false,"is_taker":false,"market":"0x5e0e16f34adfb4b316f8d532d68ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"36","io_gas_units":"15","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"50"}
+
+
+ÔöÇÔöÇ Block 669773186 | Tx 0xa6211d93b91964ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["252800000","252850000","252910000","252980000","253110000","253240000","253380000","253510000","253650000","253780000","253920000","254050000","254190000","254320000ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"23","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"31"}
+
+
+ÔöÇÔöÇ Block 669773186 | Tx 0xfa3134cf265b5aÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["252820000"],"ask_sizes":["50000000"],"bid_prices":["252530000"],"bid_sizes":["50000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_prices":[]ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"33","io_gas_units":"19","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"52"}
+
+­ƒöì Scanning block 669773187/669773196...
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xf2328679056dceÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["71430500000","71433300000","71440500000","71451200000","71465500000","71479900000","71494200000","71522800000","71551500000","71580100000","71608800000","71637400000ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"28","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"36"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x219563109735f7ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x000362205e10b3a147d02792eccee483dca6c7b44ecce7012cb8c6e0b68b3ae9","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-19360616502397","funding_rate_bps":"0","impact_ask_px":"2216900000","impact_bid_px":"2216700000","mark_px":"2216800000","market":{"inner":"0x96c3c2e77041264d082d0ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696269443073","market":{"inner":"0x96c3c2e77041264d082d03365e9c346fbc6be9c9428a401be8e70dcb60ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696269443073","market":{"inner":"0x96c3c2e77041264d082d03365e9c346fbc6be9c9428a401be8eÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"90","io_gas_units":"19","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"108"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xe5bd893c8c1829ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::configure_user_settings_for_market
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::PositionUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","entry_price_times_size_sum":"0","fixed_sized_sls":[],"fixed_sized_tps":[],"full_sized_sl":{"vec":[]},"full_sized_tp":{"vec":[]},"funding_index_at_last_update":"-646764677552919","ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"18","io_gas_units":"10","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"28"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x9a5a81521f3805ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["118610000","118640000","118670000","118700000","118740000","118770000","118810000","118840000","118880000","118950000","119020000","119090000","119160000","119300000ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"22","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"30"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x09779643012358ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"21","io_gas_units":"14","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"34"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xb608927c1274c8ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x000356ca64d3b32135e17dc0dc721a645bf50d0303be8ceb2cdca0a50bab8fdc","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"15855344","funding_rate_bps":"12","impact_ask_px":"95470","impact_bid_px":"95430","mark_px":"95458","market":{"inner":"0xd62d10d1ef0cbe2103b5bd479691ac38222a85140fÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696336551937","market":{"inner":"0xd62d10d1ef0cbe2103b5bd479691ac38222a85140fcbe7c2dc66ed23bdÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696336551937","market":{"inner":"0xd62d10d1ef0cbe2103b5bd479691ac38222a85140fcbe7c2dc6ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"88","io_gas_units":"19","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"106"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xfcd2670d7f35d3ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"19","io_gas_units":"14","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"32"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x13f3983fe5d094ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x000348ce31679e9ce1f80ec929f1d7c86499569d67f1cea80a90d6e5e3c127a7","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-1406740277","funding_rate_bps":"12","impact_ask_px":"990900","impact_bid_px":"990300","mark_px":"990684","market":{"inner":"0xe7da11926e61dbd227170d1271f73bfaf9f5ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696370106369","market":{"inner":"0xe7da11926e61dbd227170d1271f73bfaf9f5aab7605fac1ae62541dd38ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696370106369","market":{"inner":"0xe7da11926e61dbd227170d1271f73bfaf9f5aab7605fac1ae62ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"88","io_gas_units":"19","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"107"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xb86e1deb1ae4efÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x000348a0911d971aafb082790ac3b4af7271c5d8d9603b644240442d8656c2d6","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-261431137","funding_rate_bps":"-65","impact_ask_px":"97570","impact_bid_px":"97490","mark_px":"97545","market":{"inner":"0x2f9cd9ceca483d847849d33d095b3e35ca33340ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696386883585","market":{"inner":"0x2f9cd9ceca483d847849d33d095b3e35ca333403f670e5eee65879356cÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696386883585","market":{"inner":"0x2f9cd9ceca483d847849d33d095b3e35ca333403f670e5eee65ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"88","io_gas_units":"19","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"106"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xbc874b90632f88ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-398688926164","funding_rate_bps":"12","impact_ask_px":"41607000","impact_bid_px":"41585000","mark_px":"41596000","market":{"inner":"0xc6b3fa01e6ee89b04fe3960d8d63ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696403660801","market":{"inner":"0xc6b3fa01e6ee89b04fe3960d8d6377ebbe6caa8e47d87c2120dae14920ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696403660801","market":{"inner":"0xc6b3fa01e6ee89b04fe3960d8d6377ebbe6caa8e47d87c2120dÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"29","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"47"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x4c4116fcc8749eÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-577259866513","funding_rate_bps":"12","impact_ask_px":"252800000","impact_bid_px":"252670000","mark_px":"252777422","market":{"inner":"0xaef108ea0590464effd25054eÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696420438017","market":{"inner":"0xaef108ea0590464effd25054e2e1b66b6ea8be088c479da63518983e47ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696420438017","market":{"inner":"0xaef108ea0590464effd25054e2e1b66b6ea8be088c479da6351ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"29","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"46"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x728f47103f0346ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x0003481a2f7fe21c01d427f39035541d2b7a53db9c76234dc36082e6ad6db7f5","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-19016323862","funding_rate_bps":"12","impact_ask_px":"118610000","impact_bid_px":"118560000","mark_px":"118603179","market":{"inner":"0x5cfcf06f3c133d71a0cc967736ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696437215233","market":{"inner":"0x5cfcf06f3c133d71a0cc967736a03848be99919f7eca30fba94f4015a3ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696437215233","market":{"inner":"0x5cfcf06f3c133d71a0cc967736a03848be99919f7eca30fba94ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"88","io_gas_units":"19","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"106"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xfe41b7730259acÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"19","io_gas_units":"14","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"32"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x69b092acd90521ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x0003b778d3f6b2ac4991302b89cb313f99a42467d6c9c5f96f57c29c0d2bc24f","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"2562091595301","funding_rate_bps":"-30","impact_ask_px":"90600000","impact_bid_px":"90590000","mark_px":"90609862","market":{"inner":"0xdf3f9b3241aaf20c47e99eac29fÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696470769665","market":{"inner":"0xdf3f9b3241aaf20c47e99eac29f3ff2f736e40644c856e0db612a22e62ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696470769665","market":{"inner":"0xdf3f9b3241aaf20c47e99eac29f3ff2f736e40644c856e0db61ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"89","io_gas_units":"19","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"108"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xa97ee7f0b935faÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-743678712","funding_rate_bps":"12","impact_ask_px":"9275000","impact_bid_px":"9271000","mark_px":"9273000","market":{"inner":"0xcf99921aced56e32ddc907b9b16bf13601ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696487546881","market":{"inner":"0xcf99921aced56e32ddc907b9b16bf13601ac247e0090adc4cc728b6fa9ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696487546881","market":{"inner":"0xcf99921aced56e32ddc907b9b16bf13601ac247e0090adc4cc7ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"29","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"46"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x51d38a2164084cÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x00036d7a1251e3f67d6658466b5e9e7fe8418af7feac9567ff322bff95cc2401","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"78","io_gas_units":"15","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"92"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xd9626898c022ffÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-27710946","funding_rate_bps":"-11","impact_ask_px":"274800","impact_bid_px":"274640","mark_px":"274788","market":{"inner":"0x386bfa4f18abc8ca926b7ade89ad5aaad34cfÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696521101313","market":{"inner":"0x386bfa4f18abc8ca926b7ade89ad5aaad34cf9a0a8bd828b7059f17b25ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696521101313","market":{"inner":"0x386bfa4f18abc8ca926b7ade89ad5aaad34cf9a0a8bd828b705ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"29","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"46"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x9f0bd9899dee25ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x00039f8a144f4a62715ca60aec1cf848c4821375c57e2259c6c90b7fa49db693","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"78","io_gas_units":"15","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"92"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xa4e1ac3bf5bf2bÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x0003c6405661f306b96c352b0ed428e190b76e1f14641fb5b68652f9ca8d9af5","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"10403095673","funding_rate_bps":"-57","impact_ask_px":"982500","impact_bid_px":"981800","mark_px":"982307","market":{"inner":"0xda8615922bac85a53811e845ce39110713bÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696554655745","market":{"inner":"0xda8615922bac85a53811e845ce39110713be6d80366f4477d5427002acÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696554655745","market":{"inner":"0xda8615922bac85a53811e845ce39110713be6d80366f4477d54ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"89","io_gas_units":"19","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"108"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x2918327eff866bÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-646764482002224","funding_rate_bps":"12","impact_ask_px":"71430000000","impact_bid_px":"71428300000","mark_px":"71429150000","market":{"inner":"0x5e0e16f34adfb4b3ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696571432961","market":{"inner":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938046bdc2ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696571432961","market":{"inner":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::OrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","cancellation_reason":{"vec":[]},"client_order_id":{"vec":["931f16ed6ea14305867baaca02670e3e"]},"details":"","is_bid":false,"is_taker":true,"market":"0x5e0e16f34adfb4b316f8d532d68aÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::TradeEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","account":"0x81d39d436944f305f20785f7cd7ab251abaa5f7093ecb95dddacb2d31c8236b3","action":{"__variant__":"OpenShort"},"builder_code":{"vec":[]},"client_order_id":{"vec":["931f16ed6eaÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::PositionUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","entry_price_times_size_sum":"31285595400000000","fixed_sized_sls":[],"fixed_sized_tps":[],"full_sized_sl":{"vec":[]},"full_sized_tp":{"vec":[]},"funding_index_at_last_update":"-64ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::TradeEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","account":"0xd6b4dccb59e8c9bd451e2e7d935039bef1e6de51ffbab2f77b1e9de73996b301","action":{"__variant__":"OpenLong"},"builder_code":{"vec":[]},"client_order_id":{"vec":[]},"fee":"0",ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::PositionUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","entry_price_times_size_sum":"7201106222953235497","fixed_sized_sls":[],"fixed_sized_tps":[],"full_sized_sl":{"vec":[]},"full_sized_tp":{"vec":[]},"funding_index_at_last_update":"-ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::collateral_balance_sheet::CollateralBalanceChangeEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","asset_type":{"inner":"0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b"},"balance_type":{"__variant__":"Cross","account":"0x81d39d436944f305f20785f7cd7ab251abaa5ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"106371","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8"}
+   ­ƒôî Event: 0xe5c5befe31ce06bc1f2fd31210988aac08af6d821b039935557a6f14c03471be::stablecoin::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"106371","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8","store_owner":"0x836e0558f907fe74488d455d729bd8b6752fb7d218665852dba7d2aa9f9cfd0a"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::collateral_balance_sheet::CollateralBalanceChangeEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","asset_type":{"inner":"0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b"},"balance_type":{"__variant__":"Cross","account":"0xa6ebf45cef6b683cf4275ee8c5f8f92f956a3ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"106371","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8"}
+   ­ƒôî Event: 0xe5c5befe31ce06bc1f2fd31210988aac08af6d821b039935557a6f14c03471be::stablecoin::Deposit
+      Addr:  0x0
+      Data:  {"amount":"106371","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8","store_owner":"0x836e0558f907fe74488d455d729bd8b6752fb7d218665852dba7d2aa9f9cfd0a"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::open_interest_tracker::OpenInterestUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","current_open_interest":"2281065000","market":{"inner":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938046bdc2044861"}}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::OrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","cancellation_reason":{"vec":[]},"client_order_id":{"vec":["931f16ed6ea14305867baaca02670e3e"]},"details":"","is_bid":false,"is_taker":true,"market":"0x5e0e16f34adfb4b316f8d532d68aÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderFilledEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","fill_id":"127822270108367948807696571432964","filled_size":"438000","is_bid":true,"market":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938046bdc2044861","order_id":"1701415ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::OrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","cancellation_reason":{"vec":[]},"client_order_id":{"vec":[]},"details":"","is_bid":false,"is_taker":true,"market":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938046bdc20448ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::collateral_balance_sheet::CollateralBalanceChangeEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","asset_type":{"inner":"0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b"},"balance_type":{"__variant__":"Cross","account":"0x3977f001ebb77956b1c3dd5e58a0f39922afcÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::TradeEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","account":"0x3977f001ebb77956b1c3dd5e58a0f39922afc1d6fb2d64de3828b7d270564fef","action":{"__variant__":"CloseLong"},"builder_code":{"vec":[]},"client_order_id":{"vec":[]},"fee":"92ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::PositionUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","entry_price_times_size_sum":"0","fixed_sized_sls":[],"fixed_sized_tps":[],"full_sized_sl":{"vec":[]},"full_sized_tp":{"vec":[]},"funding_index_at_last_update":"-646764482002224","ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::TradeEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","account":"0xd6b4dccb59e8c9bd451e2e7d935039bef1e6de51ffbab2f77b1e9de73996b301","action":{"__variant__":"OpenLong"},"builder_code":{"vec":[]},"client_order_id":{"vec":[]},"fee":"0",ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::PositionUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","entry_price_times_size_sum":"7509747907253235497","fixed_sized_sls":[],"fixed_sized_tps":[],"full_sized_sl":{"vec":[]},"full_sized_tp":{"vec":[]},"funding_index_at_last_update":"-ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::collateral_balance_sheet::CollateralBalanceChangeEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","asset_type":{"inner":"0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b"},"balance_type":{"__variant__":"Cross","account":"0x3977f001ebb77956b1c3dd5e58a0f39922afcÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"925925","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8"}
+   ­ƒôî Event: 0xe5c5befe31ce06bc1f2fd31210988aac08af6d821b039935557a6f14c03471be::stablecoin::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"925925","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8","store_owner":"0x836e0558f907fe74488d455d729bd8b6752fb7d218665852dba7d2aa9f9cfd0a"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::collateral_balance_sheet::CollateralBalanceChangeEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","asset_type":{"inner":"0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b"},"balance_type":{"__variant__":"Cross","account":"0xa6ebf45cef6b683cf4275ee8c5f8f92f956a3ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"925925","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8"}
+   ­ƒôî Event: 0xe5c5befe31ce06bc1f2fd31210988aac08af6d821b039935557a6f14c03471be::stablecoin::Deposit
+      Addr:  0x0
+      Data:  {"amount":"925925","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8","store_owner":"0x836e0558f907fe74488d455d729bd8b6752fb7d218665852dba7d2aa9f9cfd0a"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::open_interest_tracker::OpenInterestUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","current_open_interest":"2281065000","market":{"inner":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938046bdc2044861"}}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::OrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","cancellation_reason":{"vec":[]},"client_order_id":{"vec":[]},"details":"","is_bid":false,"is_taker":true,"market":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938046bdc20448ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderFilledEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","fill_id":"127822270108367948807696571432965","filled_size":"4321000","is_bid":true,"market":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938046bdc2044861","order_id":"170141ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::OrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","cancellation_reason":{"vec":[{"__variant__":"ClearinghouseSettleViolation"}]},"client_order_id":{"vec":[]},"details":"Taker reduce only violation","is_bid":false,"is_taker":true,"ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"107","io_gas_units":"42","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"149"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x78ff64660b9341ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"20","io_gas_units":"14","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"34"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x1acc208eff9011ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x0003d34539af562867c3cb309b59efccf40e74b404fb415eeb7699d61322aed9","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"78","io_gas_units":"15","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"93"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x62e30cc98f7f37ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x000335fd3f3ffa06cfd9297b97367f77145d7a5f132e84c736cc471dd98621fe","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-4445513566256","funding_rate_bps":"-37","impact_ask_px":"653580000","impact_bid_px":"653450000","mark_px":"653568405","market":{"inner":"0xa0b805baf5e69adbb717e3dÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696621764609","market":{"inner":"0xa0b805baf5e69adbb717e3daefe71f5ebaae708dd480fbb964ad324f9cÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696621764609","market":{"inner":"0xa0b805baf5e69adbb717e3daefe71f5ebaae708dd480fbb964aÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"88","io_gas_units":"19","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"106"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x06c536b20ece07ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-1224864847","funding_rate_bps":"12","impact_ask_px":"1391200","impact_bid_px":"1390600","mark_px":"1390900","market":{"inner":"0xc29172db08345aceadb2306320c3239a2ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696638541825","market":{"inner":"0xc29172db08345aceadb2306320c3239a212d55fdb6c728109a0de62864ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696638541825","market":{"inner":"0xc29172db08345aceadb2306320c3239a212d55fdb6c728109a0ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"29","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"46"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xcc1727cfd4f127ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x00038580225b924c69e28ea101d4723d90c1b44ab83548a995c3d86ad9e92eb0","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"78","io_gas_units":"15","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"92"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x5f04f8fdeda572ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x0003c16c6aed42294f5cb4741f6e59ba2d728f0eae2eb9e6d3f555808c59fc45","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","funding_index":"-1825428539","funding_rate_bps":"12","impact_ask_px":"1467700","impact_bid_px":"1467400","mark_px":"1467550","market":{"inner":"0xd3223402bb7b156fad9a645a8c114a5e0ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696672096257","market":{"inner":"0xd3223402bb7b156fad9a645a8c114a5e08eda8e492a38e42db1b0df1d3ÔÇª
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696672096257","market":{"inner":"0xd3223402bb7b156fad9a645a8c114a5e08eda8e492a38e42db1ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"88","io_gas_units":"19","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"106"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x8aada193a1b87bÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"19","io_gas_units":"14","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"32"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x13d50531b1a0e2ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x00039d9e45394f473ab1f050a1b963e6b05351e52d71e507509ada0c95ed75b8","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"82","io_gas_units":"15","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"96"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0xb096e55aa1193eÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_chainlink_oracle
+   ­ƒôî Event: 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+      Addr:  0x0
+      Data:  {"feed_id":"0x00036e9386eda6b177c6f7e9d493e60ae9ebaeb732a271b880b4d6a131d6b3f5","sender":"0xbf40935e0e6f0515cddf3e884ea7ebf1488f1292e0313f080c88102d8e0564f4"}
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"78","io_gas_units":"15","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"92"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x5631e95c6ae1cdÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"19","io_gas_units":"14","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"32"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x69570de530afe9ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"19","io_gas_units":"14","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"32"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x911009abc77932ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"19","io_gas_units":"14","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"32"}
+
+
+ÔöÇÔöÇ Block 669773187 | Tx 0x3be2c90e277307ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::admin_apis::update_mark_for_internal_oracle
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"20","io_gas_units":"14","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"34"}
+
+­ƒöì Scanning block 669773188/669773196...
+
+ÔöÇÔöÇ Block 669773188 | Tx 0xc50e430ef18138ÔÇª ÔöÇÔöÇ
+   Function: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_scripts::cancel_and_place_multiple_orders
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","market_id":"16","order_id":"1235471514440603444661212802","reason":3,"user":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"19931400","market_id":"16"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"2847342","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"2847342","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"16","order_id":"1235471514440603444661212802","order_type":3,"profile_address":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","market_id":"16","order_id":"1235471532888472774032512618","reason":3,"user":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"29864700","market_id":"16"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"4266385","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"4266385","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"16","order_id":"1235471532888472774032512618","order_type":3,"profile_address":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","market_id":"16","order_id":"1235471551340142788683519570","reason":3,"user":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"39997380","market_id":"16"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"5713911","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"5713911","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"16","order_id":"1235471551340142788683519570","order_type":3,"profile_address":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","market_id":"16","order_id":"1235471569785057210619942578","reason":3,"user":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"900000","market_id":"16"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"2853514","market_id":"16"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"2853514","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"2853514","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"16","order_id":"1235471569785057210619942578","order_type":4,"profile_address":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","market_id":"16","order_id":"1235471588231661036467410634","reason":3,"user":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"1350000","market_id":"16"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"4284900","market_id":"16"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"4284900","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"4284900","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"16","order_id":"1235471588231661036467410634","order_type":4,"profile_address":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","market_id":"16","order_id":"1235471606675308799533799138","reason":3,"user":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"1790000","market_id":"16"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetBurnEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"5687597","market_id":"16"}
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"5687597","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"5687597","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","market_id":"16","order_id":"1235471606675308799533799138","order_type":4,"profile_address":"0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2","timestamp":"177389ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"2848629","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"2848629","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"19940400","market_id":"16"}
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","integrator":"0x93c1484a35e3f032dc8f5b084c03931230c7dc78d7ab9a311334d0b40517ffb3","market_id":"16","order_id":"1235471735807583525779035788","price":"22156","remaining_size":"90","ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"16","order_id":"1235471735807583525779035788","order_type":3,"price":"2215600000000","profile_address":"0x6d410f126185786ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"4269472","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"4269472","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"29886300","market_id":"16"}
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","integrator":"0x93c1484a35e3f032dc8f5b084c03931230c7dc78d7ab9a311334d0b40517ffb3","market_id":"16","order_id":"1235471754249401658547132026","price":"22138","remaining_size":"135",ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"16","order_id":"1235471754249401658547132026","order_type":3,"price":"2213800000000","profile_address":"0x6d410f126185786ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"5688001","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"5688001","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"39816000","market_id":"16"}
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","integrator":"0x93c1484a35e3f032dc8f5b084c03931230c7dc78d7ab9a311334d0b40517ffb3","market_id":"16","order_id":"1235471772695020476594935400","price":"22120","remaining_size":"180",ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"16","order_id":"1235471772695020476594935400","order_type":3,"price":"2212000000000","profile_address":"0x6d410f126185786ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"2853129","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"2853129","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"900000","market_id":"16"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"2853129","market_id":"16"}
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","integrator":"0x93c1484a35e3f032dc8f5b084c03931230c7dc78d7ab9a311334d0b40517ffb3","market_id":"16","order_id":"1235471791142749536629315247","price":"22191","remaining_size":"90","ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"16","order_id":"1235471791142749536629315247","order_type":4,"price":"2219100000000","profile_address":"0x6d410f126185786ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"4283165","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"4283165","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"1350000","market_id":"16"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"4283165","market_id":"16"}
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","integrator":"0x93c1484a35e3f032dc8f5b084c03931230c7dc78d7ab9a311334d0b40517ffb3","market_id":"16","order_id":"1235471809592589920982030017","price":"22209","remaining_size":"135",ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"16","order_id":"1235471809592589920982030017","order_type":4,"price":"2220900000000","profile_address":"0x6d410f126185786ÔÇª
+   ­ƒôî Event: 0x1::fungible_asset::Withdraw
+      Addr:  0x0
+      Data:  {"amount":"5683762","store":"0x3d961ab948b871ce03cc49c2048271bf9df12971b7f1ec004424b779f8810631"}
+   ­ƒôî Event: 0x1::fungible_asset::Deposit
+      Addr:  0x0
+      Data:  {"amount":"5683762","store":"0x145f0074a041062840a78ccab2d37a5303941891a355750229e99e25971dc4cd"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"1790000","market_id":"16"}
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetMintEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","amount":"5683762","market_id":"16"}
+   ­ƒôî Event: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+      Addr:  0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+      Data:  {"custodian_id":"3","integrator":"0x93c1484a35e3f032dc8f5b084c03931230c7dc78d7ab9a311334d0b40517ffb3","market_id":"16","order_id":"1235471828039474242553665235","price":"22227","remaining_size":"179",ÔÇª
+   ­ƒôî Event: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"16","order_id":"1235471828039474242553665235","order_type":4,"price":"2222700000000","profile_address":"0x6d410f126185786ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"220","io_gas_units":"32","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"252"}
+
+
+ÔöÇÔöÇ Block 669773188 | Tx 0x74e7f72cc4e1ddÔÇª ÔöÇÔöÇ
+   Function: 0x87eaa1f3f6e80882f9535344f2ef5bb5efde9ecd25fbe6b36a0f290e199a9d04::PhotonRouterModule::participate_in_campaign_router
+   ­ƒôî Event: 0x240dc02cc394968ea5e1b41662c526c1894860028062508386dd8c94e59701ba::PhotonVerifier::RequestVerifiedEvent
+      Addr:  0x0
+      Data:  {"data_hash":"0xf889efe0a7649a321c03fa63126609694d0c16aae92e3e86e574f25498bae5dc","function_name":"participate_in_campaign","processor_address":"0x85c46ae42c966b45473efeb236addf9240d5b75544249eab79dbaÔÇª
+   ­ƒôî Event: 0xa65b211020a1583496fa5db5bbf38150d0ca40858962a2d991c3010d4301a4d5::PhotonCampaignManagerModule::UserParticipatedEvent
+      Addr:  0x164381808b403589c7060554e4e7d3ae5372ae0aa2cede0815c0abfe40bf1df5
+      Data:  {"campaign_id":"1","campaign_name":"Stan Engagement Layer","timestamp":"1773890341","user":"0x113258fd7f16ca0e26446e88dafc7b296af3775cd9a9e283990dd4e2d9e92fde"}
+   ­ƒôî Event: 0xa65b211020a1583496fa5db5bbf38150d0ca40858962a2d991c3010d4301a4d5::PhotonCampaignManagerModule::TokensEarnedEvent
+      Addr:  0x164381808b403589c7060554e4e7d3ae5372ae0aa2cede0815c0abfe40bf1df5
+      Data:  {"amount":"0","campaign_id":"1","campaign_name":"Stan Engagement Layer","event_name":"game_win","instant_payout":false,"token_type":"0xa1f55129fbb52888371037b64826aacc849aac0705e90b63b2f7f068f87311f5"ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"42","io_gas_units":"12","storage_fee_octas":"1800","storage_fee_refund_octas":"0","total_charge_gas_units":"72"}
+
+­ƒöì Scanning block 669773189/669773196...
+
+ÔöÇÔöÇ Block 669773189 | Tx 0x971c64fef3d13dÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::cancel_bulk_order_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderModifiedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":[],"ask_sizes":[],"bid_prices":[],"bid_sizes":[],"cancellation_reason":{"vec":[{"__variant__":"OrderCancelledByUser"}]},"cancelled_ask_prices":["252820000"],"cancelledÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"22","io_gas_units":"11","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"32"}
+
+
+ÔöÇÔöÇ Block 669773189 | Tx 0x2bb82c91fc92a1ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["41607000"],"ask_sizes":["100000000"],"bid_prices":["41579000"],"bid_sizes":["100000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_prices":[]ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"33","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"50"}
+
+­ƒöì Scanning block 669773190/669773196...
+
+ÔöÇÔöÇ Block 669773190 | Tx 0xf344aae44afac0ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::cancel_bulk_order_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderModifiedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":[],"ask_sizes":[],"bid_prices":[],"bid_sizes":[],"cancellation_reason":{"vec":[{"__variant__":"OrderCancelledByUser"}]},"cancelled_ask_prices":["41607000"],"cancelled_ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"23","io_gas_units":"12","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"34"}
+
+­ƒöì Scanning block 669773191/669773196...
+­ƒöì Scanning block 669773192/669773196...
+
+ÔöÇÔöÇ Block 669773192 | Tx 0xd776080c217742ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["990700","991000","991200","991500","991800","992000","992300","992600","992900","993500","994000","994600","995200","995700","996300","996900","997400","998000","998ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"22","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"30"}
+
+
+ÔöÇÔöÇ Block 669773192 | Tx 0x376193691b0109ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["90620000","90640000","90660000","90680000","90700000","90720000","90780000","90890000","91030000","91040000","91050000","91060000","91070000","91080000","91090000","ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"25","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"33"}
+
+­ƒöì Scanning block 669773193/669773196...
+
+ÔöÇÔöÇ Block 669773193 | Tx 0x380457836b8083ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["90630000"],"ask_sizes":["500000000"],"bid_prices":["90580000"],"bid_sizes":["500000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_prices":[]ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"35","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"52"}
+
+
+ÔöÇÔöÇ Block 669773193 | Tx 0x2a325ccfb04e67ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":[],"ask_sizes":[],"bid_prices":["71412000000"],"bid_sizes":["50000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_prices":[],"cancelled_bid_sizÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"35","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"52"}
+
+
+ÔöÇÔöÇ Block 669773193 | Tx 0x8afc711a3940c1ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["2217300000"],"ask_sizes":["500000000"],"bid_prices":["2215800000"],"bid_sizes":["500000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_pricesÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"33","io_gas_units":"19","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"52"}
+
+
+ÔöÇÔöÇ Block 669773193 | Tx 0xa5d8c416681928ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":[],"ask_sizes":[],"bid_prices":["1465700"],"bid_sizes":["100000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_prices":[],"cancelled_bid_sizes"ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"31","io_gas_units":"18","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"48"}
+
+­ƒöì Scanning block 669773194/669773196...
+
+ÔöÇÔöÇ Block 669773194 | Tx 0x25a2cbb4a657c3ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["1467500","1467700","1468000","1468300","1468600","1468900","1469200","1469600","1469900","1470200","1470500","1471300","1472100","1472900","1473600","1474400","14752ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"23","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"31"}
+
+­ƒöì Scanning block 669773195/669773196...
+
+ÔöÇÔöÇ Block 669773195 | Tx 0x303daa6a2ca60cÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::cancel_bulk_order_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderModifiedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":[],"ask_sizes":[],"bid_prices":[],"bid_sizes":[],"cancellation_reason":{"vec":[{"__variant__":"OrderCancelledByUser"}]},"cancelled_ask_prices":["2217300000"],"cancelleÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"22","io_gas_units":"11","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"33"}
+
+
+ÔöÇÔöÇ Block 669773195 | Tx 0x7a7bb3e6e34d59ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::cancel_bulk_order_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderModifiedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":[],"ask_sizes":[],"bid_prices":[],"bid_sizes":[],"cancellation_reason":{"vec":[{"__variant__":"OrderCancelledByUser"}]},"cancelled_ask_prices":["90630000"],"cancelled_ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"24","io_gas_units":"11","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"34"}
+
+
+ÔöÇÔöÇ Block 669773195 | Tx 0xea3f54f9546266ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::cancel_bulk_order_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderModifiedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":[],"ask_sizes":[],"bid_prices":[],"bid_sizes":[],"cancellation_reason":{"vec":[{"__variant__":"OrderCancelledByUser"}]},"cancelled_ask_prices":[],"cancelled_ask_sizes"ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"21","io_gas_units":"12","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"32"}
+
+
+ÔöÇÔöÇ Block 669773195 | Tx 0xdd9cf35aac5b76ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::cancel_bulk_order_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderModifiedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":[],"ask_sizes":[],"bid_prices":[],"bid_sizes":[],"cancellation_reason":{"vec":[{"__variant__":"OrderCancelledByUser"}]},"cancelled_ask_prices":[],"cancelled_ask_sizes"ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"22","io_gas_units":"11","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"32"}
+
+­ƒöì Scanning block 669773196/669773196...
+
+ÔöÇÔöÇ Block 669773196 | Tx 0xfc857cf8e6533dÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["9274000","9279000","9284000","9288000","9293000","9298000","9302000","9312000","9321000","9331000","9340000","9350000","9359000","9378000","9397000","9415000","94340ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"22","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"30"}
+
+
+ÔöÇÔöÇ Block 669773196 | Tx 0x5ef3f170f70bf5ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["253160000","253500000","253840000"],"ask_sizes":["4990000","7050000","8630000"],"bid_prices":["252230000","251890000","251550000"],"bid_sizes":["2970000","4190000","ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"37","io_gas_units":"26","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"63"}
+
+
+ÔöÇÔöÇ Block 669773196 | Tx 0x30d77995f76f36ÔÇª ÔöÇÔöÇ
+   Function: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::dex_accounts_entry::place_bulk_orders_to_subaccount
+   ­ƒôî Event: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+      Addr:  0x0
+      Data:  {"__variant__":"V1","ask_prices":["41602000","41611000","41619000","41630000","41640000","41651000","41661000","41672000","41682000","41693000","41703000","41714000","41724000","41735000","41745000","ÔÇª
+   ­ƒôî Event: 0x1::transaction_fee::FeeStatement
+      Addr:  0x0
+      Data:  {"execution_gas_units":"23","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"31"}
+
+
+
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  SCAN SUMMARY
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  Blocks scanned:       20
+  Blocks with txns:     20
+  Total transactions:   105
+  User transactions:    65
+  Total events:         315
+  Unique event types:   31
+
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  ALL EVENT TYPES (by frequency)
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  [65x] 0x1::transaction_fee::FeeStatement
+        Accounts: 0x0
+        Keywords: storage
+  [30x] 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+        Accounts: 0x0
+        Keywords: commit
+  [24x] 0x1::fungible_asset::Withdraw
+        Accounts: 0x0
+        Keywords: store
+  [24x] 0x1::fungible_asset::Deposit
+        Accounts: 0x0
+        Keywords: store
+  [19x] 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+        Accounts: 0x0
+        Keywords: size
+  [15x] 0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d::verifier::ReportVerified
+        Accounts: 0x0
+  [15x] 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::price_management::PriceUpdateEvent
+        Accounts: 0x0
+  [12x] 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::CancelOrderEvent
+        Accounts: 0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7, 0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8, 0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+  [12x] 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::CancelOrderEvent
+        Accounts: 0x0
+  [12x] 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+        Accounts: 0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7, 0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8, 0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+        Keywords: size
+  [12x] 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+        Accounts: 0x0
+        Keywords: size
+  [9x] 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetBurnEvent
+        Accounts: 0x0
+  [9x] 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::QuoteAssetMintEvent
+        Accounts: 0x0
+  [8x] 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::OrderEvent
+        Accounts: 0x0
+        Keywords: size, data
+  [6x] 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetBurnEvent
+        Accounts: 0x0
+  [6x] 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::BaseAssetMintEvent
+        Accounts: 0x0
+  [6x] 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderModifiedEvent
+        Accounts: 0x0
+        Keywords: size
+  [5x] 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::PositionUpdateEvent
+        Accounts: 0x0
+        Keywords: size
+  [5x] 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::collateral_balance_sheet::CollateralBalanceChangeEvent
+        Accounts: 0x0
+  [4x] 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::TradeEvent
+        Accounts: 0x0
+        Keywords: size
+  [3x] 0xe5c5befe31ce06bc1f2fd31210988aac08af6d821b039935557a6f14c03471be::stablecoin::Withdraw
+        Accounts: 0x0
+        Keywords: store
+  [3x] 0xe5c5befe31ce06bc1f2fd31210988aac08af6d821b039935557a6f14c03471be::stablecoin::Deposit
+        Accounts: 0x0
+        Keywords: store
+  [2x] 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::open_interest_tracker::OpenInterestUpdateEvent
+        Accounts: 0x0
+  [2x] 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderFilledEvent
+        Accounts: 0x0
+        Keywords: size
+  [1x] 0xa611a8ba7261ed1f4d3afe4ac2166fc9f3180103e3296772d593a1e2720c7405::stable::Fees
+        Accounts: 0x0
+  [1x] 0xa611a8ba7261ed1f4d3afe4ac2166fc9f3180103e3296772d593a1e2720c7405::stable::Swapped
+        Accounts: 0x0
+        Keywords: store
+  [1x] 0x487e905f899ccb6d46fdaec56ba1e0c4cf119862a16c409904b8c78fab1f5e8a::router::Swapped
+        Accounts: 0x0
+  [1x] 0x664f1da7f6256b26a7808e0e5b02e747c4c6450e92b602740a2a5514bba91e52::game::CattosEvent
+        Accounts: 0x0
+  [1x] 0x240dc02cc394968ea5e1b41662c526c1894860028062508386dd8c94e59701ba::PhotonVerifier::RequestVerifiedEvent
+        Accounts: 0x0
+        Keywords: hash, name, data
+  [1x] 0xa65b211020a1583496fa5db5bbf38150d0ca40858962a2d991c3010d4301a4d5::PhotonCampaignManagerModule::UserParticipatedEvent
+        Accounts: 0x164381808b403589c7060554e4e7d3ae5372ae0aa2cede0815c0abfe40bf1df5
+        Keywords: name
+  [1x] 0xa65b211020a1583496fa5db5bbf38150d0ca40858962a2d991c3010d4301a4d5::PhotonCampaignManagerModule::TokensEarnedEvent
+        Accounts: 0x164381808b403589c7060554e4e7d3ae5372ae0aa2cede0815c0abfe40bf1df5
+        Keywords: name
+
+
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  ­ƒöÄ POTENTIAL SHELBY EVENTS
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+
+  ­ƒƒó CANDIDATE: 0x1::transaction_fee::FeeStatement
+     Count:      65
+     Accounts:   0x0
+     Keywords:   storage
+     Tx hashes:  0x67a6176befe12e4eacae64cea1e79ecc135067a3128bc6260f163f9e342f1220, 0xcc428d39ab30ffa9101aeaa560aab338e62d873406998d34a864e2425bf44fc1, 0xdee33fc5506dc9a2f1fa2c08c6bbf89c7142f3fc82e47a6c2e231db615572651
+     Sample data:
+       {"execution_gas_units":"22","io_gas_units":"59","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"81"}
+       {"execution_gas_units":"134","io_gas_units":"30","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"164"}
+       {"execution_gas_units":"5","io_gas_units":"9","storage_fee_octas":"0","storage_fee_refund_octas":"0","total_charge_gas_units":"14"}
+
+  ­ƒƒó CANDIDATE: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::async_matching_engine::ACKEvent
+     Count:      30
+     Accounts:   0x0
+     Keywords:   commit
+     Tx hashes:  0x219563109735f7b9fc8686b9ed524a790484224e39ac3e3e72815f975116ee47, 0x219563109735f7b9fc8686b9ed524a790484224e39ac3e3e72815f975116ee47, 0xb608927c1274c85f1169c85a4763cc05c8ad486f2fc35e251a31793f7cf83054
+     Sample data:
+       {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696269443073","market":{"inner":"0x96c3c2e77041264d082d03365e9c346fbc6be9c9428a401be8e70dcb60ÔÇª
+       {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CommitMarkPrice"},"batch_key":"127822270108367948807696269443073","market":{"inner":"0x96c3c2e77041264d082d03365e9c346fbc6be9c9428a401be8eÔÇª
+       {"__variant__":"V1","accounts":[],"ack_phase":{"__variant__":"CheckADL"},"batch_key":"127822270108367948807696336551937","market":{"inner":"0xd62d10d1ef0cbe2103b5bd479691ac38222a85140fcbe7c2dc66ed23bdÔÇª
+
+  ­ƒƒó CANDIDATE: 0x1::fungible_asset::Withdraw
+     Count:      24
+     Accounts:   0x0
+     Keywords:   store
+     Tx hashes:  0x67a6176befe12e4eacae64cea1e79ecc135067a3128bc6260f163f9e342f1220, 0x67a6176befe12e4eacae64cea1e79ecc135067a3128bc6260f163f9e342f1220, 0x67a6176befe12e4eacae64cea1e79ecc135067a3128bc6260f163f9e342f1220
+     Sample data:
+       {"amount":"65023926","store":"0x19761828256266bc4090e5fdd763e321479836564d3b32a01b240fa771f6a613"}
+       {"amount":"65030251","store":"0x78ab01aae37065c6197b5e007c19882c0b396ba93fdd99eefec52c1fb319ed5b"}
+       {"amount":"65030251","store":"0x52eb213a62b79674b6764ab515fea2e399508539f5de4cab439603967e564aee"}
+
+  ­ƒƒó CANDIDATE: 0x1::fungible_asset::Deposit
+     Count:      24
+     Accounts:   0x0
+     Keywords:   store
+     Tx hashes:  0x67a6176befe12e4eacae64cea1e79ecc135067a3128bc6260f163f9e342f1220, 0x67a6176befe12e4eacae64cea1e79ecc135067a3128bc6260f163f9e342f1220, 0x67a6176befe12e4eacae64cea1e79ecc135067a3128bc6260f163f9e342f1220
+     Sample data:
+       {"amount":"65023926","store":"0x8984a9c273ecf1c4d4c05357daa4961c260653c3b2b305cb9ca331a6df23433a"}
+       {"amount":"65023926","store":"0x8c0abd2d2cf673792fca6f4eab473dab1d07c3887d4a6b20b728942977bf08b7"}
+       {"amount":"65030251","store":"0x3e52e8c69440d66c1224fd4dc092791117110934c9f029e1c705d412116986ef"}
+
+  ­ƒƒó CANDIDATE: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderPlacedEvent
+     Count:      19
+     Accounts:   0x0
+     Keywords:   size
+     Tx hashes:  0x36d7c74899fb18c074d12437d39c58df0c99763ccb8854861ace94bdddef7ccb, 0xf83f5494d3a04e6f99a5152e913c6283ddb77b53db1cfdd41cf161f31662009c, 0x2259216980aa8645868e0b485f97284370e41dfd826b10090c50b35d7774533d
+     Sample data:
+       {"__variant__":"V1","ask_prices":["2217500000"],"ask_sizes":["500000000"],"bid_prices":["2216100000"],"bid_sizes":["500000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_pricesÔÇª
+       {"__variant__":"V1","ask_prices":["41607000"],"ask_sizes":["100000000"],"bid_prices":["41585000"],"bid_sizes":["100000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_prices":[]ÔÇª
+       {"__variant__":"V1","ask_prices":["653870000"],"ask_sizes":["10000000"],"bid_prices":["653310000"],"bid_sizes":["10000000"],"cancelled_ask_prices":[],"cancelled_ask_sizes":[],"cancelled_bid_prices":[]ÔÇª
+
+  ­ƒƒó CANDIDATE: 0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c::user::PlaceLimitOrderEvent
+     Count:      12
+     Accounts:   0xf2916dd3b4373426e116f4984c24e141d931c788811743f6aaa93351a76f62e7, 0x5656ed0928a29985cc1bba27793a7e5bb323b8af5d4ea206c8676cac971faad8, 0x6d410f126185786c0520fcee27871fb1f2f07c8bf32f8dbaf8712c445449cea2
+     Keywords:   size
+     Tx hashes:  0xcc428d39ab30ffa9101aeaa560aab338e62d873406998d34a864e2425bf44fc1, 0xcc428d39ab30ffa9101aeaa560aab338e62d873406998d34a864e2425bf44fc1, 0xcc428d39ab30ffa9101aeaa560aab338e62d873406998d34a864e2425bf44fc1
+     Sample data:
+       {"custodian_id":"2","integrator":"0xaf9b81752b066f81e01c7dbbcbace0a573de51930a654160535b9ec7cc847fd3","market_id":"15","order_id":"1378517473898440326436165418","price":"71466","remaining_size":"27","ÔÇª
+       {"custodian_id":"2","integrator":"0xaf9b81752b066f81e01c7dbbcbace0a573de51930a654160535b9ec7cc847fd3","market_id":"15","order_id":"1378517492348139964710590280","price":"71496","remaining_size":"41","ÔÇª
+       {"custodian_id":"2","integrator":"0xaf9b81752b066f81e01c7dbbcbace0a573de51930a654160535b9ec7cc847fd3","market_id":"15","order_id":"1378517510788269110179469159","price":"71527","remaining_size":"55","ÔÇª
+
+  ­ƒƒó CANDIDATE: 0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6::perpetual_core::LimitOrderEvent
+     Count:      12
+     Accounts:   0x0
+     Keywords:   size
+     Tx hashes:  0xcc428d39ab30ffa9101aeaa560aab338e62d873406998d34a864e2425bf44fc1, 0xcc428d39ab30ffa9101aeaa560aab338e62d873406998d34a864e2425bf44fc1, 0xcc428d39ab30ffa9101aeaa560aab338e62d873406998d34a864e2425bf44fc1
+     Sample data:
+       {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"15","order_id":"1378517473898440326436165418","order_type":4,"price":"7146600000000","profile_address":"0xf2916dd3b437342ÔÇª
+       {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"15","order_id":"1378517492348139964710590280","order_type":4,"price":"7149600000000","profile_address":"0xf2916dd3b437342ÔÇª
+       {"__variant__":"V1","base_contribution":{"vec":[]},"leverage":"7","market_id":"15","order_id":"1378517510788269110179469159","order_type":4,"price":"7152700000000","profile_address":"0xf2916dd3b437342ÔÇª
+
+  ­ƒƒó CANDIDATE: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::OrderEvent
+     Count:      8
+     Accounts:   0x0
+     Keywords:   size, data
+     Tx hashes:  0xe582e33bd1d0f72fb4d51c89c761b504fe64a560c62641f786aceb17e31e0986, 0x80f0305ff6e28a69862ca8c9686786050cf8d51b63f15b76025b82a48b5f8941, 0x80f0305ff6e28a69862ca8c9686786050cf8d51b63f15b76025b82a48b5f8941
+     Sample data:
+       {"__variant__":"V1","cancellation_reason":{"vec":[]},"client_order_id":{"vec":[]},"details":"","is_bid":false,"is_taker":true,"market":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938046bdc20448ÔÇª
+       {"__variant__":"V1","cancellation_reason":{"vec":[]},"client_order_id":{"vec":["44ffe41ae6e04f93bed8cfbee9f199b0"]},"details":"","is_bid":false,"is_taker":true,"market":"0x5e0e16f34adfb4b316f8d532d68aÔÇª
+       {"__variant__":"V1","cancellation_reason":{"vec":[]},"client_order_id":{"vec":["44ffe41ae6e04f93bed8cfbee9f199b0"]},"details":"","is_bid":false,"is_taker":false,"market":"0x5e0e16f34adfb4b316f8d532d68ÔÇª
+
+  ­ƒƒó CANDIDATE: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderModifiedEvent
+     Count:      6
+     Accounts:   0x0
+     Keywords:   size
+     Tx hashes:  0x971c64fef3d13de8e18a0bc18d83de9a2596a1eafdc7ab856a552b331fdf2bad, 0xf344aae44afac0d9e8b82e75c61bdc012a634f021398ab06f94bafca78785e6e, 0x303daa6a2ca60c5e365b49dc5a634199d5cb8c4e81d37ac9ba4fb584bd957015
+     Sample data:
+       {"__variant__":"V1","ask_prices":[],"ask_sizes":[],"bid_prices":[],"bid_sizes":[],"cancellation_reason":{"vec":[{"__variant__":"OrderCancelledByUser"}]},"cancelled_ask_prices":["252820000"],"cancelledÔÇª
+       {"__variant__":"V1","ask_prices":[],"ask_sizes":[],"bid_prices":[],"bid_sizes":[],"cancellation_reason":{"vec":[{"__variant__":"OrderCancelledByUser"}]},"cancelled_ask_prices":["41607000"],"cancelled_ÔÇª
+       {"__variant__":"V1","ask_prices":[],"ask_sizes":[],"bid_prices":[],"bid_sizes":[],"cancellation_reason":{"vec":[{"__variant__":"OrderCancelledByUser"}]},"cancelled_ask_prices":["2217300000"],"cancelleÔÇª
+
+  ­ƒƒó CANDIDATE: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::PositionUpdateEvent
+     Count:      5
+     Accounts:   0x0
+     Keywords:   size
+     Tx hashes:  0xe5bd893c8c1829da835b5fdb13a9b44bb3fa8b3b71a3dc4433cf9bde88efa4ac, 0x2918327eff866ba55ff7da82056f0bcb1cac7c9679aa9440c9bc89225ac609d8, 0x2918327eff866ba55ff7da82056f0bcb1cac7c9679aa9440c9bc89225ac609d8
+     Sample data:
+       {"__variant__":"V1","entry_price_times_size_sum":"0","fixed_sized_sls":[],"fixed_sized_tps":[],"full_sized_sl":{"vec":[]},"full_sized_tp":{"vec":[]},"funding_index_at_last_update":"-646764677552919","ÔÇª
+       {"__variant__":"V1","entry_price_times_size_sum":"31285595400000000","fixed_sized_sls":[],"fixed_sized_tps":[],"full_sized_sl":{"vec":[]},"full_sized_tp":{"vec":[]},"funding_index_at_last_update":"-64ÔÇª
+       {"__variant__":"V1","entry_price_times_size_sum":"7201106222953235497","fixed_sized_sls":[],"fixed_sized_tps":[],"full_sized_sl":{"vec":[]},"full_sized_tp":{"vec":[]},"funding_index_at_last_update":"-ÔÇª
+
+  ­ƒƒó CANDIDATE: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::perp_positions::TradeEvent
+     Count:      4
+     Accounts:   0x0
+     Keywords:   size
+     Tx hashes:  0x2918327eff866ba55ff7da82056f0bcb1cac7c9679aa9440c9bc89225ac609d8, 0x2918327eff866ba55ff7da82056f0bcb1cac7c9679aa9440c9bc89225ac609d8, 0x2918327eff866ba55ff7da82056f0bcb1cac7c9679aa9440c9bc89225ac609d8
+     Sample data:
+       {"__variant__":"V1","account":"0x81d39d436944f305f20785f7cd7ab251abaa5f7093ecb95dddacb2d31c8236b3","action":{"__variant__":"OpenShort"},"builder_code":{"vec":[]},"client_order_id":{"vec":["931f16ed6eaÔÇª
+       {"__variant__":"V1","account":"0xd6b4dccb59e8c9bd451e2e7d935039bef1e6de51ffbab2f77b1e9de73996b301","action":{"__variant__":"OpenLong"},"builder_code":{"vec":[]},"client_order_id":{"vec":[]},"fee":"0",ÔÇª
+       {"__variant__":"V1","account":"0x3977f001ebb77956b1c3dd5e58a0f39922afc1d6fb2d64de3828b7d270564fef","action":{"__variant__":"CloseLong"},"builder_code":{"vec":[]},"client_order_id":{"vec":[]},"fee":"92ÔÇª
+
+  ­ƒƒó CANDIDATE: 0xe5c5befe31ce06bc1f2fd31210988aac08af6d821b039935557a6f14c03471be::stablecoin::Withdraw
+     Count:      3
+     Accounts:   0x0
+     Keywords:   store
+     Tx hashes:  0x67a6176befe12e4eacae64cea1e79ecc135067a3128bc6260f163f9e342f1220, 0x2918327eff866ba55ff7da82056f0bcb1cac7c9679aa9440c9bc89225ac609d8, 0x2918327eff866ba55ff7da82056f0bcb1cac7c9679aa9440c9bc89225ac609d8
+     Sample data:
+       {"amount":"65030251","store":"0x52eb213a62b79674b6764ab515fea2e399508539f5de4cab439603967e564aee","store_owner":"0x57edaae7ac6e3813b057a675c05f155c0296f6757050e213dda7d8941b79609d"}
+       {"amount":"106371","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8","store_owner":"0x836e0558f907fe74488d455d729bd8b6752fb7d218665852dba7d2aa9f9cfd0a"}
+       {"amount":"925925","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8","store_owner":"0x836e0558f907fe74488d455d729bd8b6752fb7d218665852dba7d2aa9f9cfd0a"}
+
+  ­ƒƒó CANDIDATE: 0xe5c5befe31ce06bc1f2fd31210988aac08af6d821b039935557a6f14c03471be::stablecoin::Deposit
+     Count:      3
+     Accounts:   0x0
+     Keywords:   store
+     Tx hashes:  0x67a6176befe12e4eacae64cea1e79ecc135067a3128bc6260f163f9e342f1220, 0x2918327eff866ba55ff7da82056f0bcb1cac7c9679aa9440c9bc89225ac609d8, 0x2918327eff866ba55ff7da82056f0bcb1cac7c9679aa9440c9bc89225ac609d8
+     Sample data:
+       {"amount":"65030251","store":"0x3e52e8c69440d66c1224fd4dc092791117110934c9f029e1c705d412116986ef","store_owner":"0x42a0829341631a3bd1d40337ac60223b52ff6e307a077730130b55733ba674bd"}
+       {"amount":"106371","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8","store_owner":"0x836e0558f907fe74488d455d729bd8b6752fb7d218665852dba7d2aa9f9cfd0a"}
+       {"amount":"925925","store":"0xe16a858661bf74702611c836df8d7fcbf61d9a7a1382a82f586e412478f043d8","store_owner":"0x836e0558f907fe74488d455d729bd8b6752fb7d218665852dba7d2aa9f9cfd0a"}
+
+  ­ƒƒó CANDIDATE: 0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06::market_types::BulkOrderFilledEvent
+     Count:      2
+     Accounts:   0x0
+     Keywords:   size
+     Tx hashes:  0x2918327eff866ba55ff7da82056f0bcb1cac7c9679aa9440c9bc89225ac609d8, 0x2918327eff866ba55ff7da82056f0bcb1cac7c9679aa9440c9bc89225ac609d8
+     Sample data:
+       {"__variant__":"V1","fill_id":"127822270108367948807696571432964","filled_size":"438000","is_bid":true,"market":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938046bdc2044861","order_id":"1701415ÔÇª
+       {"__variant__":"V1","fill_id":"127822270108367948807696571432965","filled_size":"4321000","is_bid":true,"market":"0x5e0e16f34adfb4b316f8d532d68acbfa206826feaaa418d3938046bdc2044861","order_id":"170141ÔÇª
+
+  ­ƒƒó CANDIDATE: 0xa611a8ba7261ed1f4d3afe4ac2166fc9f3180103e3296772d593a1e2720c7405::stable::Swapped
+     Count:      1
+     Accounts:   0x0
+     Keywords:   store
+     Tx hashes:  0x67a6176befe12e4eacae64cea1e79ecc135067a3128bc6260f163f9e342f1220
+     Sample data:
+       {"bought_id":"2","buyer":"0x42a0829341631a3bd1d40337ac60223b52ff6e307a077730130b55733ba674bd","pool_addr":"0x76e7c1ad414f50274b371e51b7a272cf774c7027c2e4433b9f82ab47a6e5527b","sold_id":"1","stored_balÔÇª
+
+  ­ƒƒó CANDIDATE: 0x240dc02cc394968ea5e1b41662c526c1894860028062508386dd8c94e59701ba::PhotonVerifier::RequestVerifiedEvent
+     Count:      1
+     Accounts:   0x0
+     Keywords:   hash, name, data
+     Tx hashes:  0x74e7f72cc4e1dd2a03b9de074eb9adbc2e95e8d68a3add84d0a299c47d478944
+     Sample data:
+       {"data_hash":"0xf889efe0a7649a321c03fa63126609694d0c16aae92e3e86e574f25498bae5dc","function_name":"participate_in_campaign","processor_address":"0x85c46ae42c966b45473efeb236addf9240d5b75544249eab79dbaÔÇª
+
+  ­ƒƒó CANDIDATE: 0xa65b211020a1583496fa5db5bbf38150d0ca40858962a2d991c3010d4301a4d5::PhotonCampaignManagerModule::UserParticipatedEvent
+     Count:      1
+     Accounts:   0x164381808b403589c7060554e4e7d3ae5372ae0aa2cede0815c0abfe40bf1df5
+     Keywords:   name
+     Tx hashes:  0x74e7f72cc4e1dd2a03b9de074eb9adbc2e95e8d68a3add84d0a299c47d478944
+     Sample data:
+       {"campaign_id":"1","campaign_name":"Stan Engagement Layer","timestamp":"1773890341","user":"0x113258fd7f16ca0e26446e88dafc7b296af3775cd9a9e283990dd4e2d9e92fde"}
+
+  ­ƒƒó CANDIDATE: 0xa65b211020a1583496fa5db5bbf38150d0ca40858962a2d991c3010d4301a4d5::PhotonCampaignManagerModule::TokensEarnedEvent
+     Count:      1
+     Accounts:   0x164381808b403589c7060554e4e7d3ae5372ae0aa2cede0815c0abfe40bf1df5
+     Keywords:   name
+     Tx hashes:  0x74e7f72cc4e1dd2a03b9de074eb9adbc2e95e8d68a3add84d0a299c47d478944
+     Sample data:
+       {"amount":"0","campaign_id":"1","campaign_name":"Stan Engagement Layer","event_name":"game_win","instant_payout":false,"token_type":"0xa1f55129fbb52888371037b64826aacc849aac0705e90b63b2f7f068f87311f5"ÔÇª
+
+
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  UNIQUE MODULE ADDRESSES (from event types)
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+     0x1
+     0x50ead22afd6ffd9769e3b3d6e0e64a2a350d68e8b102c4e72e33d0b8cfdfdb06
+     0x5e6ee502816abcbe49b5bb670da4a1d5af520db11732e93f19ddd15b4608d01d
+     0xc0deb00c405f84c85dc13442e305df75d1288100cdd82675695f6148c7ece51c
+     0x7a38039fffd016adcac2c53795ee49325e5ec6fddf3bf02651c09f9a583655a6
+     0xe5c5befe31ce06bc1f2fd31210988aac08af6d821b039935557a6f14c03471be
+     0xa611a8ba7261ed1f4d3afe4ac2166fc9f3180103e3296772d593a1e2720c7405
+     0x487e905f899ccb6d46fdaec56ba1e0c4cf119862a16c409904b8c78fab1f5e8a
+     0x664f1da7f6256b26a7808e0e5b02e747c4c6450e92b602740a2a5514bba91e52
+     0x240dc02cc394968ea5e1b41662c526c1894860028062508386dd8c94e59701ba
+     0xa65b211020a1583496fa5db5bbf38150d0ca40858962a2d991c3010d4301a4d5
+
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+  Discovery complete.
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+
