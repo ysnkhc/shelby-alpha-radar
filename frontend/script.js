@@ -1,8 +1,5 @@
 // ── Config ───────────────────────────────────────────────────
-const API_BASE =
-  window.location.hostname === "localhost"
-    ? "http://localhost:3000"
-    : "https://shelby-alpha-radar-production.up.railway.app";
+const API_BASE = "https://shelby-alpha-radar-production.up.railway.app";
 
 // ── State ────────────────────────────────────────────────────
 const MAX_EVENTS = 100;
