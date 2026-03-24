@@ -17,16 +17,6 @@ import {
  *   GET /ws/status                         — connection stats
  */
 export async function liveRoutes(app: FastifyInstance): Promise<void> {
-  // ── CORS preflight for SSE endpoint ──────────────────────
-  app.options("/ws/alpha", async (_request, reply) => {
-    return reply
-      .header("Access-Control-Allow-Origin", "*")
-      .header("Access-Control-Allow-Methods", "GET, OPTIONS")
-      .header("Access-Control-Allow-Headers", "*")
-      .status(204)
-      .send();
-  });
-
   app.get<{
     Querystring: { minPriority?: string; owner?: string };
   }>("/ws/alpha", async (request, reply) => {
@@ -35,18 +25,21 @@ export async function liveRoutes(app: FastifyInstance): Promise<void> {
     const owner = request.query.owner?.trim() || undefined;
     const filter = { minPriority, owner };
 
-    // Set SSE headers with explicit CORS
-    void reply.raw.writeHead(200, {
+    // Hijack the response FIRST — tells Fastify we handle it ourselves
+    await reply.hijack();
+
+    const raw = reply.raw;
+
+    // Set SSE + CORS headers on the raw Node.js response
+    raw.writeHead(200, {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
-      Connection: "keep-alive",
+      "Connection": "keep-alive",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, OPTIONS",
       "Access-Control-Allow-Headers": "*",
       "X-Accel-Buffering": "no",
     });
-
-    const raw = reply.raw;
 
     const sendEvent = (type: string, data: unknown) => {
       raw.write(`event: ${type}\n`);
@@ -90,8 +83,6 @@ export async function liveRoutes(app: FastifyInstance): Promise<void> {
       unsubscribe();
       clearInterval(ping);
     });
-
-    await reply.hijack();
   });
 
   // ── Status ──────────────────────────────────────────────────
