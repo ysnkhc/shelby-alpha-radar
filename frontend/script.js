@@ -2,7 +2,7 @@
 const API_BASE =
   window.location.hostname === "localhost"
     ? "http://localhost:3000"
-    : "https://YOUR_BACKEND_URL";
+    : "https://shelby-alpha-radar-production.up.railway.app";
 
 // ── State ────────────────────────────────────────────────────
 const MAX_EVENTS = 100;

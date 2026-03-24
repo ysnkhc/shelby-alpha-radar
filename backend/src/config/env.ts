@@ -7,10 +7,10 @@ import { z } from "zod";
  * If any variable is missing or invalid, the app will fail fast with a clear error.
  */
 const envSchema = z.object({
-  DATABASE_URL: z.string().url("DATABASE_URL must be a valid connection string"),
-  REDIS_URL: z.string().url("REDIS_URL must be a valid connection string"),
-  SHELBY_RPC_URL: z.string().url("SHELBY_RPC_URL must be a valid URL"),
-  APTOS_RPC_URL: z.string().url("APTOS_RPC_URL must be a valid URL"),
+  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  REDIS_URL: z.string().min(1).default("redis://localhost:6379"),
+  SHELBY_RPC_URL: z.string().url().default("https://api.shelbynet.shelby.xyz"),
+  APTOS_RPC_URL: z.string().url().default("https://api.shelbynet.shelby.xyz/v1"),
   PORT: z.coerce.number().int().positive().default(3000),
   NODE_ENV: z
     .enum(["development", "production", "test"])
