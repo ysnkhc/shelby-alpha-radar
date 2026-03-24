@@ -29,7 +29,7 @@ export async function createServer() {
   });
 
   // ── Plugins ─────────────────────────────────────────────────
-  await app.register(cors, { origin: true });
+  await app.register(cors, { origin: "*", methods: ["GET", "POST", "OPTIONS"] });
   await app.register(errorHandler);
   await app.register(rateLimiter, { max: 100, windowMs: 60_000 });
 

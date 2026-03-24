@@ -219,6 +219,22 @@
     // ── Config ───────────────────────────────────────────────────
     const API_BASE = "https://shelby-alpha-radar-production.up.railway.app";
 
+    // ── DEBUG: Step 1 — Log API_BASE ─────────────────────────────
+    console.log("🔧 [DEBUG] API_BASE:", API_BASE);
+    console.log("🔧 [DEBUG] window.location:", window.location.href);
+
+    // ── DEBUG: Step 2 — Test HTTP connection ─────────────────────
+    fetch(`${API_BASE}/health`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("✅ [DEBUG] HEALTH OK:", data);
+        document.title = "Shelby Alpha Radar — Backend Connected";
+      })
+      .catch(err => {
+        console.error("❌ [DEBUG] HEALTH FAILED:", err);
+        document.title = "Shelby Alpha Radar — Backend UNREACHABLE";
+      });
+
     // ── State ────────────────────────────────────────────────────
     const MAX_EVENTS = 100;
     let allEvents = [];
@@ -227,30 +243,46 @@
     let stats = { total: 0, HIGH: 0, MEDIUM: 0, LOW: 0 };
     const timelineCache = new Map();
 
-    // ── SSE ──────────────────────────────────────────────────────
+    // ── SSE with full debug ──────────────────────────────────────
     function connect() {
-      eventSource = new EventSource(`${API_BASE}/ws/alpha`);
+      const sseUrl = `${API_BASE}/ws/alpha`;
+      console.log("🔧 [DEBUG] SSE connecting to:", sseUrl);
+
+      eventSource = new EventSource(sseUrl);
+
+      eventSource.onopen = () => {
+        console.log("✅ [DEBUG] SSE CONNECTED (onopen fired)");
+      };
+
       eventSource.addEventListener("connected", (e) => {
+        console.log("✅ [DEBUG] SSE 'connected' event received:", e.data);
         const d = JSON.parse(e.data);
         setStatus("connected", `Live — ${d.clients} client${d.clients !== 1 ? "s" : ""}`);
       });
+
       eventSource.addEventListener("backfill", (e) => {
+        console.log("✅ [DEBUG] SSE 'backfill' event received");
         const d = JSON.parse(e.data);
         if (d.events?.length) {
           d.events.forEach((ev) => addEvent(ev, false));
           renderFeed();
         }
       });
+
       eventSource.addEventListener("alpha", (e) => {
+        console.log("✅ [DEBUG] SSE 'alpha' event received");
         addEvent(JSON.parse(e.data), true);
         renderFeed();
       });
-      eventSource.onerror = () => {
+
+      eventSource.onerror = (err) => {
+        console.error("❌ [DEBUG] SSE ERROR:", err);
+        console.error("❌ [DEBUG] SSE readyState:", eventSource.readyState, "(0=CONNECTING, 1=OPEN, 2=CLOSED)");
         setStatus("disconnected", "Reconnecting...");
         setTimeout(() => {
           eventSource?.close();
           connect();
-        }, 3000);
+        }, 5000);
       };
     }
 
