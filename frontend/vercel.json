@@ -1,4 +1,6 @@
 {
-  "buildCommand": "",
-  "outputDirectory": "."
+  "framework": null,
+  "buildCommand": "echo done",
+  "outputDirectory": ".",
+  "cleanUrls": true
 }
