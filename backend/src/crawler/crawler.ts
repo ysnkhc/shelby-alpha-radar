@@ -96,7 +96,7 @@ export class CrawlerService {
 
       // Process up to 5 blocks per cycle (rate-limited)
       const nextBlock = this.lastProcessedBlock + 1;
-      const endBlock = Math.min(nextBlock + 4, latestBlock);
+      const endBlock = Math.min(nextBlock + 1, latestBlock);
 
       let totalBlobs = 0;
 
@@ -104,9 +104,9 @@ export class CrawlerService {
         const blobs = await this.processBlock(height);
         totalBlobs += blobs;
 
-        // Rate limit: 500ms between block fetches to avoid 429
+        // Rate limit: 2000ms between block fetches to avoid 429
         if (height < endBlock) {
-          await new Promise((r) => setTimeout(r, 500));
+          await new Promise((r) => setTimeout(r, 2000));
         }
       }
 
@@ -135,9 +135,10 @@ export class CrawlerService {
         error instanceof Error ? error.message : error
       );
       // Longer delay after errors (e.g. 429 rate limit)
+      console.log("⏳ Rate limited. Waiting 30s before retry...");
       this.pollTimer = setTimeout(
         () => void this.poll(),
-        5_000
+        30_000
       );
     }
   }
