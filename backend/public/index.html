@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shelby Alpha Radar</title>
+  <meta name="description" content="Real-time alpha signals from the Shelby network" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-card: #12121a;
+      --bg-card-hover: #1a1a25;
+      --bg-high: rgba(255, 59, 48, 0.08);
+      --bg-medium: rgba(255, 179, 0, 0.06);
+      --bg-low: rgba(100, 210, 255, 0.05);
+      --bg-group: rgba(138, 43, 226, 0.06);
+      --border: #1e1e2e;
+      --border-high: rgba(255, 59, 48, 0.3);
+      --border-medium: rgba(255, 179, 0, 0.2);
+      --border-low: rgba(100, 210, 255, 0.15);
+      --border-group: rgba(138, 43, 226, 0.25);
+      --text: #e4e4e7;
+      --text-muted: #71717a;
+      --text-dim: #52525b;
+      --accent-high: #ff3b30;
+      --accent-medium: #ffb300;
+      --accent-low: #64d2ff;
+      --accent-green: #30d158;
+      --accent-purple: #a855f7;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app { max-width: 860px; margin: 0 auto; padding: 24px 20px 60px; }
+
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 24px;
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .logo {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, #ff3b30 0%, #ff6b35 50%, #ffb300 100%);
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+      box-shadow: 0 4px 20px rgba(255, 59, 48, 0.25);
+    }
+    .header-title {
+      font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff 0%, #a0a0b0 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .header-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+
+    .status-indicator { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-dim); }
+    .status-dot.connected { background: var(--accent-green); box-shadow: 0 0 8px rgba(48,209,88,0.5); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; text-align: center; }
+    .stat-value { font-size: 22px; font-weight: 700; font-family: var(--font-mono); }
+    .stat-value.high { color: var(--accent-high); }
+    .stat-value.medium { color: var(--accent-medium); }
+    .stat-value.green { color: var(--accent-green); }
+    .stat-label { font-size: 11px; font-weight: 500; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; }
+
+    .controls { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .filter-btn {
+      padding: 7px 16px; border: 1px solid var(--border); border-radius: 20px;
+      background: transparent; color: var(--text-muted); font-family: var(--font-sans);
+      font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+    }
+    .filter-btn:hover { border-color: #3a3a4a; color: var(--text); }
+    .filter-btn.active { border-color: var(--accent-high); color: var(--text); background: rgba(255,59,48,0.08); }
+    .filter-btn.active-medium { border-color: var(--accent-medium); color: var(--text); background: rgba(255,179,0,0.08); }
+    .filter-btn.active-all { border-color: var(--accent-low); color: var(--text); background: rgba(100,210,255,0.08); }
+    .event-count { margin-left: auto; font-size: 12px; color: var(--text-dim); font-family: var(--font-mono); }
+
+    .feed { display: flex; flex-direction: column; gap: 10px; }
+    .feed-empty { text-align: center; padding: 80px 20px; color: var(--text-dim); font-size: 14px; }
+    .feed-empty-icon { font-size: 40px; margin-bottom: 16px; opacity: 0.4; }
+    .feed-empty-text { color: var(--text-muted); margin-top: 6px; font-size: 13px; }
+
+    .signal-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 18px; transition: all 0.3s ease; animation: slideIn 0.4s ease-out;
+      position: relative; overflow: hidden;
+    }
+    .signal-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
+    .signal-card:hover { background: var(--bg-card-hover); transform: translateY(-1px); }
+    .signal-card.priority-HIGH { background: var(--bg-high); border-color: var(--border-high); }
+    .signal-card.priority-HIGH::before { background: var(--accent-high); }
+    .signal-card.priority-MEDIUM { background: var(--bg-medium); border-color: var(--border-medium); }
+    .signal-card.priority-MEDIUM::before { background: var(--accent-medium); }
+    .signal-card.priority-LOW { background: var(--bg-low); border-color: var(--border-low); }
+    .signal-card.priority-LOW::before { background: var(--accent-low); }
+
+    .signal-card.extreme {
+      box-shadow: 0 0 20px rgba(255,59,48,0.15), 0 0 40px rgba(255,59,48,0.05);
+      border-color: rgba(255,59,48,0.5);
+      animation: slideIn 0.4s ease-out, glowPulse 3s ease-in-out infinite;
+    }
+    .signal-card.extreme::before { width: 4px; background: linear-gradient(180deg, #ff3b30, #ff6b35); }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 20px rgba(255,59,48,0.15), 0 0 40px rgba(255,59,48,0.05); }
+      50% { box-shadow: 0 0 30px rgba(255,59,48,0.25), 0 0 60px rgba(255,59,48,0.1); }
+    }
+    @keyframes slideIn { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:translateY(0)} }
+
+    .signal-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+    .priority-badge { padding:3px 10px; border-radius:12px; font-size:10px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; }
+    .priority-badge.HIGH { background:rgba(255,59,48,0.2); color:var(--accent-high); }
+    .priority-badge.MEDIUM { background:rgba(255,179,0,0.15); color:var(--accent-medium); }
+    .priority-badge.LOW { background:rgba(100,210,255,0.12); color:var(--accent-low); }
+    .strong-label { padding:3px 10px; border-radius:12px; font-size:10px; font-weight:700; background:rgba(255,59,48,0.25); color:#ff6b35; animation: glowText 2s ease-in-out infinite; }
+    @keyframes glowText { 0%,100%{opacity:1} 50%{opacity:0.7} }
+
+    .signal-type { font-size:11px; font-weight:600; font-family:var(--font-mono); color:var(--text-muted); letter-spacing:0.3px; }
+    .signal-score { margin-left:auto; font-size:16px; font-weight:700; font-family:var(--font-mono); }
+    .signal-score.HIGH { color:var(--accent-high); }
+    .signal-score.MEDIUM { color:var(--accent-medium); }
+    .signal-score.LOW { color:var(--accent-low); }
+    .signal-explanation { font-size:14px; line-height:1.5; color:var(--text); margin-bottom:6px; }
+
+    .signal-impact {
+      font-size:12px; line-height:1.5; color:var(--text-muted); margin-bottom:8px;
+      padding:8px 12px; background:rgba(255,255,255,0.02); border-radius:6px;
+      border-left:2px solid rgba(255,255,255,0.06);
+    }
+    .signal-impact-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim); margin-bottom:3px; }
+    .signal-context {
+      font-size:11px; font-family:var(--font-mono); color:var(--accent-purple); margin-bottom:8px;
+      padding:4px 8px; background:rgba(138,43,226,0.06); border-radius:4px; display:inline-block;
+    }
+    .signal-meta { display:flex; align-items:center; gap:16px; font-size:12px; color:var(--text-dim); font-family:var(--font-mono); flex-wrap:wrap; }
+    .signal-meta-item { display:flex; align-items:center; gap:5px; }
+
+    .mini-timeline { margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.04); }
+    .timeline-header { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-dim); margin-bottom:6px; }
+    .timeline-items { display:flex; flex-direction:column; gap:3px; }
+    .timeline-item { font-size:11px; font-family:var(--font-mono); color:var(--text-muted); display:flex; align-items:center; gap:8px; }
+    .timeline-dot { width:4px; height:4px; border-radius:50%; background:var(--text-dim); flex-shrink:0; }
+    .timeline-type { color:var(--accent-low); }
+    .timeline-time { color:var(--text-dim); margin-left:auto; font-size:10px; }
+
+    .group-card { background: var(--bg-group); border: 1px solid var(--border-group); border-radius: var(--radius); padding: 14px 18px; animation: slideIn 0.4s ease-out; }
+    .group-header { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+    .group-badge { padding:3px 10px; border-radius:12px; font-size:10px; font-weight:700; letter-spacing:0.8px; background:rgba(138,43,226,0.2); color:var(--accent-purple); text-transform:uppercase; }
+    .group-title { font-size:14px; font-weight:600; color:var(--text); }
+    .group-count { margin-left:auto; font-size:12px; color:var(--accent-purple); font-family:var(--font-mono); }
+    .group-context { font-size:12px; color:var(--text-muted); margin-bottom:4px; }
+    .group-trend { font-size:12px; font-family:var(--font-mono); }
+    .trend-up { color:var(--accent-high); }
+    .trend-down { color:var(--accent-green); }
+    .trend-steady { color:var(--text-dim); }
+
+    @media (max-width:640px) {
+      .stats-bar { grid-template-columns:repeat(2,1fr); }
+      .header { flex-direction:column; gap:16px; align-items:flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">⚡</div>
+        <div>
+          <div class="header-title">Shelby Alpha Radar</div>
+          <div class="header-subtitle">Real-Time Signal Feed</div>
+        </div>
+      </div>
+      <div class="status-indicator">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Connecting...</span>
+      </div>
+    </header>
+
+    <div class="stats-bar">
+      <div class="stat-card"><div class="stat-value green" id="statTotal">0</div><div class="stat-label">Signals</div></div>
+      <div class="stat-card"><div class="stat-value high" id="statHigh">0</div><div class="stat-label">High</div></div>
+      <div class="stat-card"><div class="stat-value medium" id="statMedium">0</div><div class="stat-label">Medium</div></div>
+      <div class="stat-card"><div class="stat-value" id="statLow">0</div><div class="stat-label">Low</div></div>
+    </div>
+
+    <div class="controls">
+      <button class="filter-btn active-all" id="filterAll" onclick="setFilter('ALL')">All</button>
+      <button class="filter-btn" id="filterHigh" onclick="setFilter('HIGH')">🔴 High</button>
+      <button class="filter-btn" id="filterMedium" onclick="setFilter('MEDIUM')">🟡 Medium</button>
+      <button class="filter-btn" id="filterLow" onclick="setFilter('LOW')">🔵 Low</button>
+      <span class="event-count" id="eventCount">0 events</span>
+    </div>
+
+    <div class="feed" id="feed">
+      <div class="feed-empty">
+        <div class="feed-empty-icon">📡</div>
+        <div>Connecting to Shelby Alpha Feed...</div>
+        <div class="feed-empty-text">Signals will appear here in real-time</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Config ───────────────────────────────────────────────────
+    const API_BASE = ""; // Same origin — served from Railway backend
+
+    // ── DEBUG: Step 1 — Log API_BASE ─────────────────────────────
+    console.log("🔧 [DEBUG] API_BASE:", API_BASE);
+    console.log("🔧 [DEBUG] window.location:", window.location.href);
+
+    // ── DEBUG: Step 2 — Test HTTP connection ─────────────────────
+    fetch(`${API_BASE}/health`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("✅ [DEBUG] HEALTH OK:", data);
+        document.title = "Shelby Alpha Radar — Backend Connected";
+      })
+      .catch(err => {
+        console.error("❌ [DEBUG] HEALTH FAILED:", err);
+        document.title = "Shelby Alpha Radar — Backend UNREACHABLE";
+      });
+
+    // ── State ────────────────────────────────────────────────────
+    const MAX_EVENTS = 100;
+    let allEvents = [];
+    let currentFilter = "ALL";
+    let eventSource = null;
+    let stats = { total: 0, HIGH: 0, MEDIUM: 0, LOW: 0 };
+    const timelineCache = new Map();
+
+    // ── SSE with full debug ──────────────────────────────────────
+    function connect() {
+      const sseUrl = `${API_BASE}/ws/alpha`;
+      console.log("🔧 [DEBUG] SSE connecting to:", sseUrl);
+
+      eventSource = new EventSource(sseUrl);
+
+      eventSource.onopen = () => {
+        console.log("✅ [DEBUG] SSE CONNECTED (onopen fired)");
+      };
+
+      eventSource.addEventListener("connected", (e) => {
+        console.log("✅ [DEBUG] SSE 'connected' event received:", e.data);
+        const d = JSON.parse(e.data);
+        setStatus("connected", `Live — ${d.clients} client${d.clients !== 1 ? "s" : ""}`);
+      });
+
+      eventSource.addEventListener("backfill", (e) => {
+        console.log("✅ [DEBUG] SSE 'backfill' event received");
+        const d = JSON.parse(e.data);
+        if (d.events?.length) {
+          d.events.forEach((ev) => addEvent(ev, false));
+          renderFeed();
+        }
+      });
+
+      eventSource.addEventListener("alpha", (e) => {
+        console.log("✅ [DEBUG] SSE 'alpha' event received");
+        addEvent(JSON.parse(e.data), true);
+        renderFeed();
+      });
+
+      eventSource.onerror = (err) => {
+        console.error("❌ [DEBUG] SSE ERROR:", err);
+        console.error("❌ [DEBUG] SSE readyState:", eventSource.readyState, "(0=CONNECTING, 1=OPEN, 2=CLOSED)");
+        setStatus("disconnected", "Reconnecting...");
+        setTimeout(() => {
+          eventSource?.close();
+          connect();
+        }, 5000);
+      };
+    }
+
+    // ── Events ───────────────────────────────────────────────────
+    function addEvent(event, prepend) {
+      if (!event.impact) {
+        event.impact = IMPACT_MAP[event.signalType] || "";
+        event.context = event.context || "";
+      }
+      if (!event.priority) event.priority = inferPriority(event.score, event.signalType);
+      stats.total++;
+      if (event.priority in stats) stats[event.priority]++;
+      updateStats();
+      if (prepend) allEvents.unshift(event);
+      else allEvents.push(event);
+      if (allEvents.length > MAX_EVENTS) allEvents = allEvents.slice(0, MAX_EVENTS);
+    }
+
+    const IMPACT_MAP = {
+      CROSS_WALLET_PATTERN:
+        "Multiple wallets acting together may indicate shared pipelines, coordinated uploads, or automated distribution systems",
+      WALLET_VELOCITY:
+        "Sudden velocity spikes may indicate automated scripts, bot activity, or large-scale data migration",
+      FIRST_TIME_BURST:
+        "First-time burst activity suggests automated pipelines, airdrop claims, or programmatic uploads",
+      DORMANT_REACTIVATION:
+        "Returning wallets may indicate renewed interest, delayed workflows, or reactivated automation",
+      RARE_FILE_TYPE:
+        "New file types may represent new use cases, protocol experiments, or novel data formats",
+    };
+
+    function updateStats() {
+      document.getElementById("statTotal").textContent = stats.total;
+      document.getElementById("statHigh").textContent = stats.HIGH;
+      document.getElementById("statMedium").textContent = stats.MEDIUM;
+      document.getElementById("statLow").textContent = stats.LOW;
+    }
+
+    // ── Rendering ────────────────────────────────────────────────
+    function renderFeed() {
+      const feed = document.getElementById("feed");
+      let filtered =
+        currentFilter === "ALL" ? allEvents : allEvents.filter((e) => e.priority === currentFilter);
+
+      filtered.sort((a, b) => {
+        if (a.priority === "HIGH" && b.priority !== "HIGH") return -1;
+        if (b.priority === "HIGH" && a.priority !== "HIGH") return 1;
+        return new Date(b.timestamp) - new Date(a.timestamp);
+      });
+
+      document.getElementById("eventCount").textContent = `${filtered.length} event${filtered.length !== 1 ? "s" : ""}`;
+
+      if (!filtered.length) {
+        feed.innerHTML = '<div class="feed-empty"><div class="feed-empty-icon">📡</div><div>Waiting for signals...</div><div class="feed-empty-text">High-signal events will appear here in real-time</div></div>';
+        return;
+      }
+
+      const { groups, singles } = groupSignals(filtered);
+      let html = "";
+      groups.forEach((g) => { html += renderGroupCard(g); });
+      singles.forEach((ev) => { html += renderCard(ev); });
+      feed.innerHTML = html;
+
+      singles.forEach((ev) => {
+        if (!timelineCache.has(ev.owner)) loadTimeline(ev.owner);
+      });
+    }
+
+    // ── Grouping ─────────────────────────────────────────────────
+    function groupSignals(events) {
+      const crossWallet = [];
+      const rest = [];
+      events.forEach((e) => {
+        if (e.signalType === "CROSS_WALLET_PATTERN") crossWallet.push(e);
+        else rest.push(e);
+      });
+      const cwByType = new Map();
+      crossWallet.forEach((e) => {
+        const match = e.explanation.match(/\.(\w+)\s+files/);
+        const ext = match ? match[1] : "unknown";
+        if (!cwByType.has(ext)) cwByType.set(ext, []);
+        cwByType.get(ext).push(e);
+      });
+      const groups = [];
+      const ungrouped = [];
+      cwByType.forEach((evts, ext) => {
+        if (evts.length >= 2) {
+          const totalWallets = new Set();
+          let maxScore = 0;
+          evts.forEach((e) => {
+            const m = e.explanation.match(/(\d+)\s+wallets/);
+            if (m) for (let i = 0; i < parseInt(m[1]); i++) totalWallets.add(`${e.owner}_${i}`);
+            if (e.score > maxScore) maxScore = e.score;
+          });
+          const walletCount = totalWallets.size || evts.length * 3;
+          const oldest = new Date(Math.min(...evts.map((e) => new Date(e.timestamp))));
+          const newest = new Date(Math.max(...evts.map((e) => new Date(e.timestamp))));
+          const spanMin = Math.max(1, Math.round((newest - oldest) / 60000));
+          const mid = evts.length / 2;
+          const recentScores = evts.slice(0, Math.ceil(mid));
+          const olderScores = evts.slice(Math.ceil(mid));
+          let trend = "steady";
+          if (recentScores.length && olderScores.length) {
+            const avgRecent = recentScores.reduce((s, e) => s + e.score, 0) / recentScores.length;
+            const avgOlder = olderScores.reduce((s, e) => s + e.score, 0) / olderScores.length;
+            if (avgRecent > avgOlder * 1.2) trend = "up";
+            else if (avgRecent < avgOlder * 0.8) trend = "down";
+          }
+          groups.push({ ext, events: evts, walletCount, maxScore, spanMin, trend, count: evts.length });
+        } else {
+          ungrouped.push(...evts);
+        }
+      });
+      return { groups, singles: [...ungrouped, ...rest] };
+    }
+
+    function renderGroupCard(g) {
+      const trendIcon = g.trend === "up" ? "↑" : g.trend === "down" ? "↓" : "→";
+      const trendClass = g.trend === "up" ? "trend-up" : g.trend === "down" ? "trend-down" : "trend-steady";
+      return '<div class="group-card">' +
+        '<div class="group-header">' +
+          '<span class="group-badge">Grouped</span>' +
+          '<span class="group-title">' + g.walletCount + ' wallets uploaded .' + esc(g.ext) + ' in last ' + g.spanMin + ' min</span>' +
+          '<span class="group-count">' + g.count + ' signals</span>' +
+        '</div>' +
+        '<div class="group-context">Coordinated pattern across ' + g.count + ' detections · max score: ' + g.maxScore + '</div>' +
+        '<div class="group-trend ' + trendClass + '">Trend: ' + trendIcon + ' ' + g.trend + ' activity</div>' +
+      '</div>';
+    }
+
+    function renderCard(event) {
+      const timeAgo = getTimeAgo(new Date(event.timestamp));
+      const typeLabel = event.signalType.replace(/_/g, " ");
+      const isExtreme = event.score >= 9;
+      const extremeClass = isExtreme ? " extreme" : "";
+      const strongLabel = isExtreme ? '<span class="strong-label">🔥 Strong Signal</span>' : "";
+      const timeline = timelineCache.get(event.owner);
+      const timelineHtml = timeline ? renderTimeline(timeline) : "";
+      const impactHtml = event.impact
+        ? '<div class="signal-impact"><div class="signal-impact-label">💡 Why this matters</div>' + esc(event.impact) + '</div>'
+        : "";
+      const contextHtml = event.context ? '<div class="signal-context">📊 ' + esc(event.context) + '</div>' : "";
+
+      return '<div class="signal-card priority-' + event.priority + extremeClass + '">' +
+        '<div class="signal-header">' +
+          '<span class="priority-badge ' + event.priority + '">' + event.priority + '</span>' +
+          strongLabel +
+          '<span class="signal-type">' + typeLabel + '</span>' +
+          '<span class="signal-score ' + event.priority + '">' + event.score + '</span>' +
+        '</div>' +
+        '<div class="signal-explanation">' + esc(event.explanation) + '</div>' +
+        impactHtml +
+        contextHtml +
+        '<div class="signal-meta">' +
+          '<span class="signal-meta-item">👤 ' + (event.ownerShort || shorten(event.owner)) + '</span>' +
+          '<span class="signal-meta-item">🕐 ' + timeAgo + '</span>' +
+          (event.blobName ? '<span class="signal-meta-item">📄 ' + esc(truncate(event.blobName, 28)) + '</span>' : '') +
+        '</div>' +
+        timelineHtml +
+      '</div>';
+    }
+
+    function renderTimeline(tl) {
+      if (!tl.length) return "";
+      const items = tl.slice(0, 3).map((t) =>
+        '<div class="timeline-item">' +
+          '<div class="timeline-dot"></div>' +
+          '<span class="timeline-type">' + esc(t.fileType || "?") + '</span>' +
+          '<span>' + esc(truncate(t.fileName, 20)) + '</span>' +
+          '<span class="timeline-time">' + t.timeAgo + '</span>' +
+        '</div>'
+      ).join("");
+      return '<div class="mini-timeline"><div class="timeline-header">Recent activity</div><div class="timeline-items">' + items + '</div></div>';
+    }
+
+    // ── Timeline loader ──────────────────────────────────────────
+    async function loadTimeline(owner) {
+      if (timelineCache.has(owner)) return;
+      timelineCache.set(owner, []);
+      try {
+        const r = await fetch(`${API_BASE}/owners/${owner}/timeline?limit=3`);
+        if (r.ok) {
+          const d = await r.json();
+          timelineCache.set(owner, d.timeline || []);
+          renderFeed();
+        }
+      } catch (_) {}
+    }
+
+    // ── Filters ──────────────────────────────────────────────────
+    function setFilter(f) {
+      currentFilter = f;
+      document.querySelectorAll(".filter-btn").forEach((b) => (b.className = "filter-btn"));
+      const btn = document.getElementById("filter" + capitalize(f));
+      if (f === "HIGH") btn.classList.add("active");
+      else if (f === "MEDIUM") btn.classList.add("active-medium");
+      else btn.classList.add("active-all");
+      renderFeed();
+    }
+
+    function setStatus(state, text) {
+      document.getElementById("statusDot").className = "status-dot" + (state === "connected" ? " connected" : "");
+      document.getElementById("statusText").textContent = text;
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────
+    function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+    function truncate(s, l) { return s.length > l ? s.slice(0, l) + "…" : s; }
+    function shorten(a) { return a ? a.slice(0, 8) + "..." + a.slice(-4) : ""; }
+    function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); }
+    function getTimeAgo(d) {
+      const s = Math.floor((Date.now() - d.getTime()) / 1000);
+      if (s < 5) return "just now";
+      if (s < 60) return s + "s ago";
+      const m = Math.floor(s / 60);
+      if (m < 60) return m + "m ago";
+      const h = Math.floor(m / 60);
+      if (h < 24) return h + "h ago";
+      return Math.floor(h / 24) + "d ago";
+    }
+    function inferPriority(score, type) {
+      const boosted = ["CROSS_WALLET_PATTERN", "WALLET_VELOCITY"];
+      if (score >= 8 || (score >= 6 && boosted.includes(type))) return "HIGH";
+      if (score >= 6) return "MEDIUM";
+      return "LOW";
+    }
+
+    setInterval(() => { if (allEvents.length) renderFeed(); }, 30000);
+
+    // ── Load history from REST API ───────────────────────────────
+    async function loadHistory() {
+      try {
+        const r = await fetch(`${API_BASE}/alpha?limit=50`);
+        const d = await r.json();
+        if (d.events?.length) {
+          d.events.forEach((e) => {
+            e.impact = e.impact || IMPACT_MAP[e.signalType] || "";
+            e.context = e.context || "";
+            e.priority = e.priority || inferPriority(e.score, e.signalType);
+            addEvent(e, false);
+          });
+          allEvents.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+          renderFeed();
+        }
+      } catch (_) {}
+    }
+
+    // ── Init ─────────────────────────────────────────────────────
+    loadHistory();
+    connect();
+  </script>
+</body>
+</html>
