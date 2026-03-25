@@ -1,8 +1,5 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import fastifyStatic from "@fastify/static";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 import { env } from "../config/env.js";
 import { logger } from "../config/logger.js";
 import { blobRoutes } from "./routes/blobs.js";
@@ -14,14 +11,8 @@ import { liveRoutes } from "./routes/live.js";
 import { errorHandler } from "./plugins/errorHandler.js";
 import { rateLimiter } from "./plugins/rateLimiter.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 /**
- * API Server
- *
- * Creates and configures the Fastify HTTP server.
- * Registers error handling, rate limiting, CORS, static files, and all route plugins.
+ * API Server — Backend ONLY (no static files)
  */
 export async function createServer() {
   const app = Fastify({
@@ -34,16 +25,10 @@ export async function createServer() {
     },
   });
 
-  // ── Plugins ─────────────────────────────────────────────────
-  await app.register(cors, { origin: "*", methods: ["GET", "POST", "OPTIONS"] });
+  // ── CORS — allow all origins ────────────────────────────────
+  await app.register(cors, { origin: "*", methods: ["GET"] });
   await app.register(errorHandler);
   await app.register(rateLimiter, { max: 100, windowMs: 60_000 });
-
-  // ── Static files (frontend) ─────────────────────────────────
-  await app.register(fastifyStatic, {
-    root: join(__dirname, "../../public"),
-    prefix: "/",
-  });
 
   // ── Health check ────────────────────────────────────────────
   app.get("/health", async () => ({

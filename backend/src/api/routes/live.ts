@@ -12,7 +12,6 @@ import {
  *   GET /ws/alpha?minPriority=MEDIUM       — only MEDIUM + HIGH
  *   GET /ws/alpha?minPriority=HIGH         — only HIGH
  *   GET /ws/alpha?owner=0x...              — watchlist for specific wallet
- *   GET /ws/alpha?minPriority=HIGH&owner=  — combined filters
  *
  *   GET /ws/status                         — connection stats
  */
@@ -20,26 +19,25 @@ export async function liveRoutes(app: FastifyInstance): Promise<void> {
   app.get<{
     Querystring: { minPriority?: string; owner?: string };
   }>("/ws/alpha", async (request, reply) => {
-    // Parse filters
     const minPriority = parseMinPriority(request.query.minPriority);
     const owner = request.query.owner?.trim() || undefined;
     const filter = { minPriority, owner };
 
-    // Hijack the response FIRST — tells Fastify we handle it ourselves
+    // Hijack response — Fastify hands control to us
     await reply.hijack();
 
     const raw = reply.raw;
 
-    // Set SSE + CORS headers on the raw Node.js response
+    // SSE + CORS headers (hardened)
     raw.writeHead(200, {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
       "Connection": "keep-alive",
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "*",
       "X-Accel-Buffering": "no",
     });
+
+    console.log("SSE client connected");
 
     const sendEvent = (type: string, data: unknown) => {
       raw.write(`event: ${type}\n`);
@@ -57,29 +55,26 @@ export async function liveRoutes(app: FastifyInstance): Promise<void> {
       timestamp: new Date().toISOString(),
     });
 
-    // 2. Backfill (filtered)
+    // 2. Backfill
     const recent = alphaFeed.getRecent(filter);
     if (recent.length > 0) {
-      sendEvent("backfill", {
-        count: recent.length,
-        events: recent,
-      });
+      sendEvent("backfill", { count: recent.length, events: recent });
     }
 
-    // 3. Subscribe with filters
+    // 3. Subscribe — DO NOT close connection
     const onAlpha = (event: LiveAlphaEvent) => {
       sendEvent("alpha", event);
     };
-
     const unsubscribe = alphaFeed.subscribe(onAlpha, filter);
 
-    // 4. Keep-alive
+    // 4. Keep-alive ping every 30s
     const ping = setInterval(() => {
       raw.write(`: ping\n\n`);
     }, 30_000);
 
-    // 5. Cleanup
+    // 5. Cleanup only when CLIENT disconnects
     request.raw.on("close", () => {
+      console.log("SSE client disconnected");
       unsubscribe();
       clearInterval(ping);
     });
