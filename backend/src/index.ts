@@ -43,7 +43,32 @@ async function ensureContentIntelligenceSchema(): Promise<void> {
       CREATE INDEX IF NOT EXISTS blobs_project_id_idx ON blobs(project_id)
     `);
 
-    console.log("[DB] ✅ Schema columns verified (content intelligence + project clustering)");
+    // Create projects table for global project intelligence
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS projects (
+        project_id TEXT PRIMARY KEY,
+        label TEXT NOT NULL,
+        category TEXT NOT NULL DEFAULT 'general',
+        wallets TEXT[] DEFAULT '{}',
+        tags TEXT[] DEFAULT '{}',
+        signals TEXT[] DEFAULT '{}',
+        file_types TEXT[] DEFAULT '{}',
+        blob_count INTEGER DEFAULT 0,
+        wallet_count INTEGER DEFAULT 0,
+        growth_rate DOUBLE PRECISION DEFAULT 0,
+        first_seen TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+        last_active TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Indexes on projects
+    await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS projects_category_idx ON projects(category)`);
+    await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS projects_wallet_count_idx ON projects(wallet_count)`);
+    await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS projects_blob_count_idx ON projects(blob_count)`);
+    await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS projects_last_active_idx ON projects(last_active)`);
+
+    console.log("[DB] ✅ Schema verified (content intelligence + global project clustering)");
   } catch (error) {
     console.error(
       "[DB] ⚠️ Schema migration warning:",

@@ -1,5 +1,5 @@
 // Shelby Indexer — Prisma Schema
-// Core data model for blob indexing and search + crawler state.
+// Core data model for blob indexing, project intelligence, and search.
 
 generator client {
   provider = "prisma-client-js"
@@ -31,7 +31,6 @@ model Blob {
 }
 
 /// Extended metadata extracted from a blob after processing.
-/// Full-text search index on title + description is added via raw SQL migration.
 model BlobMetadata {
   id              Int      @id @default(autoincrement())
   blobId          String   @unique @map("blob_id")
@@ -43,10 +42,32 @@ model BlobMetadata {
   analysisStatus  String   @default("pending") @map("analysis_status")
   contentPreview  String?  @map("content_preview")
 
-  /// Relation back to the parent blob.
   blob            Blob     @relation(fields: [blobId], references: [blobId], onDelete: Cascade)
 
   @@map("blob_metadata")
+}
+
+/// Discovered project — cross-wallet clustering of related blobs.
+model Project {
+  id          String   @id @map("project_id")
+  label       String
+  category    String   @default("general")
+  wallets     String[] @default([])
+  tags        String[] @default([])
+  signals     String[] @default([])
+  fileTypes   String[] @default([]) @map("file_types")
+  blobCount   Int      @default(0) @map("blob_count")
+  walletCount Int      @default(0) @map("wallet_count")
+  growthRate  Float    @default(0) @map("growth_rate")
+  firstSeen   DateTime @default(now()) @map("first_seen")
+  lastActive  DateTime @default(now()) @map("last_active")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([walletCount])
+  @@index([blobCount])
+  @@index([lastActive])
+  @@map("projects")
 }
 
 /// Crawler state persistence — stores key-value pairs for resumable scanning.
@@ -60,7 +81,6 @@ model CrawlerState {
 }
 
 /// High-signal events detected from blob activity patterns.
-/// Populated by the alpha detection module during blob processing.
 model AlphaEvent {
   id          Int      @id @default(autoincrement())
   owner       String

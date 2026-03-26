@@ -1,15 +1,19 @@
 import { prisma } from "../database/db.js";
 
 /**
- * Project Cluster — Blob Grouping Intelligence
+ * Global Project Cluster — Cross-Wallet Intelligence
  *
- * Groups blobs into "projects" based on three signals:
- *  1. Filename similarity  (shared prefix / directory structure)
- *  2. Content structure     (same tags/signals pattern)
- *  3. Time proximity        (uploaded within a short window)
+ * Groups blobs into "projects" that span multiple wallets:
  *
- * A project_id is a deterministic hash:  wallet + basePrefix + fileTypeGroup
- * This allows real-time assignment without maintaining a separate entity.
+ *  1. Filename similarity  → shared naming conventions
+ *  2. Content structure    → same tags/signals pattern
+ *  3. Time proximity       → uploaded in similar windows
+ *
+ * Project IDs are NOW global (not per-wallet):
+ *   Format: {category}:{normalizedPrefix}
+ *
+ * This allows blobs from DIFFERENT wallets to cluster together
+ * when they share naming patterns and content types.
  */
 
 // ── Public API ────────────────────────────────────────────────
@@ -18,205 +22,204 @@ export interface ClusterResult {
   projectId: string;
   projectLabel: string;
   clusterSize: number;
+  walletCount: number;
   isNewCluster: boolean;
+  isNewWallet: boolean;
+  growthRate: number;
 }
 
 /**
- * Assign a blob to a project cluster.
- *
- * @returns ClusterResult with the project_id and cluster metadata
+ * Assign a blob to a global project cluster.
+ * Creates or updates the Project entity with lifecycle data.
  */
 export async function assignToCluster(
   wallet: string,
   blobName: string,
   tags: string[],
-  signals: string[]
+  signals: string[],
+  fileType: string | null
 ): Promise<ClusterResult> {
-  // Step 1 — Derive base prefix from blob name
-  const prefix = extractPrefix(blobName);
+  // Step 1 — Derive normalized prefix (wallet-independent)
+  const prefix = extractGlobalPrefix(blobName);
 
-  // Step 2 — Determine content group
-  const contentGroup = deriveContentGroup(tags, signals);
+  // Step 2 — Determine content category
+  const category = deriveCategory(tags, signals);
 
-  // Step 3 — Build project ID: wallet-prefix combo
-  const projectId = buildProjectId(wallet, prefix, contentGroup);
+  // Step 3 — Build global project ID (no wallet — cross-wallet!)
+  const projectId = buildGlobalProjectId(category, prefix);
 
-  // Step 4 — Check existing cluster size
-  const existingCount = await prisma.blob.count({
-    where: { projectId },
+  // Step 4 — Upsert the Project entity
+  const now = new Date();
+  const existing = await prisma.project.findUnique({
+    where: { id: projectId },
   });
 
-  // Step 5 — Generate human-readable label
-  const projectLabel = generateLabel(prefix, contentGroup, wallet);
+  const isNewCluster = !existing;
+  const isNewWallet = existing ? !existing.wallets.includes(wallet) : true;
+
+  const updatedWallets = existing
+    ? [...new Set([...existing.wallets, wallet])]
+    : [wallet];
+
+  const updatedTags = existing
+    ? [...new Set([...existing.tags, ...tags])]
+    : tags;
+
+  const updatedSignals = existing
+    ? [...new Set([...existing.signals, ...signals])]
+    : signals;
+
+  const updatedFileTypes = existing && fileType
+    ? [...new Set([...existing.fileTypes, fileType])]
+    : fileType
+      ? [fileType]
+      : existing?.fileTypes ?? [];
+
+  const newBlobCount = (existing?.blobCount ?? 0) + 1;
+
+  // Growth rate: blobs per hour since first seen
+  const firstSeen = existing?.firstSeen ?? now;
+  const hoursSinceFirst = Math.max(1, (now.getTime() - firstSeen.getTime()) / 3_600_000);
+  const growthRate = Math.round((newBlobCount / hoursSinceFirst) * 100) / 100;
+
+  const label = generateLabel(prefix, category, updatedWallets.length);
+
+  await prisma.project.upsert({
+    where: { id: projectId },
+    create: {
+      id: projectId,
+      label,
+      category,
+      wallets: updatedWallets,
+      tags: updatedTags,
+      signals: updatedSignals,
+      fileTypes: updatedFileTypes,
+      blobCount: newBlobCount,
+      walletCount: updatedWallets.length,
+      growthRate,
+      firstSeen,
+      lastActive: now,
+    },
+    update: {
+      label,
+      wallets: updatedWallets,
+      tags: updatedTags,
+      signals: updatedSignals,
+      fileTypes: updatedFileTypes,
+      blobCount: newBlobCount,
+      walletCount: updatedWallets.length,
+      growthRate,
+      lastActive: now,
+    },
+  });
 
   return {
     projectId,
-    projectLabel,
-    clusterSize: existingCount + 1, // include current blob
-    isNewCluster: existingCount === 0,
+    projectLabel: label,
+    clusterSize: newBlobCount,
+    walletCount: updatedWallets.length,
+    isNewCluster,
+    isNewWallet,
+    growthRate,
   };
-}
-
-/**
- * Get cluster summary for a wallet — groups all blobs by project.
- */
-export async function getWalletClusters(wallet: string): Promise<WalletCluster[]> {
-  const blobs = await prisma.blob.findMany({
-    where: { wallet, projectId: { not: null } },
-    include: { metadata: { select: { tags: true, signals: true, fileType: true } } },
-    orderBy: { createdAt: "desc" },
-  });
-
-  // Group by project_id
-  const groups = new Map<string, typeof blobs>();
-  for (const blob of blobs) {
-    const pid = blob.projectId!;
-    if (!groups.has(pid)) groups.set(pid, []);
-    groups.get(pid)!.push(blob);
-  }
-
-  return [...groups.entries()].map(([projectId, members]) => {
-    const tags = [...new Set(members.flatMap((m) => m.metadata?.tags ?? []))];
-    const signals = [...new Set(members.flatMap((m) => m.metadata?.signals ?? []))];
-    const fileTypes = [...new Set(members.map((m) => m.metadata?.fileType).filter(Boolean))] as string[];
-
-    return {
-      projectId,
-      label: generateLabel(
-        extractPrefix(members[0].blobId.split(":")[1] ?? ""),
-        deriveContentGroup(tags, signals),
-        wallet
-      ),
-      blobCount: members.length,
-      tags,
-      signals,
-      fileTypes,
-      firstSeen: members[members.length - 1].createdAt,
-      lastSeen: members[0].createdAt,
-    };
-  });
-}
-
-export interface WalletCluster {
-  projectId: string;
-  label: string;
-  blobCount: number;
-  tags: string[];
-  signals: string[];
-  fileTypes: string[];
-  firstSeen: Date;
-  lastSeen: Date;
 }
 
 // ── Internal Helpers ──────────────────────────────────────────
 
 /**
- * Extract a meaningful prefix from blob name.
+ * Extract a GLOBAL prefix (wallet-independent).
+ *
+ * Strips the @address/ prefix, removes UUIDs/hashes/versions,
+ * normalizes separators → gives a cross-wallet comparable key.
  *
  * Examples:
- *   "@0xabc/data/training_v1.json"  → "data/training"
- *   "@0xabc/model_weights_v2.pt"    → "model_weights"
- *   "LiDAR_Sensor_Fusion_abc123.rosbag" → "LiDAR_Sensor_Fusion"
- *   "pexels-some-photo-12345.jpg"   → "pexels"
+ *   "@0xabc/LiDAR_Sensor_Fusion_abc123.rosbag" → "lidar_sensor_fusion"
+ *   "@0xdef/LiDAR_Sensor_Fusion_def456.rosbag" → "lidar_sensor_fusion" (SAME!)
+ *   "@0x123/training_data_v3.csv"               → "training_data"
+ *   "@0x456/pexels-photo-12345.jpg"             → "pexels"
  */
-function extractPrefix(blobName: string): string {
-  // Remove the @address/ prefix
+function extractGlobalPrefix(blobName: string): string {
+  // Remove @address/ prefix
   let name = blobName.startsWith("@")
     ? blobName.replace(/^@[^/]+\//, "")
     : blobName;
 
-  // If there's a directory structure, use it
+  // If there's a directory structure, use the directory path
   const parts = name.split("/");
   if (parts.length > 1) {
-    // Use directory path as prefix
-    const dirPath = parts.slice(0, -1).join("/");
-    const filename = parts[parts.length - 1];
-    const fileBase = stripSuffix(filename);
-    return `${dirPath}/${fileBase}`;
+    name = parts[parts.length - 1]; // use filename only for prefix
   }
 
-  // No directory — extract base from filename
-  return stripSuffix(name);
+  return stripToCore(name);
 }
 
 /**
- * Strip version numbers, UUIDs, hashes, and extensions from filename.
+ * Strip a filename down to its "core" identity.
+ * Removes extensions, UUIDs, hashes, version numbers, and trailing IDs.
  */
-function stripSuffix(filename: string): string {
+function stripToCore(filename: string): string {
   return filename
-    // Remove extension
-    .replace(/\.[^.]+$/, "")
-    // Remove trailing UUIDs
-    .replace(/_?[0-9a-f]{8,}$/i, "")
-    // Remove trailing version numbers
-    .replace(/_?v\d+$/i, "")
-    // Remove trailing numbers (like photo IDs)
-    .replace(/_?\d{4,}$/, "")
-    // Remove trailing hashes
-    .replace(/_?[A-F0-9]{12,}$/i, "")
-    // Clean up trailing separators
-    .replace(/[-_]+$/, "")
+    .replace(/\.[^.]+$/, "")                    // extension
+    .replace(/[_-]?[0-9a-f]{8,}$/i, "")         // trailing UUIDs/hashes
+    .replace(/[_-]?v\d+$/i, "")                  // version numbers
+    .replace(/[_-]?\d{4,}$/g, "")                // trailing numeric IDs
+    .replace(/[_-]?[A-F0-9]{12,}$/i, "")         // hex hashes
+    .replace(/[-]+/g, "_")                        // normalize separators
+    .replace(/_+/g, "_")                          // collapse underscores
+    .replace(/^_|_$/g, "")                        // trim edges
+    .toLowerCase()
     || "unnamed";
 }
 
 /**
- * Derive a content group from tags and signals.
- * Groups: ai, trading, data, config, media, general
+ * Derive content category from tags and signals.
  */
-function deriveContentGroup(tags: string[], signals: string[]): string {
+function deriveCategory(tags: string[], signals: string[]): string {
   const t = new Set(tags);
   const s = new Set(signals);
 
   if (t.has("ai_data") || s.has("ai_interaction") || s.has("model_data") || s.has("agent_config")) {
     return "ai";
   }
-  if (s.has("trading_data")) {
-    return "trading";
-  }
-  if (t.has("dataset")) {
-    return "data";
-  }
-  if (t.has("config")) {
-    return "config";
-  }
-  if (t.has("media")) {
-    return "media";
-  }
+  if (s.has("trading_data")) return "trading";
+  if (t.has("dataset")) return "data";
+  if (t.has("config")) return "config";
+  if (t.has("media")) return "media";
+  if (t.has("logs")) return "infra";
   return "general";
 }
 
 /**
- * Build a deterministic project ID.
+ * Build global project ID (cross-wallet).
  */
-function buildProjectId(wallet: string, prefix: string, contentGroup: string): string {
-  const walletShort = wallet.slice(0, 10);
-  const cleanPrefix = prefix.replace(/[^a-zA-Z0-9_/]/g, "").toLowerCase().slice(0, 30);
-  return `${walletShort}:${contentGroup}:${cleanPrefix}`;
+function buildGlobalProjectId(category: string, prefix: string): string {
+  const cleanPrefix = prefix.slice(0, 40);
+  return `${category}:${cleanPrefix}`;
 }
 
 /**
  * Generate a human-readable project label.
  */
-function generateLabel(prefix: string, contentGroup: string, wallet: string): string {
-  const walletTag = `${wallet.slice(0, 6)}...${wallet.slice(-4)}`;
-
+function generateLabel(prefix: string, category: string, walletCount: number): string {
   const groupLabels: Record<string, string> = {
     ai: "🤖 AI Project",
     trading: "📊 Trading System",
-    data: "📦 Dataset Collection",
+    data: "📦 Dataset",
     config: "⚙️ Config Bundle",
     media: "🎨 Media Collection",
+    infra: "🔧 Infrastructure",
     general: "📁 File Group",
   };
 
-  const groupLabel = groupLabels[contentGroup] ?? "📁 File Group";
+  const groupLabel = groupLabels[category] ?? "📁 File Group";
   const cleanPrefix = prefix
-    .replace(/[_-]+/g, " ")
-    .replace(/\//g, " / ")
+    .replace(/_/g, " ")
     .trim();
 
+  const walletTag = walletCount > 1 ? ` (${walletCount} wallets)` : "";
+
   if (cleanPrefix && cleanPrefix !== "unnamed") {
-    return `${groupLabel}: ${cleanPrefix} (${walletTag})`;
+    return `${groupLabel}: ${cleanPrefix}${walletTag}`;
   }
-  return `${groupLabel} (${walletTag})`;
+  return `${groupLabel}${walletTag}`;
 }

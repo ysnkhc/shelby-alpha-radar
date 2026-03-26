@@ -30,18 +30,20 @@ export function computePriority(
   score: number,
   signalType: string
 ): AlphaPriority {
-  // Only truly structured/coordinated signals get boosted to HIGH
+  // High-value structured + multi-wallet signals get priority boost
   const boostedTypes = new Set([
-    "PROJECT_CLUSTER_DETECTED",
-    "AI_PROJECT_ACTIVITY",
-    "AI_COORDINATION",
-    "DATASET_FORMATION",
+    "MULTI_WALLET_PROJECT",
+    "AI_TRAINING",
+    "AI_INFERENCE",
+    "AGENT_DEPLOYMENT",
+    "DATA_PIPELINE",
+    "PROJECT_GROWTH",
   ]);
 
-  if (score >= 8 || (score >= 7 && boostedTypes.has(signalType))) {
+  if (score >= 9 || (score >= 7 && boostedTypes.has(signalType))) {
     return "HIGH";
   }
-  if (score >= 6) {
+  if (score >= 7) {
     return "MEDIUM";
   }
   return "LOW";
