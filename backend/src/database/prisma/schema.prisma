@@ -31,15 +31,18 @@ model Blob {
 /// Extended metadata extracted from a blob after processing.
 /// Full-text search index on title + description is added via raw SQL migration.
 model BlobMetadata {
-  id          Int      @id @default(autoincrement())
-  blobId      String   @unique @map("blob_id")
-  title       String?
-  description String?
-  tags        String[] @default([])
-  fileType    String?  @map("file_type")
+  id              Int      @id @default(autoincrement())
+  blobId          String   @unique @map("blob_id")
+  title           String?
+  description     String?
+  tags            String[] @default([])
+  fileType        String?  @map("file_type")
+  signals         String[] @default([])
+  analysisStatus  String   @default("pending") @map("analysis_status")
+  contentPreview  String?  @map("content_preview")
 
   /// Relation back to the parent blob.
-  blob        Blob     @relation(fields: [blobId], references: [blobId], onDelete: Cascade)
+  blob            Blob     @relation(fields: [blobId], references: [blobId], onDelete: Cascade)
 
   @@map("blob_metadata")
 }

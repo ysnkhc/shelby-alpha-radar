@@ -25,23 +25,38 @@ export class ShelbyRpcClient {
   // ── Blob Retrieval ─────────────────────────────────────────
 
   /**
-   * Fetch blob content from the Shelby RPC.
-   *
-   * Confirmed URL pattern:
-   *   GET /shelby/v1/blobs/{owner}/{blobPath}
-   *
-   * The blob_name from on-chain events has the format:
-   *   @{ownerHex}/{filename}
-   *
-   * We extract the path part after `@{address}/` and use it as blobPath.
-   *
-   * @returns Blob info (size, content type) if found, null otherwise
+   * Fetch blob info (metadata only — no content).
    */
   async fetchBlobInfo(
     owner: string,
     blobName: string
   ): Promise<ShelbyBlobInfo | null> {
-    // Ensure owner has 0x prefix
+    const result = await this.fetchBlobContent(owner, blobName);
+    if (!result) return null;
+    return {
+      owner: result.owner,
+      blobName: result.blobName,
+      size: result.size,
+      contentType: result.contentType,
+    };
+  }
+
+  /**
+   * Fetch blob content from the Shelby RPC.
+   *
+   * Only fetches content for text-based files under 300KB.
+   * Returns the raw buffer + metadata for content analysis.
+   *
+   * @param owner - Owner address (hex with 0x prefix)
+   * @param blobName - Full blob name from on-chain event
+   * @param maxSizeBytes - Max content size to download (default 300KB)
+   * @returns Blob content + metadata if found, null otherwise
+   */
+  async fetchBlobContent(
+    owner: string,
+    blobName: string,
+    maxSizeBytes = 300 * 1024
+  ): Promise<ShelbyBlobContent | null> {
     const cleanOwner = owner.startsWith("0x") ? owner : `0x${owner}`;
 
     // Extract the file path part (remove @address/ prefix if present)
@@ -49,7 +64,6 @@ export class ShelbyRpcClient {
       ? blobName.replace(/^@[^/]+\//, "")
       : blobName;
 
-    // Confirmed working pattern: /shelby/v1/blobs/{owner}/{blobPath}
     const url = `${this.baseUrl}/shelby/v1/blobs/${cleanOwner}/${encodeURIComponent(blobPath)}`;
 
     const controller = new AbortController();
@@ -63,10 +77,7 @@ export class ShelbyRpcClient {
       });
 
       if (!response.ok) {
-        if (response.status === 404) {
-          // Blob not found — may not be propagated yet
-          return null;
-        }
+        if (response.status === 404) return null;
         const body = await response.text().catch(() => "");
         throw new RpcError(
           `RPC ${response.status} ${response.statusText}: ${url}`,
@@ -77,22 +88,37 @@ export class ShelbyRpcClient {
 
       const contentType = response.headers.get("content-type") ?? undefined;
       const contentLength = response.headers.get("content-length");
+      const declaredSize = contentLength ? Number(contentLength) : undefined;
 
-      // We do a HEAD-like approach: read the body to get size but don't store it
+      // Skip content download if too large
+      if (declaredSize && declaredSize > maxSizeBytes) {
+        return {
+          owner: cleanOwner,
+          blobName,
+          size: declaredSize,
+          contentType,
+          buffer: null, // Too large — metadata only
+        };
+      }
+
       const bodyBuffer = await response.arrayBuffer();
-      const size = contentLength ? Number(contentLength) : bodyBuffer.byteLength;
+      const size = declaredSize ?? bodyBuffer.byteLength;
+
+      // Return buffer only if within size limit
+      const buffer = bodyBuffer.byteLength <= maxSizeBytes
+        ? Buffer.from(bodyBuffer)
+        : null;
 
       return {
         owner: cleanOwner,
         blobName,
         size,
         contentType,
+        buffer,
       };
     } catch (error) {
       if (error instanceof RpcError) throw error;
-
-      const message =
-        error instanceof Error ? error.message : "Unknown RPC error";
+      const message = error instanceof Error ? error.message : "Unknown RPC error";
       throw new RpcError(`RPC request to ${url} failed: ${message}`, 0);
     } finally {
       clearTimeout(timer);
@@ -101,7 +127,6 @@ export class ShelbyRpcClient {
 
   // ── Health ─────────────────────────────────────────────────
 
-  /** Simple connectivity check — tests the Aptos fullnode endpoint */
   async healthCheck(): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/v1`, {
@@ -115,13 +140,25 @@ export class ShelbyRpcClient {
 }
 
 /**
- * Blob info returned from the Shelby RPC.
+ * Blob info (metadata only).
  */
 export interface ShelbyBlobInfo {
   owner: string;
   blobName: string;
   size?: number;
   contentType?: string;
+}
+
+/**
+ * Blob content + metadata.
+ */
+export interface ShelbyBlobContent {
+  owner: string;
+  blobName: string;
+  size: number;
+  contentType?: string;
+  /** Raw content buffer. null if file was too large or binary. */
+  buffer: Buffer | null;
 }
 
 /**

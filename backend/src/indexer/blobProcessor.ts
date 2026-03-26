@@ -1,6 +1,7 @@
 import { prisma } from "../database/db.js";
 import { ShelbyRpcClient } from "../crawler/rpcClient.js";
 import { extractMetadata } from "./metadataExtractor.js";
+import { analyzeContent } from "./contentAnalyzer.js";
 import { detectAlphaSignals } from "./alphaDetector.js";
 import type { BlobJobData } from "../types.js";
 
@@ -8,66 +9,88 @@ import type { BlobJobData } from "../types.js";
 const rpcClient = new ShelbyRpcClient();
 
 /**
- * Blob Processor
+ * Blob Processor — with Content Intelligence
  *
- * Handles a single blob indexing job:
- * 1. Skip if already indexed (dedup by owner+blobName)
- * 2. Attempt to fetch blob details from Shelby RPC
- * 3. Extract metadata from the event data + RPC response
- * 4. Persist blob + metadata to the database
+ * Pipeline:
+ * 1. Dedup by owner+blobName
+ * 2. Fetch blob content from Shelby RPC (best-effort, capped 300KB)
+ * 3. Run content analyzer → tags, signals, preview
+ * 4. Extract filename metadata
+ * 5. Persist blob + enriched metadata to DB
+ * 6. Trigger alpha signal detection
  *
- * Called by the BullMQ worker for each queued job.
+ * Content analysis never blocks indexing — failures are swallowed.
  */
 export async function processBlob(data: BlobJobData): Promise<void> {
   const blobId = `${data.accountAddress}:${data.blobName}`;
 
-  console.log(`📦 Processing blob: ${blobId}`);
-
   // Step 1 — Deduplicate
-  const existing = await prisma.blob.findUnique({
-    where: { blobId },
-  });
+  const existing = await prisma.blob.findUnique({ where: { blobId } });
+  if (existing) return;
 
-  if (existing) {
-    console.log(`⏭️  Blob ${blobId} already indexed. Skipping.`);
-    return;
-  }
-
-  // Step 2 — Attempt to fetch blob info from Shelby RPC
+  // Step 2 — Fetch blob content from Shelby RPC
   let size = BigInt(0);
   let contentType: string | null = null;
+  let contentBuffer: Buffer | null = null;
 
   try {
-    const blobInfo = await rpcClient.fetchBlobInfo(
+    const blobContent = await rpcClient.fetchBlobContent(
       data.accountAddress,
       data.blobName
     );
 
-    if (blobInfo) {
-      size = blobInfo.size ? BigInt(blobInfo.size) : BigInt(0);
-      contentType = blobInfo.contentType ?? null;
-      console.log(`  📡 RPC returned: size=${size}, type=${contentType}`);
-    } else {
-      console.log(`  📡 RPC: blob not available yet (will index from event data)`);
+    if (blobContent) {
+      size = BigInt(blobContent.size ?? 0);
+      contentType = blobContent.contentType ?? null;
+      contentBuffer = blobContent.buffer;
     }
   } catch (error) {
-    // RPC fetch is best-effort — don't fail the job for this
+    // RPC fetch is best-effort
     console.warn(
-      `  ⚠️  RPC fetch failed (indexing from event data):`,
+      `[RPC] ⚠️ Fetch failed for ${blobId}:`,
       error instanceof Error ? error.message : error
     );
   }
 
-  // Step 3 — Extract metadata from the discovery data
+  // Step 3 — Content Intelligence (never blocks)
+  let tags: string[] = [];
+  let signals: string[] = [];
+  let contentPreview: string | null = null;
+  let analysisStatus = "pending";
+
+  try {
+    const analysis = analyzeContent(data.blobName, contentBuffer, contentType ?? undefined);
+    tags = analysis.tags;
+    signals = analysis.signals;
+    contentPreview = analysis.contentPreview;
+    analysisStatus = analysis.analysisStatus;
+
+    if (tags.length > 0 || signals.length > 0) {
+      console.log(
+        `[Content] ${blobId}: type=${analysis.detectedType} tags=[${tags.join(",")}] signals=[${signals.join(",")}] status=${analysisStatus}`
+      );
+    }
+  } catch (error) {
+    analysisStatus = "error";
+    console.warn(
+      `[Content] ⚠️ Analysis failed for ${blobId}:`,
+      error instanceof Error ? error.message : error
+    );
+  }
+
+  // Step 4 — Extract filename metadata
   const metadata = extractMetadata(data);
 
-  // Step 4 — Parse timestamp (Aptos timestamps are in microseconds)
+  // Merge content-derived tags with filename-derived tags
+  const mergedTags = [...new Set([...metadata.tags, ...tags])];
+
+  // Step 5 — Parse timestamp (Aptos timestamps are in microseconds)
   const createdAt =
     data.timestamp && data.timestamp !== "0"
       ? new Date(Number(data.timestamp) / 1000)
       : new Date();
 
-  // Step 5 — Persist blob + metadata in a single transaction
+  // Step 6 — Persist blob + enriched metadata
   await prisma.$transaction(async (tx) => {
     const blob = await tx.blob.create({
       data: {
@@ -85,15 +108,19 @@ export async function processBlob(data: BlobJobData): Promise<void> {
         blobId: blob.blobId,
         title: metadata.title,
         description: metadata.description,
-        tags: metadata.tags,
+        tags: mergedTags,
         fileType: metadata.fileType,
+        signals,
+        analysisStatus,
+        contentPreview,
       },
     });
   });
 
-  console.log(`[DB] ✅ Blob inserted: ${data.accountAddress}/${data.blobName} (block ${data.blockHeight})`);
+  console.log(
+    `[DB] ✅ Blob inserted: ${data.accountAddress.slice(0, 10)}.../${data.blobName.split("/").pop()} (block ${data.blockHeight})`
+  );
 
-  // Run alpha signal detection (non-blocking, best-effort)
-  console.log(`[Alpha] Detector triggered for blob: ${blobId}`);
-  await detectAlphaSignals(data);
+  // Step 7 — Run alpha signal detection (enriched with content data)
+  await detectAlphaSignals(data, { tags: mergedTags, signals });
 }
