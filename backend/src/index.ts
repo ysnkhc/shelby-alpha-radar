@@ -2,43 +2,49 @@ import { env } from "./config/env.js";
 import { logger } from "./config/logger.js";
 import { startServer } from "./api/server.js";
 import { CrawlerService } from "./crawler/crawler.js";
-import { enqueueBlobJob, closeQueue } from "./worker/queue.js";
-import { createBlobWorker, closeWorker } from "./worker/worker.js";
+import { processBlob } from "./indexer/blobProcessor.js";
 import { disconnectDatabase } from "./database/db.js";
+import type { BlobJobData } from "./types.js";
 
 /**
  * Shelby Indexer — Main Entry Point
  *
  * Orchestrates all subsystems:
  * 1. API server   — serves search endpoints
- * 2. Crawler      — polls Shelby RPC for new blobs
- * 3. Worker       — processes queued blobs (metadata extraction + DB storage)
+ * 2. Crawler      — polls Shelby RPC for new blobs → processes directly (no queue)
  *
- * Handles graceful shutdown on SIGINT/SIGTERM.
+ * BullMQ/Redis queue removed — processBlob is called directly by the crawler
+ * for reliability (Redis connection was failing silently on Railway).
  */
 async function main(): Promise<void> {
   logger.info("🚀 Shelby Indexer starting...");
-  logger.info({ env: env.NODE_ENV, port: env.PORT, rpc: env.SHELBY_RPC_URL }, "Configuration loaded");
+  logger.info({ env: env.NODE_ENV, port: env.PORT, rpc: env.APTOS_RPC_URL }, "Configuration loaded");
 
   // ── 1. Start API server ─────────────────────────────────────
   const server = await startServer();
 
-  // ── 2. Start blob processing worker ─────────────────────────
-  const worker = createBlobWorker();
+  // ── 2. Start crawler — directly processes blobs (no BullMQ) ──
+  const onBlobDiscovered = async (data: BlobJobData): Promise<void> => {
+    try {
+      await processBlob(data);
+    } catch (error) {
+      console.error(
+        `[Pipeline] ❌ Failed to process blob ${data.blobName}:`,
+        error instanceof Error ? error.message : error
+      );
+    }
+  };
 
-  // ── 3. Start crawler (scans transactions for blob activity) ──
-  const crawler = new CrawlerService(enqueueBlobJob);
+  const crawler = new CrawlerService(onBlobDiscovered);
   await crawler.start();
 
-  logger.info("✅ All systems operational.");
+  logger.info("✅ All systems operational (direct processing, no queue).");
 
   // ── Graceful shutdown ───────────────────────────────────────
   const shutdown = async (signal: string) => {
     logger.info({ signal }, "Shutting down gracefully...");
 
     crawler.stop();
-    await closeWorker(worker);
-    await closeQueue();
     await server.close();
     await disconnectDatabase();
 
