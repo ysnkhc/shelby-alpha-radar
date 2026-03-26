@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { env } from "../config/env.js";
 import { logger } from "../config/logger.js";
+import { pipelineState } from "../debugState.js";
 import { blobRoutes } from "./routes/blobs.js";
 import { statsRoutes } from "./routes/stats.js";
 import { searchRoutes } from "./routes/search.js";
@@ -35,6 +36,13 @@ export async function createServer() {
     status: "ok",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
+  }));
+
+  // ── Debug endpoint — pipeline diagnostic ────────────────────
+  app.get("/debug", async () => ({
+    ...pipelineState,
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
   }));
 
   // ── Route modules ──────────────────────────────────────────

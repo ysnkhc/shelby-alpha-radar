@@ -1,5 +1,6 @@
 import { AptosClient } from "./aptosClient.js";
 import { prisma } from "../database/db.js";
+import { pipelineState, recordError } from "../debugState.js";
 import type { AptosBlock, TransactionEvent, BlobJobData } from "../types.js";
 
 /**
@@ -105,6 +106,9 @@ export class CrawlerService {
       const nextBlock = this.lastProcessedBlock + 1;
       const endBlock = nextBlock + batchSize - 1;
 
+      pipelineState.crawlerLastPoll = new Date().toISOString();
+      pipelineState.crawlerChainTip = latestBlock;
+
       console.log(
         `[Crawler] Processing blocks ${nextBlock}–${endBlock} (gap: ${gap})`
       );
@@ -123,6 +127,8 @@ export class CrawlerService {
 
       // Persist progress
       this.lastProcessedBlock = endBlock;
+      pipelineState.crawlerLastBlock = endBlock;
+      pipelineState.blocksProcessed += batchSize;
       await this.saveLastProcessedBlock(endBlock);
 
       if (totalBlobs > 0) {
@@ -138,6 +144,7 @@ export class CrawlerService {
         this.schedulePoll();
       }
     } catch (error) {
+      recordError("crawler.poll", error);
       console.error(
         "[Crawler] ❌ Poll failed:",
         error instanceof Error ? error.message : error

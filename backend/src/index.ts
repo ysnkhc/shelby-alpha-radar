@@ -4,17 +4,14 @@ import { startServer } from "./api/server.js";
 import { CrawlerService } from "./crawler/crawler.js";
 import { processBlob } from "./indexer/blobProcessor.js";
 import { disconnectDatabase } from "./database/db.js";
+import { pipelineState, recordError } from "./debugState.js";
 import type { BlobJobData } from "./types.js";
 
 /**
  * Shelby Indexer — Main Entry Point
  *
- * Orchestrates all subsystems:
- * 1. API server   — serves search endpoints
- * 2. Crawler      — polls Shelby RPC for new blobs → processes directly (no queue)
- *
- * BullMQ/Redis queue removed — processBlob is called directly by the crawler
- * for reliability (Redis connection was failing silently on Railway).
+ * Direct processing: Crawler → processBlob → DB → alphaDetector → SSE
+ * No BullMQ/Redis queue (was failing silently on Railway).
  */
 async function main(): Promise<void> {
   logger.info("🚀 Shelby Indexer starting...");
@@ -23,11 +20,15 @@ async function main(): Promise<void> {
   // ── 1. Start API server ─────────────────────────────────────
   const server = await startServer();
 
-  // ── 2. Start crawler — directly processes blobs (no BullMQ) ──
+  // ── 2. Start crawler — directly processes blobs ──────────────
   const onBlobDiscovered = async (data: BlobJobData): Promise<void> => {
+    pipelineState.blobEventsFound++;
     try {
       await processBlob(data);
+      pipelineState.blobsInserted++;
     } catch (error) {
+      pipelineState.blobInsertErrors++;
+      recordError("processBlob", error);
       console.error(
         `[Pipeline] ❌ Failed to process blob ${data.blobName}:`,
         error instanceof Error ? error.message : error
@@ -36,6 +37,7 @@ async function main(): Promise<void> {
   };
 
   const crawler = new CrawlerService(onBlobDiscovered);
+  pipelineState.crawlerStartedAt = new Date().toISOString();
   await crawler.start();
 
   logger.info("✅ All systems operational (direct processing, no queue).");
@@ -43,11 +45,9 @@ async function main(): Promise<void> {
   // ── Graceful shutdown ───────────────────────────────────────
   const shutdown = async (signal: string) => {
     logger.info({ signal }, "Shutting down gracefully...");
-
     crawler.stop();
     await server.close();
     await disconnectDatabase();
-
     logger.info("👋 Shelby Indexer stopped. Goodbye!");
     process.exit(0);
   };
