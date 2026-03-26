@@ -25,9 +25,9 @@ const CRAWLER_STATE_KEY = "last_processed_block";
 
 /**
  * How many blocks behind chain tip to start when no saved state exists.
- * 1000 blocks ≈ ~17 minutes of history on Shelbynet (~1 block/s).
+ * 2000 blocks ≈ ~33 minutes of history on Shelbynet (~1 block/s).
  */
-const INITIAL_LOOKBACK = 1000;
+const INITIAL_LOOKBACK = 2000;
 
 /**
  * Crawler Service — Aptos Event Scanner

@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "prisma db push --schema=src/database/prisma/schema.prisma --skip-generate && tsc",
-    "start": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "prisma db push --schema=src/database/prisma/schema.prisma --skip-generate && tsx src/index.ts",
     "postinstall": "prisma generate --schema=src/database/prisma/schema.prisma",
     "typecheck": "tsc --noEmit"
   },
