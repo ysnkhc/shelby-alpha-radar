@@ -2,6 +2,7 @@ import { prisma } from "../database/db.js";
 import { ShelbyRpcClient } from "../crawler/rpcClient.js";
 import { extractMetadata } from "./metadataExtractor.js";
 import { analyzeContent } from "./contentAnalyzer.js";
+import { assignToCluster } from "./projectCluster.js";
 import { detectAlphaSignals } from "./alphaDetector.js";
 import type { BlobJobData } from "../types.js";
 
@@ -9,17 +10,18 @@ import type { BlobJobData } from "../types.js";
 const rpcClient = new ShelbyRpcClient();
 
 /**
- * Blob Processor — with Content Intelligence
+ * Blob Processor — with Content + Project Intelligence
  *
  * Pipeline:
  * 1. Dedup by owner+blobName
  * 2. Fetch blob content from Shelby RPC (best-effort, capped 300KB)
  * 3. Run content analyzer → tags, signals, preview
- * 4. Extract filename metadata
- * 5. Persist blob + enriched metadata to DB
- * 6. Trigger alpha signal detection
+ * 4. Assign to project cluster
+ * 5. Extract filename metadata
+ * 6. Persist blob + enriched metadata + project_id to DB
+ * 7. Trigger alpha signal detection (with cluster context)
  *
- * Content analysis never blocks indexing — failures are swallowed.
+ * Content analysis + clustering never block indexing — failures are swallowed.
  */
 export async function processBlob(data: BlobJobData): Promise<void> {
   const blobId = `${data.accountAddress}:${data.blobName}`;
@@ -45,7 +47,6 @@ export async function processBlob(data: BlobJobData): Promise<void> {
       contentBuffer = blobContent.buffer;
     }
   } catch (error) {
-    // RPC fetch is best-effort
     console.warn(
       `[RPC] ⚠️ Fetch failed for ${blobId}:`,
       error instanceof Error ? error.message : error
@@ -80,17 +81,43 @@ export async function processBlob(data: BlobJobData): Promise<void> {
 
   // Step 4 — Extract filename metadata
   const metadata = extractMetadata(data);
-
-  // Merge content-derived tags with filename-derived tags
   const mergedTags = [...new Set([...metadata.tags, ...tags])];
 
-  // Step 5 — Parse timestamp (Aptos timestamps are in microseconds)
+  // Step 5 — Project Clustering (never blocks)
+  let projectId: string | null = null;
+  let clusterSize = 1;
+  let isNewCluster = true;
+  let projectLabel = "";
+
+  try {
+    const cluster = await assignToCluster(
+      data.accountAddress,
+      data.blobName,
+      mergedTags,
+      signals
+    );
+    projectId = cluster.projectId;
+    clusterSize = cluster.clusterSize;
+    isNewCluster = cluster.isNewCluster;
+    projectLabel = cluster.projectLabel;
+
+    if (clusterSize > 1) {
+      console.log(`[Cluster] ${projectLabel}: ${clusterSize} blobs`);
+    }
+  } catch (error) {
+    console.warn(
+      `[Cluster] ⚠️ Clustering failed for ${blobId}:`,
+      error instanceof Error ? error.message : error
+    );
+  }
+
+  // Step 6 — Parse timestamp (Aptos timestamps are in microseconds)
   const createdAt =
     data.timestamp && data.timestamp !== "0"
       ? new Date(Number(data.timestamp) / 1000)
       : new Date();
 
-  // Step 6 — Persist blob + enriched metadata
+  // Step 7 — Persist blob + enriched metadata + project_id
   await prisma.$transaction(async (tx) => {
     const blob = await tx.blob.create({
       data: {
@@ -98,6 +125,7 @@ export async function processBlob(data: BlobJobData): Promise<void> {
         wallet: data.accountAddress,
         size,
         contentType,
+        projectId,
         createdAt,
         indexedAt: new Date(),
       },
@@ -121,6 +149,13 @@ export async function processBlob(data: BlobJobData): Promise<void> {
     `[DB] ✅ Blob inserted: ${data.accountAddress.slice(0, 10)}.../${data.blobName.split("/").pop()} (block ${data.blockHeight})`
   );
 
-  // Step 7 — Run alpha signal detection (enriched with content data)
-  await detectAlphaSignals(data, { tags: mergedTags, signals });
+  // Step 8 — Alpha signal detection (enriched with content + cluster data)
+  await detectAlphaSignals(data, {
+    tags: mergedTags,
+    signals,
+    projectId,
+    clusterSize,
+    isNewCluster,
+    projectLabel,
+  });
 }

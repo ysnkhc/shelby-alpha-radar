@@ -17,6 +17,7 @@ model Blob {
   wallet      String
   size        BigInt    @default(0)
   contentType String?   @map("content_type")
+  projectId   String?   @map("project_id")
   createdAt   DateTime  @default(now()) @map("created_at")
   indexedAt   DateTime  @default(now()) @map("indexed_at")
 
@@ -25,6 +26,7 @@ model Blob {
 
   @@index([wallet])
   @@index([createdAt])
+  @@index([projectId])
   @@map("blobs")
 }
 

@@ -30,10 +30,15 @@ export function computePriority(
   score: number,
   signalType: string
 ): AlphaPriority {
-  // Coordination and velocity are always boosted
-  const boostedTypes = new Set(["CROSS_WALLET_PATTERN", "WALLET_VELOCITY"]);
+  // Only truly structured/coordinated signals get boosted to HIGH
+  const boostedTypes = new Set([
+    "PROJECT_CLUSTER_DETECTED",
+    "AI_PROJECT_ACTIVITY",
+    "AI_COORDINATION",
+    "DATASET_FORMATION",
+  ]);
 
-  if (score >= 8 || (score >= 6 && boostedTypes.has(signalType))) {
+  if (score >= 8 || (score >= 7 && boostedTypes.has(signalType))) {
     return "HIGH";
   }
   if (score >= 6) {

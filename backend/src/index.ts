@@ -32,7 +32,18 @@ async function ensureContentIntelligenceSchema(): Promise<void> {
       ADD COLUMN IF NOT EXISTS content_preview TEXT
     `);
 
-    console.log("[DB] ✅ Content intelligence schema columns verified");
+    // Add 'project_id' column to blobs
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE blobs
+      ADD COLUMN IF NOT EXISTS project_id TEXT
+    `);
+
+    // Add index on project_id
+    await prisma.$executeRawUnsafe(`
+      CREATE INDEX IF NOT EXISTS blobs_project_id_idx ON blobs(project_id)
+    `);
+
+    console.log("[DB] ✅ Schema columns verified (content intelligence + project clustering)");
   } catch (error) {
     console.error(
       "[DB] ⚠️ Schema migration warning:",

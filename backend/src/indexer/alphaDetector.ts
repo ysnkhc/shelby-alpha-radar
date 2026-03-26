@@ -3,24 +3,32 @@ import { alphaFeed, computePriority } from "../services/alphaFeed.js";
 import type { BlobJobData } from "../types.js";
 
 /**
- * Alpha Detection Module v4 — Behavioral + Content Intelligence
+ * Alpha Detection Module v5 — Project Discovery Intelligence
  *
- * Combines timing-based signals with content-derived intelligence:
+ * Shift from "event detection" → "project discovery"
  *
- * Timing signals:
- *   WALLET_VELOCITY, FIRST_TIME_BURST, DORMANT_REACTIVATION,
- *   CROSS_WALLET_PATTERN, RARE_FILE_TYPE
+ * Scoring philosophy:
+ *   - HIGH (8-10): Only truly rare, coordinated, or multi-signal events
+ *   - MEDIUM (6-7): Interesting patterns worth watching
+ *   - LOW (5): Routine observations
  *
- * Content signals (NEW):
- *   AI_COORDINATION, DATASET_CLUSTER, CONFIG_DEPLOYMENT
+ * Signal groups:
+ *   Timing:   WALLET_VELOCITY, DORMANT_REACTIVATION
+ *   Content:  AI_COORDINATION, CONFIG_DEPLOYMENT
+ *   Project:  PROJECT_CLUSTER_DETECTED, AI_PROJECT_ACTIVITY, DATASET_FORMATION
+ *   Rare:     RARE_FILE_TYPE
  */
 
 const SCORE_THRESHOLD = 5;
 
-/** Content intelligence passed from blobProcessor */
+/** Content + cluster intelligence passed from blobProcessor */
 export interface ContentIntelligence {
   tags: string[];
   signals: string[];
+  projectId: string | null;
+  clusterSize: number;
+  isNewCluster: boolean;
+  projectLabel: string;
 }
 
 export async function detectAlphaSignals(
@@ -29,16 +37,18 @@ export async function detectAlphaSignals(
 ): Promise<void> {
   try {
     const signals = await Promise.all([
-      // Timing-based signals
+      // Timing-based (rebalanced)
       detectWalletVelocity(data),
-      detectFirstTimeBurst(data),
       detectDormantReactivation(data),
-      detectCrossWalletPattern(data),
-      detectRareFileType(data),
-      // Content-based signals (new)
+      // Content-based
       detectAICoordination(data, content),
-      detectDatasetCluster(data, content),
       detectConfigDeployment(data, content),
+      // Project-based (NEW)
+      detectProjectCluster(data, content),
+      detectAIProjectActivity(data, content),
+      detectDatasetFormation(data, content),
+      // Rare (kept)
+      detectRareFileType(data),
     ]);
 
     const valid = signals.filter(
@@ -74,7 +84,7 @@ export async function detectAlphaSignals(
           timestamp: new Date().toISOString(),
         });
 
-        console.log(`[SSE] Broadcasting: ${s.type} score=${s.score} priority=${priority}`);
+        console.log(`[Alpha] ${s.type} score=${s.score} → ${priority}: ${s.explanation}`);
       }
     }
   } catch (error) {
@@ -96,10 +106,8 @@ interface AlphaSignal {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// TIMING-BASED SIGNALS
+// TIMING SIGNALS (rebalanced — harder to trigger HIGH)
 // ═══════════════════════════════════════════════════════════════
-
-// ── Rule 1: Wallet Velocity ────────────────────────────────────
 
 async function detectWalletVelocity(
   data: BlobJobData
@@ -116,14 +124,13 @@ async function detectWalletVelocity(
     }),
   ]);
 
-  if (totalCount < 3) return null;
+  if (totalCount < 5) return null; // raised from 3 → 5
 
   const firstBlob = await prisma.blob.findFirst({
     where: { wallet: data.accountAddress },
     orderBy: { createdAt: "asc" },
     select: { createdAt: true },
   });
-
   if (!firstBlob) return null;
 
   const historyHours = Math.max(
@@ -132,60 +139,23 @@ async function detectWalletVelocity(
   );
   const avgPerHour = totalCount / historyHours;
 
-  if (avgPerHour > 0 && recentCount >= 3) {
+  if (avgPerHour > 0 && recentCount >= 5) { // raised from 3 → 5
     const multiplier = Math.round(recentCount / avgPerHour);
-    if (multiplier >= 3) {
-      const score = Math.min(10, 5 + multiplier);
+    if (multiplier >= 5) { // raised from 3 → 5
+      // Score: 5-8 max (was 5-10)
+      const score = Math.min(8, 4 + Math.floor(multiplier / 2));
       return {
         type: "WALLET_VELOCITY",
         score,
-        explanation: `Wallet surged ${multiplier}x — ${recentCount} uploads in last hour`,
-        impact: "Velocity spikes may indicate bots, automated pipelines, or migrations",
-        context: `${recentCount}/hr vs avg ${avgPerHour.toFixed(1)}/hr · ${totalCount} all-time`,
+        explanation: `Wallet ${data.accountAddress.slice(0, 8)}... is uploading ${multiplier}x faster than usual — ${recentCount} files in the last hour, suggesting an automated pipeline or bulk migration`,
+        impact: "Sustained velocity spikes often precede project launches or large-scale data operations",
+        context: `${recentCount}/hr vs avg ${avgPerHour.toFixed(1)}/hr · ${totalCount} total blobs`,
       };
     }
   }
 
   return null;
 }
-
-// ── Rule 2: First-Time Burst ───────────────────────────────────
-
-async function detectFirstTimeBurst(
-  data: BlobJobData
-): Promise<AlphaSignal | null> {
-  const tenMinAgo = new Date(Date.now() - 10 * 60_000);
-
-  const firstBlob = await prisma.blob.findFirst({
-    where: { wallet: data.accountAddress },
-    orderBy: { createdAt: "asc" },
-    select: { createdAt: true },
-  });
-
-  if (!firstBlob || firstBlob.createdAt < tenMinAgo) return null;
-
-  const totalCount = await prisma.blob.count({
-    where: { wallet: data.accountAddress },
-  });
-
-  if (totalCount < 3) return null;
-
-  const minsSinceFirst = Math.max(
-    1,
-    Math.round((Date.now() - firstBlob.createdAt.getTime()) / 60_000)
-  );
-
-  const score = Math.min(9, 5 + totalCount);
-  return {
-    type: "FIRST_TIME_BURST",
-    score,
-    explanation: `New wallet uploaded ${totalCount} blobs within ${minsSinceFirst} minutes`,
-    impact: "First-time bursts suggest automated pipelines or programmatic uploads",
-    context: `${totalCount} blobs in ${minsSinceFirst}min`,
-  };
-}
-
-// ── Rule 3: Dormant Wallet Reactivation ────────────────────────
 
 async function detectDormantReactivation(
   data: BlobJobData
@@ -202,55 +172,240 @@ async function detectDormantReactivation(
   const gapHours =
     (recentBlobs[0].createdAt.getTime() - recentBlobs[1].createdAt.getTime()) / 3_600_000;
 
-  if (gapHours < 24) return null;
+  if (gapHours < 48) return null; // raised from 24h → 48h
 
   const gapLabel = gapHours >= 72
     ? `${Math.round(gapHours / 24)} days`
     : `${Math.round(gapHours)} hours`;
 
-  const score = Math.min(8, 5 + Math.floor(gapHours / 24));
+  // Score: 5-7 max (was 5-8)
+  const score = Math.min(7, 5 + Math.floor(gapHours / 48));
   return {
     type: "DORMANT_REACTIVATION",
     score,
-    explanation: `Dormant wallet reactivated after ${gapLabel} of silence`,
-    impact: "Returning wallets signal renewed interest or reactivated automation",
-    context: `Last upload: ${recentBlobs[1].createdAt.toISOString().slice(0, 10)} · Gap: ${gapLabel}`,
+    explanation: `A wallet that was silent for ${gapLabel} just uploaded "${data.blobName.split("/").pop()}" — this could signal a returning project or reactivated automation`,
+    impact: "Dormant wallets returning to activity often indicate renewed development or delayed project milestones",
+    context: `Last seen: ${recentBlobs[1].createdAt.toISOString().slice(0, 10)} · Silent for ${gapLabel}`,
   };
 }
 
-// ── Rule 4: Cross-Wallet Pattern ───────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// CONTENT SIGNALS (rebalanced)
+// ═══════════════════════════════════════════════════════════════
 
-async function detectCrossWalletPattern(
-  data: BlobJobData
+async function detectAICoordination(
+  _data: BlobJobData,
+  content?: ContentIntelligence
 ): Promise<AlphaSignal | null> {
-  const ext = extractExtension(data.blobName);
-  if (!ext) return null;
+  if (!content) return null;
 
-  const twoMinAgo = new Date(Date.now() - 2 * 60_000);
+  const hasAISignal = content.signals.some((s) =>
+    ["ai_interaction", "model_data", "agent_config"].includes(s)
+  );
+  if (!hasAISignal) return null;
 
-  const recentSameType = await prisma.blob.findMany({
+  const fiveMinAgo = new Date(Date.now() - 5 * 60_000);
+
+  const recentAIBlobs = await prisma.blobMetadata.findMany({
     where: {
-      createdAt: { gte: twoMinAgo },
-      metadata: { fileType: ext },
+      blob: { createdAt: { gte: fiveMinAgo } },
+      signals: { hasSome: ["ai_interaction", "model_data", "agent_config"] },
     },
-    select: { wallet: true },
-    distinct: ["wallet"],
+    include: { blob: { select: { wallet: true } } },
   });
 
-  const walletsIn2Min = recentSameType.length;
-  if (walletsIn2Min < 3) return null;
+  const uniqueWallets = new Set(recentAIBlobs.map((b) => b.blob.wallet));
+  if (uniqueWallets.size < 3) return null; // raised from 2 → 3
 
-  const score = Math.min(10, 6 + walletsIn2Min);
+  const signalTypes = [...new Set(recentAIBlobs.flatMap((b) => b.signals))];
+  // Score: 7-9 (high value — truly coordinated AI)
+  const score = Math.min(9, 6 + uniqueWallets.size);
+
   return {
-    type: "CROSS_WALLET_PATTERN",
+    type: "AI_COORDINATION",
     score,
-    explanation: `${walletsIn2Min} wallets uploaded .${ext} files within 2 minutes`,
-    impact: "Coordinated uploads indicate shared pipelines or distribution systems",
-    context: `${walletsIn2Min} distinct wallets · file type: .${ext}`,
+    explanation: `${uniqueWallets.size} different wallets are uploading AI-related content simultaneously — possible multi-agent coordination, shared model training, or collaborative AI infrastructure`,
+    impact: "Cross-wallet AI activity is rare and high-signal, suggesting organized AI development on Shelby",
+    context: `${recentAIBlobs.length} AI blobs from ${uniqueWallets.size} wallets in 5min · signals: ${signalTypes.join(", ")}`,
   };
 }
 
-// ── Rule 5: Rare File Type ─────────────────────────────────────
+async function detectConfigDeployment(
+  data: BlobJobData,
+  content?: ContentIntelligence
+): Promise<AlphaSignal | null> {
+  if (!content) return null;
+
+  const hasConfig = content.tags.includes("config") || content.signals.includes("agent_config");
+  if (!hasConfig) return null;
+
+  const oneHourAgo = new Date(Date.now() - 3_600_000);
+
+  const recentWalletBlobs = await prisma.blobMetadata.findMany({
+    where: {
+      blob: { wallet: data.accountAddress, createdAt: { gte: oneHourAgo } },
+    },
+    select: { tags: true, signals: true },
+  });
+
+  const hasAI = recentWalletBlobs.some((b) =>
+    b.tags.includes("ai_data") || b.signals.some((s: string) => s.includes("ai"))
+  );
+  const hasTrading = recentWalletBlobs.some((b) =>
+    b.signals.includes("trading_data")
+  );
+
+  if (!hasAI && !hasTrading) return null;
+
+  const domain = hasAI && hasTrading ? "AI + trading" : hasAI ? "AI" : "trading";
+  // Score: 6-7 (MEDIUM — interesting but needs cluster confirmation)
+  const score = Math.min(7, 5 + recentWalletBlobs.length);
+
+  return {
+    type: "CONFIG_DEPLOYMENT",
+    score,
+    explanation: `A ${domain} configuration file was deployed alongside ${recentWalletBlobs.length} related data uploads — this looks like a live system launch or strategy update`,
+    impact: "Config files paired with domain-specific data often mark deployment milestones or strategy pivots",
+    context: `${domain} config deployment · ${recentWalletBlobs.length} related blobs in last hour`,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PROJECT SIGNALS (NEW — highest value)
+// ═══════════════════════════════════════════════════════════════
+
+async function detectProjectCluster(
+  _data: BlobJobData,
+  content?: ContentIntelligence
+): Promise<AlphaSignal | null> {
+  if (!content?.projectId) return null;
+
+  // Only fire when cluster reaches meaningful sizes
+  const milestones = [3, 5, 10, 20, 50];
+  const size = content.clusterSize;
+  if (!milestones.includes(size)) return null;
+
+  // Check if we already fired for this milestone
+  const alreadyFired = await prisma.alphaEvent.findFirst({
+    where: {
+      signalType: "PROJECT_CLUSTER_DETECTED",
+      explanation: { contains: `${size} files` },
+      owner: _data.accountAddress,
+    },
+  });
+  if (alreadyFired) return null;
+
+  // Score scales with cluster size: 5 (3 files) → 9 (50 files)
+  const scoreMap: Record<number, number> = { 3: 5, 5: 6, 10: 7, 20: 8, 50: 9 };
+  const score = scoreMap[size] ?? 5;
+
+  return {
+    type: "PROJECT_CLUSTER_DETECTED",
+    score,
+    explanation: `${content.projectLabel} now has ${size} files — a structured project is forming on-chain with consistent naming and content patterns`,
+    impact: "Clusters of related files indicate organized development projects, not random uploads",
+    context: `Project: ${content.projectLabel} · ${size} files clustered`,
+  };
+}
+
+async function detectAIProjectActivity(
+  _data: BlobJobData,
+  content?: ContentIntelligence
+): Promise<AlphaSignal | null> {
+  if (!content?.projectId) return null;
+  if (!content.tags.some((t) => t === "ai_data")) return null;
+
+  // Need at least 3 AI files in the project
+  if (content.clusterSize < 3) return null;
+
+  // Check for multiple AI signal types within the project
+  const projectBlobs = await prisma.blobMetadata.findMany({
+    where: {
+      blob: { projectId: content.projectId },
+      tags: { hasSome: ["ai_data"] },
+    },
+    select: { signals: true, fileType: true },
+  });
+
+  const allSignals = new Set(projectBlobs.flatMap((b) => b.signals));
+  const allTypes = new Set(projectBlobs.map((b) => b.fileType).filter(Boolean));
+
+  // Needs diversity — multiple signal types or file types
+  if (allSignals.size < 2 && allTypes.size < 2) return null;
+
+  // Deduplicate — only fire once per project
+  const existing = await prisma.alphaEvent.findFirst({
+    where: {
+      signalType: "AI_PROJECT_ACTIVITY",
+      owner: _data.accountAddress,
+      explanation: { contains: content.projectId ?? "" },
+    },
+  });
+  if (existing) return null;
+
+  // Score: 7-9 (high value — confirmed AI project)
+  const score = Math.min(9, 6 + allSignals.size);
+
+  const signalList = [...allSignals].join(", ");
+  const typeList = [...allTypes].join(", ");
+
+  return {
+    type: "AI_PROJECT_ACTIVITY",
+    score,
+    explanation: `An AI project is actively developing: ${content.projectLabel} contains ${projectBlobs.length} AI-related files with ${allSignals.size} different signal types (${signalList}), spanning file types: ${typeList}`,
+    impact: "Multi-file AI projects with diverse signals indicate active model development, agent deployment, or training infrastructure",
+    context: `Project: ${content.projectId} · ${projectBlobs.length} AI files · signals: ${signalList}`,
+  };
+}
+
+async function detectDatasetFormation(
+  data: BlobJobData,
+  content?: ContentIntelligence
+): Promise<AlphaSignal | null> {
+  if (!content?.projectId) return null;
+  if (!content.tags.includes("dataset")) return null;
+  if (content.clusterSize < 3) return null;
+
+  // Count dataset files in this project
+  const datasetCount = await prisma.blobMetadata.count({
+    where: {
+      blob: { projectId: content.projectId },
+      tags: { hasSome: ["dataset"] },
+    },
+  });
+
+  if (datasetCount < 3) return null;
+
+  // Only fire at milestones
+  const milestones = [3, 5, 10, 25];
+  if (!milestones.includes(datasetCount)) return null;
+
+  // Deduplicate
+  const existing = await prisma.alphaEvent.findFirst({
+    where: {
+      signalType: "DATASET_FORMATION",
+      owner: data.accountAddress,
+      explanation: { contains: `${datasetCount} dataset` },
+    },
+  });
+  if (existing) return null;
+
+  // Score: 6-8 (structured data accumulation)
+  const scoreMap: Record<number, number> = { 3: 6, 5: 7, 10: 8, 25: 9 };
+  const score = scoreMap[datasetCount] ?? 6;
+
+  return {
+    type: "DATASET_FORMATION",
+    score,
+    explanation: `A dataset is forming: ${content.projectLabel} now contains ${datasetCount} data files — this wallet is building a structured data collection on Shelby`,
+    impact: "Systematic dataset accumulation suggests training data preparation, market analysis, or research data archiving",
+    context: `Project: ${content.projectId} · ${datasetCount} dataset files`,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RARE SIGNALS (kept, slightly boosted)
+// ═══════════════════════════════════════════════════════════════
 
 async function detectRareFileType(
   data: BlobJobData
@@ -274,153 +429,20 @@ async function detectRareFileType(
   });
   if (totalWithType > 1) return null;
 
+  // Higher value for specialized file types
+  const highValue = new Set(["ckpt", "safetensors", "onnx", "pt", "h5", "rosbag", "fastq", "parquet", "arrow"]);
+  const score = highValue.has(ext) ? 7 : 5;
+
+  const description = highValue.has(ext)
+    ? `A specialized .${ext} file appeared on Shelby for the first time — this is a high-value format used in ${getFormatDomain(ext)}`
+    : `First-ever .${ext} file uploaded to Shelby — a new file format is entering the ecosystem`;
+
   return {
     type: "RARE_FILE_TYPE",
-    score: 5,
-    explanation: `First-ever .${ext} file uploaded on Shelby`,
-    impact: "New file types may represent novel use cases or protocol experiments",
-    context: `First .${ext} ever observed on network`,
-  };
-}
-
-// ═══════════════════════════════════════════════════════════════
-// CONTENT-BASED SIGNALS (NEW)
-// ═══════════════════════════════════════════════════════════════
-
-// ── Rule 6: AI Coordination ───────────────────────────────────
-
-async function detectAICoordination(
-  _data: BlobJobData,
-  content?: ContentIntelligence
-): Promise<AlphaSignal | null> {
-  if (!content) return null;
-
-  const hasAISignal = content.signals.some((s) =>
-    ["ai_interaction", "model_data", "agent_config"].includes(s)
-  );
-  if (!hasAISignal) return null;
-
-  // Check if multiple wallets uploaded AI-related content recently
-  const fiveMinAgo = new Date(Date.now() - 5 * 60_000);
-
-  const recentAIBlobs = await prisma.blobMetadata.findMany({
-    where: {
-      blob: { createdAt: { gte: fiveMinAgo } },
-      signals: { hasSome: ["ai_interaction", "model_data", "agent_config"] },
-    },
-    include: { blob: { select: { wallet: true } } },
-  });
-
-  const uniqueWallets = new Set(recentAIBlobs.map((b) => b.blob.wallet));
-
-  if (uniqueWallets.size < 2) return null;
-
-  const signalTypes = [...new Set(recentAIBlobs.flatMap((b) => b.signals))];
-  const score = Math.min(10, 7 + uniqueWallets.size);
-
-  return {
-    type: "AI_COORDINATION",
     score,
-    explanation: `${uniqueWallets.size} wallets uploading AI content simultaneously`,
-    impact: "Coordinated AI data uploads suggest multi-agent systems, shared model pipelines, or collaborative training",
-    context: `${recentAIBlobs.length} AI blobs from ${uniqueWallets.size} wallets · signals: ${signalTypes.join(", ")}`,
-  };
-}
-
-// ── Rule 7: Dataset Cluster ───────────────────────────────────
-
-async function detectDatasetCluster(
-  data: BlobJobData,
-  content?: ContentIntelligence
-): Promise<AlphaSignal | null> {
-  if (!content) return null;
-  if (!content.tags.includes("dataset")) return null;
-
-  // Check for cluster of dataset uploads from same wallet
-  const tenMinAgo = new Date(Date.now() - 10 * 60_000);
-
-  const recentDatasets = await prisma.blobMetadata.count({
-    where: {
-      blob: {
-        wallet: data.accountAddress,
-        createdAt: { gte: tenMinAgo },
-      },
-      tags: { hasSome: ["dataset"] },
-    },
-  });
-
-  if (recentDatasets < 3) return null;
-
-  // Also check cross-wallet dataset activity
-  const crossWalletDatasets = await prisma.blobMetadata.findMany({
-    where: {
-      blob: { createdAt: { gte: tenMinAgo } },
-      tags: { hasSome: ["dataset"] },
-    },
-    include: { blob: { select: { wallet: true } } },
-    take: 50,
-  });
-
-  const datasetWallets = new Set(crossWalletDatasets.map((b) => b.blob.wallet));
-
-  const score = Math.min(10, 6 + recentDatasets);
-  return {
-    type: "DATASET_CLUSTER",
-    score,
-    explanation: `${recentDatasets} datasets uploaded by wallet in 10 minutes`,
-    impact: "Dataset clusters indicate bulk data ingestion, training pipelines, or data migration",
-    context: `${recentDatasets} datasets from this wallet · ${datasetWallets.size} wallets uploading datasets network-wide`,
-  };
-}
-
-// ── Rule 8: Config Deployment ─────────────────────────────────
-
-async function detectConfigDeployment(
-  data: BlobJobData,
-  content?: ContentIntelligence
-): Promise<AlphaSignal | null> {
-  if (!content) return null;
-
-  const hasConfig = content.tags.includes("config") ||
-    content.signals.includes("agent_config");
-  if (!hasConfig) return null;
-
-  // Check if this wallet recently uploaded related AI/trading content
-  const oneHourAgo = new Date(Date.now() - 3_600_000);
-
-  const recentWalletBlobs = await prisma.blobMetadata.findMany({
-    where: {
-      blob: {
-        wallet: data.accountAddress,
-        createdAt: { gte: oneHourAgo },
-      },
-    },
-    select: { tags: true, signals: true },
-  });
-
-  // Config is interesting when combined with AI or trading data
-  const hasAI = recentWalletBlobs.some((b) =>
-    b.tags.includes("ai_data") || b.signals.some((s) => s.includes("ai"))
-  );
-  const hasTrading = recentWalletBlobs.some((b) =>
-    b.signals.includes("trading_data")
-  );
-
-  if (!hasAI && !hasTrading) return null;
-
-  const context = hasAI && hasTrading
-    ? "AI + trading config deployment"
-    : hasAI
-      ? "AI system config deployment"
-      : "trading config deployment";
-
-  const score = Math.min(10, 7 + recentWalletBlobs.length);
-  return {
-    type: "CONFIG_DEPLOYMENT",
-    score,
-    explanation: `Config file deployed alongside ${hasAI ? "AI" : ""}${hasAI && hasTrading ? " + " : ""}${hasTrading ? "trading" : ""} data`,
-    impact: "Config deployments with AI/trading data suggest live system launches or strategy updates",
-    context: `${context} · ${recentWalletBlobs.length} related blobs in last hour`,
+    explanation: description,
+    impact: "Novel file types expand the Shelby ecosystem and may indicate new use cases or specialized workflows",
+    context: `First .${ext} ever observed · format: ${getFormatDomain(ext)}`,
   };
 }
 
@@ -434,4 +456,22 @@ function extractExtension(blobName: string): string | null {
   const ext = name.split(".").pop()?.toLowerCase();
   if (!ext || ext === name.toLowerCase()) return null;
   return ext;
+}
+
+function getFormatDomain(ext: string): string {
+  const domains: Record<string, string> = {
+    ckpt: "ML model checkpoints",
+    safetensors: "ML model weights (HuggingFace)",
+    onnx: "ML inference models",
+    pt: "PyTorch models",
+    h5: "Keras/HDF5 models",
+    rosbag: "robotics sensor data (ROS)",
+    fastq: "genomics sequencing data",
+    parquet: "columnar analytics data",
+    arrow: "Apache Arrow columnar data",
+    tfrecord: "TensorFlow training data",
+    npy: "NumPy arrays",
+    feather: "fast dataframe storage",
+  };
+  return domains[ext] ?? "specialized data";
 }
