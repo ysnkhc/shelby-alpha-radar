@@ -61,17 +61,21 @@ export class CrawlerService {
 
     // Restore last processed block from DB
     const savedBlock = await this.loadLastProcessedBlock();
+    const latestBlock = await this.aptos.getLatestBlockHeight();
+    const gap = latestBlock - savedBlock;
 
-    if (savedBlock > 0) {
+    if (savedBlock > 0 && gap <= INITIAL_LOOKBACK) {
+      // Saved state is recent — resume from it
       this.lastProcessedBlock = savedBlock;
-      console.log(`[Crawler] Resuming from saved block ${savedBlock}`);
+      console.log(`[Crawler] Resuming from saved block ${savedBlock} (gap: ${gap})`);
     } else {
-      // First run — start near chain tip, not block 0!
-      const latestBlock = await this.aptos.getLatestBlockHeight();
+      // First run OR stale state — jump to near chain tip
       this.lastProcessedBlock = Math.max(0, latestBlock - INITIAL_LOOKBACK);
       console.log(
-        `[Crawler] First run — chain tip: ${latestBlock}, starting from block ${this.lastProcessedBlock}`
+        `[Crawler] Jumping to near chain tip: ${latestBlock}, starting from block ${this.lastProcessedBlock} (was at ${savedBlock}, gap: ${gap})`
       );
+      // Persist the new starting point immediately
+      await this.saveLastProcessedBlock(this.lastProcessedBlock);
     }
 
     void this.poll();
@@ -101,8 +105,8 @@ export class CrawlerService {
       }
 
       const gap = latestBlock - this.lastProcessedBlock;
-      // Process up to 10 blocks per cycle
-      const batchSize = Math.min(10, gap);
+      // Process up to 5 blocks per cycle (avoid 429 rate limits)
+      const batchSize = Math.min(5, gap);
       const nextBlock = this.lastProcessedBlock + 1;
       const endBlock = nextBlock + batchSize - 1;
 
@@ -119,9 +123,9 @@ export class CrawlerService {
         const blobs = await this.processBlock(height);
         totalBlobs += blobs;
 
-        // Rate limit: 200ms between block fetches
+        // Rate limit: 500ms between block fetches to avoid 429
         if (height < endBlock) {
-          await new Promise((r) => setTimeout(r, 200));
+          await new Promise((r) => setTimeout(r, 500));
         }
       }
 
