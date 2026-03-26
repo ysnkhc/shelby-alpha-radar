@@ -56,7 +56,7 @@ export async function detectAlphaSignals(data: BlobJobData): Promise<void> {
           timestamp: new Date().toISOString(),
         });
 
-        console.log(`🔔 Alpha [${priority}]: [${s.type}] score=${s.score} — ${s.explanation}`);
+        console.log(`[SSE] Broadcasting event: ${s.type} score=${s.score} priority=${priority}`);
       }
     }
   } catch (error) {

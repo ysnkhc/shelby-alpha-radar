@@ -12,10 +12,6 @@ const SHELBY_MODULE_PREFIX =
 /**
  * Confirmed Shelby blob event types (discovered via event scanning):
  *
- *  BlobRegisteredEvent — emitted by `register_multiple_blobs`
- *    Data: { blob_name, blob_commitment, blob_size, owner, ... }
- *    → NOT indexed (blob not yet fully written)
- *
  *  BlobWrittenEvent — emitted by `add_blob_acknowledgements`
  *    Data: { blob_name, owner, chunkset_count, creation_micros }
  *    → Indexed (blob fully written and available)
@@ -27,17 +23,15 @@ const SHELBY_BLOB_WRITTEN_EVENT =
 const CRAWLER_STATE_KEY = "last_processed_block";
 
 /**
+ * How many blocks behind chain tip to start when no saved state exists.
+ * 1000 blocks ≈ ~17 minutes of history on Shelbynet (~1 block/s).
+ */
+const INITIAL_LOOKBACK = 1000;
+
+/**
  * Crawler Service — Aptos Event Scanner
  *
  * Scans Shelbynet Aptos blocks for Shelby blob commit events.
- *
- * Flow:
- * 1. Read last processed block from the database
- * 2. Fetch new blocks from Shelbynet Aptos fullnode
- * 3. Inspect transaction events for Shelby module activity
- * 4. Extract account address + blob name from matching events
- * 5. Push discovered blobs to the processing queue
- * 6. Persist the latest processed block height
  */
 export class CrawlerService {
   private readonly aptos: AptosClient;
@@ -50,7 +44,7 @@ export class CrawlerService {
 
   constructor(
     onBlobDiscovered: (blob: BlobJobData) => Promise<void>,
-    pollIntervalMs = 10_000,
+    pollIntervalMs = 5_000,
     aptosClient?: AptosClient
   ) {
     this.aptos = aptosClient ?? new AptosClient();
@@ -65,8 +59,19 @@ export class CrawlerService {
     this.running = true;
 
     // Restore last processed block from DB
-    this.lastProcessedBlock = await this.loadLastProcessedBlock();
-    console.log(`🔍 Crawler started at block ${this.lastProcessedBlock}`);
+    const savedBlock = await this.loadLastProcessedBlock();
+
+    if (savedBlock > 0) {
+      this.lastProcessedBlock = savedBlock;
+      console.log(`[Crawler] Resuming from saved block ${savedBlock}`);
+    } else {
+      // First run — start near chain tip, not block 0!
+      const latestBlock = await this.aptos.getLatestBlockHeight();
+      this.lastProcessedBlock = Math.max(0, latestBlock - INITIAL_LOOKBACK);
+      console.log(
+        `[Crawler] First run — chain tip: ${latestBlock}, starting from block ${this.lastProcessedBlock}`
+      );
+    }
 
     void this.poll();
   }
@@ -77,7 +82,7 @@ export class CrawlerService {
       clearTimeout(this.pollTimer);
       this.pollTimer = null;
     }
-    console.log(`🛑 Crawler stopped at block ${this.lastProcessedBlock}`);
+    console.log(`[Crawler] Stopped at block ${this.lastProcessedBlock}`);
   }
 
   // ── Core loop ──────────────────────────────────────────────
@@ -94,9 +99,15 @@ export class CrawlerService {
         return;
       }
 
-      // Process up to 5 blocks per cycle (rate-limited)
+      const gap = latestBlock - this.lastProcessedBlock;
+      // Process up to 10 blocks per cycle
+      const batchSize = Math.min(10, gap);
       const nextBlock = this.lastProcessedBlock + 1;
-      const endBlock = Math.min(nextBlock + 4, latestBlock);
+      const endBlock = nextBlock + batchSize - 1;
+
+      console.log(
+        `[Crawler] Processing blocks ${nextBlock}–${endBlock} (gap: ${gap})`
+      );
 
       let totalBlobs = 0;
 
@@ -104,9 +115,9 @@ export class CrawlerService {
         const blobs = await this.processBlock(height);
         totalBlobs += blobs;
 
-        // Rate limit: 500ms between block fetches to avoid 429
+        // Rate limit: 200ms between block fetches
         if (height < endBlock) {
-          await new Promise((r) => setTimeout(r, 500));
+          await new Promise((r) => setTimeout(r, 200));
         }
       }
 
@@ -116,29 +127,23 @@ export class CrawlerService {
 
       if (totalBlobs > 0) {
         console.log(
-          `✅ Blocks ${nextBlock}–${endBlock}: ${totalBlobs} blob events found`
+          `[Crawler] ✅ Blocks ${nextBlock}–${endBlock}: ${totalBlobs} blob events found`
         );
       }
 
-      // If more blocks remain, add a small delay before continuing (catch-up mode)
+      // If still behind, short delay; otherwise normal poll
       if (endBlock < latestBlock) {
-        this.pollTimer = setTimeout(
-          () => void this.poll(),
-          1_000 // 1s between catch-up cycles
-        );
+        this.pollTimer = setTimeout(() => void this.poll(), 500);
       } else {
         this.schedulePoll();
       }
     } catch (error) {
       console.error(
-        "❌ Crawler poll failed:",
+        "[Crawler] ❌ Poll failed:",
         error instanceof Error ? error.message : error
       );
-      // Longer delay after errors (e.g. 429 rate limit)
-      this.pollTimer = setTimeout(
-        () => void this.poll(),
-        5_000
-      );
+      // Longer delay after errors
+      this.pollTimer = setTimeout(() => void this.poll(), 5_000);
     }
   }
 
@@ -153,18 +158,13 @@ export class CrawlerService {
 
   // ── Block Processing ───────────────────────────────────────
 
-  /**
-   * Fetch a block with transactions, scan events, and enqueue blobs.
-   * Returns the number of blob events found.
-   */
   private async processBlock(height: number): Promise<number> {
     let block: AptosBlock;
     try {
       block = await this.aptos.getBlockByHeight(height, true);
     } catch (error) {
-      // Some blocks might not exist or timeout — skip gracefully
       console.warn(
-        `⚠️  Block ${height} fetch failed:`,
+        `[Crawler] ⚠️ Block ${height} fetch failed:`,
         error instanceof Error ? error.message : error
       );
       return 0;
@@ -177,7 +177,17 @@ export class CrawlerService {
       if (tx.type !== "user_transaction" || !tx.events) continue;
 
       for (const event of tx.events) {
+        // Log ALL event types for debugging (first 50 blocks only)
+        if (height <= this.lastProcessedBlock + 50) {
+          if (event.type.includes(SHELBY_MODULE_PREFIX)) {
+            console.log(`[Event] Shelby event detected: ${event.type}`);
+          }
+        }
+
         if (this.isShelbyBlobEvent(event)) {
+          console.log(
+            `[Event] ✅ BlobWrittenEvent in block ${height}: owner=${event.data["owner"]}, blob=${event.data["blob_name"]}`
+          );
           const jobData = this.extractBlobJob(event, tx.hash, block);
           if (jobData) {
             await this.onBlobDiscovered(jobData);
@@ -192,23 +202,10 @@ export class CrawlerService {
 
   // ── Event Detection ────────────────────────────────────────
 
-  /**
-   * Check if an event is a confirmed Shelby blob event.
-   * Matches against the exact event types discovered on Shelbynet.
-   */
   private isShelbyBlobEvent(event: TransactionEvent): boolean {
     return event.type === SHELBY_BLOB_WRITTEN_EVENT;
   }
 
-  /**
-   * Extract account address and blob name from a Shelby event.
-   *
-   * BlobRegisteredEvent data:
-   *   { blob_name, blob_commitment, blob_size, owner, ... }
-   *
-   * BlobWrittenEvent data:
-   *   { blob_name, owner, chunkset_count, creation_micros }
-   */
   private extractBlobJob(
     event: TransactionEvent,
     txHash: string,
@@ -242,7 +239,6 @@ export class CrawlerService {
       });
       return state ? Number(state.value) : 0;
     } catch {
-      // Table might not exist yet — start from 0
       return 0;
     }
   }
@@ -256,7 +252,7 @@ export class CrawlerService {
       });
     } catch (error) {
       console.warn(
-        "⚠️  Could not persist crawler state:",
+        "[Crawler] ⚠️ Could not persist state:",
         error instanceof Error ? error.message : error
       );
     }

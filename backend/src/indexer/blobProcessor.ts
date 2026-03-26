@@ -91,8 +91,9 @@ export async function processBlob(data: BlobJobData): Promise<void> {
     });
   });
 
-  console.log(`✅ Blob ${blobId} indexed (block ${data.blockHeight}).`);
+  console.log(`[DB] ✅ Blob inserted: ${data.accountAddress}/${data.blobName} (block ${data.blockHeight})`);
 
   // Run alpha signal detection (non-blocking, best-effort)
+  console.log(`[Alpha] Detector triggered for blob: ${blobId}`);
   await detectAlphaSignals(data);
 }
