@@ -9,6 +9,8 @@ import { searchRoutes } from "./routes/search.js";
 import { intelligenceRoutes } from "./routes/intelligence.js";
 import { alphaRoutes } from "./routes/alpha.js";
 import { liveRoutes } from "./routes/live.js";
+import { projectRoutes } from "./routes/projects.js";
+import { insightRoutes } from "./routes/insights.js";
 import { errorHandler } from "./plugins/errorHandler.js";
 import { rateLimiter } from "./plugins/rateLimiter.js";
 
@@ -52,6 +54,8 @@ export async function createServer() {
   await app.register(intelligenceRoutes);
   await app.register(alphaRoutes);
   await app.register(liveRoutes);
+  await app.register(projectRoutes);
+  await app.register(insightRoutes);
 
   return app;
 }
