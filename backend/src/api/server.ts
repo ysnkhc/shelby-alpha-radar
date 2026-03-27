@@ -11,6 +11,7 @@ import { alphaRoutes } from "./routes/alpha.js";
 import { liveRoutes } from "./routes/live.js";
 import { projectRoutes } from "./routes/projects.js";
 import { insightRoutes } from "./routes/insights.js";
+import { aiRoutes } from "./routes/ai.js";
 import { errorHandler } from "./plugins/errorHandler.js";
 import { rateLimiter } from "./plugins/rateLimiter.js";
 
@@ -29,7 +30,7 @@ export async function createServer() {
   });
 
   // ── CORS — allow all origins ────────────────────────────────
-  await app.register(cors, { origin: "*", methods: ["GET"] });
+  await app.register(cors, { origin: "*", methods: ["GET", "POST", "OPTIONS"] });
   await app.register(errorHandler);
   await app.register(rateLimiter, { max: 100, windowMs: 60_000 });
 
@@ -56,6 +57,7 @@ export async function createServer() {
   await app.register(liveRoutes);
   await app.register(projectRoutes);
   await app.register(insightRoutes);
+  await app.register(aiRoutes);
 
   return app;
 }
