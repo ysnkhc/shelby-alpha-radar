@@ -1,17 +1,15 @@
 import { prisma } from "../database/db.js";
 
 /**
- * Insight Engine v2 — Intent-Aware Intelligence
+ * Insight Engine v3 — Decision Engine
  *
- * Quality scoring + project classification + diminishing returns
- * to filter noise and surface genuinely interesting activity.
+ * Adds to v2 (quality + intent):
+ *  - Project stage: EARLY → EMERGING → GROWING → SATURATED → DYING
+ *  - Momentum score: recent growth vs historical baseline
+ *  - Opportunity score: early-stage + high-quality + high-momentum = alpha
  *
- * Key changes from v1:
- *  - Quality score (0-100) penalizes repetitive file types, rewards diversity
- *  - Project classification: MEDIA_SPAM, DATASET, AI_PIPELINE, CONFIG_DEPLOYMENT, UNKNOWN
- *  - Diminishing returns on wallet count (caps at 20, heavily after 50+)
- *  - Final importance = raw importance × quality multiplier
- *  - Alerts only fire on meaningful transitions, not incremental wallet joins
+ * The opportunity score is the PRIMARY ranking signal. It answers:
+ * "What should I pay attention to RIGHT NOW?"
  */
 
 // ── Public Types ──────────────────────────────────────────────
@@ -24,13 +22,23 @@ export type ProjectIntent =
   | "MIXED_PROJECT"
   | "UNKNOWN";
 
+export type ProjectStage =
+  | "EARLY"       // 1-3 blobs, 1-2 wallets — just discovered
+  | "EMERGING"    // 4-10 blobs, growing — building momentum
+  | "GROWING"     // 11-30 blobs, active — established project
+  | "SATURATED"   // 30+ blobs, slowing — mature, less alpha
+  | "DYING";      // no activity in 12+ hours — losing momentum
+
 export interface Insight {
   id: string;
   title: string;
   narrative: string;
   whyItMatters: string;
-  importance: number;        // 0-100 final (raw × quality)
-  quality: number;           // 0-100 content quality
+  importance: number;
+  quality: number;
+  opportunity: number;
+  stage: ProjectStage;
+  momentum: number;
   category: "project" | "ai" | "data" | "rare" | "alert";
   intent: ProjectIntent;
   projectId: string | null;
@@ -47,8 +55,11 @@ export interface ProjectSummary {
   label: string;
   category: string;
   intent: ProjectIntent;
+  stage: ProjectStage;
   status: "active" | "growing" | "dormant";
   quality: number;
+  momentum: number;
+  opportunity: number;
   wallets: string[];
   walletCount: number;
   blobCount: number;
@@ -70,80 +81,119 @@ export interface Alert {
   message: string;
   projectId: string | null;
   importance: number;
+  opportunity: number;
   timestamp: string;
 }
 
 // ═══════════════════════════════════════════════════════════════
-// QUALITY SCORING
+// PROJECT STAGE
+// ═══════════════════════════════════════════════════════════════
+
+export function computeStage(params: {
+  blobCount: number;
+  walletCount: number;
+  growthRate: number;
+  lastActive: Date;
+}): ProjectStage {
+  const hoursSinceActive = (Date.now() - params.lastActive.getTime()) / 3_600_000;
+
+  // DYING: no activity in 12+ hours
+  if (hoursSinceActive >= 12) return "DYING";
+
+  // Stage by blob count + wallet count
+  const blobs = params.blobCount;
+  const wallets = params.walletCount;
+
+  if (blobs <= 3 && wallets <= 2) return "EARLY";
+  if (blobs <= 10) return "EMERGING";
+  if (blobs <= 30) return "GROWING";
+
+  // SATURATED: large + slowing
+  if (params.growthRate < 1 || hoursSinceActive > 3) return "SATURATED";
+
+  return "GROWING";
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MOMENTUM SCORE (0-100)
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * Compute a 0-100 quality score for a project.
+ * Momentum = how is recent growth compared to historical?
  *
- * Rewards:
- *  - File type diversity (mixed ecosystems)
- *  - Structured content (JSON, CSV, configs)
- *  - Domain-specific signals (AI, trading)
+ * High momentum = accelerating project (bullish)
+ * Low momentum = decelerating or stale (bearish)
  *
- * Penalties:
- *  - Single file type dominance (>80% same type)
- *  - Pure media with no structured data
- *  - No content signals at all
+ * Formula: recent hourly rate vs overall hourly rate.
  */
+export function computeMomentum(params: {
+  growthRate: number;     // current blobs/hour
+  blobCount: number;
+  firstSeen: Date;
+  lastActive: Date;
+}): number {
+  const totalHours = Math.max(1, (params.lastActive.getTime() - params.firstSeen.getTime()) / 3_600_000);
+  const historicalRate = params.blobCount / totalHours;
+
+  if (historicalRate === 0) return 50; // neutral
+
+  const ratio = params.growthRate / historicalRate;
+
+  // ratio > 2 = accelerating strongly
+  // ratio 1-2 = steady/growing
+  // ratio 0.5-1 = slowing
+  // ratio < 0.5 = decelerating
+  if (ratio >= 3) return 100;
+  if (ratio >= 2) return 85;
+  if (ratio >= 1.5) return 75;
+  if (ratio >= 1) return 60;
+  if (ratio >= 0.5) return 40;
+  if (ratio >= 0.2) return 25;
+  return 10;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// QUALITY SCORING (unchanged from v2)
+// ═══════════════════════════════════════════════════════════════
+
 export function computeQuality(params: {
   fileTypes: string[];
   tags: string[];
   signals: string[];
   blobCount: number;
 }): number {
-  let quality = 50; // baseline
+  let quality = 50;
 
-  // ── File type diversity ──────────────────────────
   const typeCount = params.fileTypes.length;
   if (typeCount >= 4) quality += 20;
   else if (typeCount >= 3) quality += 15;
   else if (typeCount >= 2) quality += 5;
-  else quality -= 10; // single type = penalty
+  else quality -= 10;
 
-  // ── Structured content reward ────────────────────
   const structured = new Set(["json", "csv", "yaml", "yml", "toml", "xml", "parquet", "arrow"]);
-  const hasStructured = params.fileTypes.some((t) => structured.has(t));
-  if (hasStructured) quality += 15;
+  if (params.fileTypes.some((t) => structured.has(t))) quality += 15;
 
-  // ── Config/code presence reward ──────────────────
   const configTypes = new Set(["config", "logs", "ai_data", "dataset"]);
-  const configHits = params.tags.filter((t) => configTypes.has(t)).length;
-  quality += Math.min(15, configHits * 5);
+  quality += Math.min(15, params.tags.filter((t) => configTypes.has(t)).length * 5);
 
-  // ── Domain signal reward ─────────────────────────
   const domainSignals = new Set(["ai_interaction", "model_data", "agent_config", "trading_data"]);
-  const signalHits = params.signals.filter((s) => domainSignals.has(s)).length;
-  quality += Math.min(15, signalHits * 8);
+  quality += Math.min(15, params.signals.filter((s) => domainSignals.has(s)).length * 8);
 
-  // ── Media-only penalty ───────────────────────────
   const mediaTypes = new Set(["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp", "ico", "mp3", "mp4", "wav", "avi", "mov"]);
-  const allMedia = params.fileTypes.length > 0 && params.fileTypes.every((t) => mediaTypes.has(t));
-  if (allMedia) {
+  if (params.fileTypes.length > 0 && params.fileTypes.every((t) => mediaTypes.has(t))) {
     quality -= 30;
-    // Extra penalty for high-volume pure media
     if (params.blobCount > 20) quality -= 10;
   }
 
-  // ── No signals penalty ───────────────────────────
-  if (params.signals.length === 0 && params.tags.length <= 2) {
-    quality -= 10;
-  }
+  if (params.signals.length === 0 && params.tags.length <= 2) quality -= 10;
 
   return Math.max(0, Math.min(100, quality));
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PROJECT CLASSIFICATION
+// PROJECT CLASSIFICATION (unchanged from v2)
 // ═══════════════════════════════════════════════════════════════
 
-/**
- * Classify project intent based on file types, tags, and signals.
- */
 export function classifyProject(params: {
   fileTypes: string[];
   tags: string[];
@@ -154,49 +204,79 @@ export function classifyProject(params: {
   const mediaTypes = new Set(["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp", "ico", "mp3", "mp4", "wav", "avi", "mov"]);
   const allMedia = params.fileTypes.length > 0 && params.fileTypes.every((t) => mediaTypes.has(t));
 
-  // MEDIA_SPAM: all media files, many wallets, no domain signals
-  if (allMedia && params.signals.length === 0 && params.walletCount > 5) {
-    return "MEDIA_SPAM";
-  }
+  if (allMedia && params.signals.length === 0 && params.walletCount > 5) return "MEDIA_SPAM";
 
-  // AI_PIPELINE: has AI-related signals
   const aiSignals = ["ai_interaction", "model_data", "agent_config"];
-  if (params.signals.some((s) => aiSignals.includes(s))) {
-    return "AI_PIPELINE";
-  }
+  if (params.signals.some((s) => aiSignals.includes(s))) return "AI_PIPELINE";
 
-  // CONFIG_DEPLOYMENT: has config tags + domain signals
-  if (params.tags.includes("config") && params.signals.length > 0) {
-    return "CONFIG_DEPLOYMENT";
-  }
+  if (params.tags.includes("config") && params.signals.length > 0) return "CONFIG_DEPLOYMENT";
 
-  // DATASET: has dataset tags or structured data files
   const dataTypes = new Set(["csv", "parquet", "arrow", "json", "npy", "feather"]);
-  if (params.tags.includes("dataset") || params.fileTypes.some((t) => dataTypes.has(t))) {
-    return "DATASET";
-  }
+  if (params.tags.includes("dataset") || params.fileTypes.some((t) => dataTypes.has(t))) return "DATASET";
 
-  // MIXED_PROJECT: multiple file types with some substance
-  if (params.fileTypes.length >= 3 && !allMedia) {
-    return "MIXED_PROJECT";
-  }
+  if (params.fileTypes.length >= 3 && !allMedia) return "MIXED_PROJECT";
 
   return "UNKNOWN";
 }
 
 // ═══════════════════════════════════════════════════════════════
-// IMPORTANCE SCORING (v2 — with quality + diminishing returns)
+// OPPORTUNITY SCORE (0-100) — THE CORE DECISION SIGNAL
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * Compute final importance = raw importance × quality multiplier.
+ * Opportunity = should I pay attention to this RIGHT NOW?
  *
- * Diminishing returns on wallet count:
- *   1-5:   full credit (5pts each)
- *   6-20:  2pts each
- *   21-50: 0.5pts each
- *   50+:   0pts (capped)
+ * Favors:  EARLY/EMERGING + high quality + high momentum
+ * Penalizes: SATURATED/DYING, media spam, low quality
+ *
+ * Weights:
+ *   Stage bonus:  0-30 pts (EARLY=30, EMERGING=25, GROWING=15, SATURATED=5, DYING=0)
+ *   Quality:      0-30 pts (quality × 0.3)
+ *   Momentum:     0-25 pts (momentum × 0.25)
+ *   Multi-wallet: 0-15 pts (2+ wallets in early stage = big signal)
  */
+export function computeOpportunity(params: {
+  stage: ProjectStage;
+  quality: number;
+  momentum: number;
+  walletCount: number;
+  intent: ProjectIntent;
+}): number {
+  // Media spam = zero opportunity
+  if (params.intent === "MEDIA_SPAM") return 0;
+
+  let score = 0;
+
+  // Stage bonus: early-stage is where the alpha is
+  const stageBonus: Record<ProjectStage, number> = {
+    EARLY: 30,
+    EMERGING: 25,
+    GROWING: 15,
+    SATURATED: 5,
+    DYING: 0,
+  };
+  score += stageBonus[params.stage];
+
+  // Quality contribution
+  score += Math.round(params.quality * 0.3);
+
+  // Momentum contribution
+  score += Math.round(params.momentum * 0.25);
+
+  // Multi-wallet early-stage bonus (strongest signal)
+  if (params.walletCount >= 2 && (params.stage === "EARLY" || params.stage === "EMERGING")) {
+    score += 15;
+  } else if (params.walletCount >= 2) {
+    score += 5;
+  }
+
+  return Math.min(100, score);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IMPORTANCE (with diminishing returns — from v2)
+// ═══════════════════════════════════════════════════════════════
+
 export function computeImportance(params: {
   walletCount: number;
   blobCount: number;
@@ -205,7 +285,7 @@ export function computeImportance(params: {
   tags: string[];
   fileTypes: string[];
   signalScore?: number;
-}): { raw: number; quality: number; final: number; intent: ProjectIntent } {
+}): { quality: number; final: number; intent: ProjectIntent } {
   const quality = computeQuality({
     fileTypes: params.fileTypes,
     tags: params.tags,
@@ -222,36 +302,27 @@ export function computeImportance(params: {
   });
 
   let raw = 0;
-
-  // ── Multi-wallet with diminishing returns ────────
   const wc = params.walletCount;
-  if (wc <= 5) raw += wc * 5;          // 1-5: full credit
-  else if (wc <= 20) raw += 25 + (wc - 5) * 2;  // 6-20: +2 each
-  else if (wc <= 50) raw += 55 + (wc - 20) * 0.5; // 21-50: +0.5 each
-  else raw += 70;                       // 50+: capped at 70
+  if (wc <= 5) raw += wc * 5;
+  else if (wc <= 20) raw += 25 + (wc - 5) * 2;
+  else if (wc <= 50) raw += 55 + (wc - 20) * 0.5;
+  else raw += 70;
 
-  // ── Content value ────────────────────────────────
   const highValueSignals = new Set(["ai_interaction", "model_data", "agent_config", "trading_data"]);
-  const contentHits = params.signals.filter((s) => highValueSignals.has(s)).length;
-  raw += Math.min(20, contentHits * 8);
+  raw += Math.min(20, params.signals.filter((s) => highValueSignals.has(s)).length * 8);
 
-  // ── Growth rate ──────────────────────────────────
   if (params.growthRate >= 10) raw += 15;
   else if (params.growthRate >= 5) raw += 10;
   else if (params.growthRate >= 2) raw += 5;
 
-  // ── Signal score bonus ───────────────────────────
   if (params.signalScore && params.signalScore >= 9) raw += 10;
   else if (params.signalScore && params.signalScore >= 7) raw += 5;
 
   raw = Math.min(100, raw);
-
-  // ── Apply quality multiplier ─────────────────────
-  // quality 0-100 maps to multiplier 0.1-1.0
   const qualityMultiplier = 0.1 + (quality / 100) * 0.9;
   const final = Math.round(raw * qualityMultiplier);
 
-  return { raw, quality, final, intent };
+  return { quality, final, intent };
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -273,7 +344,6 @@ export async function generateInsights(limit = 20): Promise<Insight[]> {
 
   const projectMap = new Map(projects.map((p) => [p.id, p]));
 
-  // Deduplicate by project — keep highest-scored event per project
   const seen = new Map<string, typeof recentEvents[0]>();
   for (const event of recentEvents) {
     const projectId = findProjectForEvent(event, projects);
@@ -298,11 +368,20 @@ export async function generateInsights(limit = 20): Promise<Insight[]> {
       signalScore: event.score,
     });
 
-    // Skip low-quality spam entirely
+    const stage = project
+      ? computeStage({ blobCount: project.blobCount, walletCount: project.walletCount, growthRate: project.growthRate, lastActive: project.lastActive })
+      : "EARLY";
+
+    const momentum = project
+      ? computeMomentum({ growthRate: project.growthRate, blobCount: project.blobCount, firstSeen: project.firstSeen, lastActive: project.lastActive })
+      : 50;
+
+    const opportunity = computeOpportunity({ stage, quality, momentum, walletCount: project?.walletCount ?? 1, intent });
+
     if (intent === "MEDIA_SPAM" && importance < 20) continue;
 
     const category = categorizeSignal(event.signalType);
-    const { title, narrative, whyItMatters } = generateNarrative(event, project, intent);
+    const { title, narrative, whyItMatters } = generateNarrative(event, project, intent, stage, momentum, opportunity);
 
     insights.push({
       id: `insight-${event.id}`,
@@ -311,6 +390,9 @@ export async function generateInsights(limit = 20): Promise<Insight[]> {
       whyItMatters,
       importance,
       quality,
+      opportunity,
+      stage,
+      momentum,
       category,
       intent,
       projectId,
@@ -323,8 +405,9 @@ export async function generateInsights(limit = 20): Promise<Insight[]> {
     });
   }
 
+  // Sort by OPPORTUNITY first, then importance
   return insights
-    .sort((a, b) => b.importance - a.importance)
+    .sort((a, b) => b.opportunity - a.opportunity || b.importance - a.importance)
     .slice(0, limit);
 }
 
@@ -336,7 +419,7 @@ export async function getProjectSummaries(limit = 20): Promise<ProjectSummary[]>
   const projects = await prisma.project.findMany({
     where: { blobCount: { gte: 2 } },
     orderBy: [{ walletCount: "desc" }, { blobCount: "desc" }],
-    take: limit * 2, // fetch more, then filter/rank
+    take: limit * 2,
   });
 
   const now = new Date();
@@ -349,7 +432,7 @@ export async function getProjectSummaries(limit = 20): Promise<ProjectSummary[]>
     else if (hoursSinceActive < 6) status = "active";
     else status = "dormant";
 
-    const { quality, final, intent } = computeImportance({
+    const { quality, final: importance, intent } = computeImportance({
       walletCount: p.walletCount,
       blobCount: p.blobCount,
       growthRate: p.growthRate,
@@ -358,15 +441,22 @@ export async function getProjectSummaries(limit = 20): Promise<ProjectSummary[]>
       fileTypes: p.fileTypes,
     });
 
-    const topInsight = generateProjectInsight(p, status, intent);
+    const stage = computeStage({ blobCount: p.blobCount, walletCount: p.walletCount, growthRate: p.growthRate, lastActive: p.lastActive });
+    const momentum = computeMomentum({ growthRate: p.growthRate, blobCount: p.blobCount, firstSeen: p.firstSeen, lastActive: p.lastActive });
+    const opportunity = computeOpportunity({ stage, quality, momentum, walletCount: p.walletCount, intent });
+
+    const topInsight = generateProjectInsight(p, status, intent, stage, momentum, opportunity);
 
     return {
       projectId: p.id,
       label: p.label,
       category: p.category,
       intent,
+      stage,
       status,
       quality,
+      momentum,
+      opportunity,
       wallets: p.wallets.slice(0, 10).map((w) => `${w.slice(0, 8)}...${w.slice(-4)}`),
       walletCount: p.walletCount,
       blobCount: p.blobCount,
@@ -376,19 +466,20 @@ export async function getProjectSummaries(limit = 20): Promise<ProjectSummary[]>
       fileTypes: p.fileTypes,
       firstSeen: p.firstSeen.toISOString(),
       lastActive: p.lastActive.toISOString(),
-      importance: final,
+      importance,
       topInsight,
       recentSignals: [],
     };
   });
 
+  // Sort by opportunity (the decision signal)
   return summaries
-    .sort((a, b) => b.importance - a.importance)
+    .sort((a, b) => b.opportunity - a.opportunity || b.importance - a.importance)
     .slice(0, limit);
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ALERTS (v2 — meaningful transitions only)
+// ALERTS (v3 — opportunity-driven)
 // ═══════════════════════════════════════════════════════════════
 
 export async function generateAlerts(): Promise<Alert[]> {
@@ -396,19 +487,18 @@ export async function generateAlerts(): Promise<Alert[]> {
   const now = new Date();
   const oneHourAgo = new Date(now.getTime() - 3_600_000);
 
-  // Alert 1: Non-spam multi-wallet projects with high activity
-  const hotProjects = await prisma.project.findMany({
+  // Alert: High-opportunity non-spam projects
+  const activeProjects = await prisma.project.findMany({
     where: {
-      walletCount: { gte: 3 },
       lastActive: { gte: oneHourAgo },
-      growthRate: { gte: 2 },
+      blobCount: { gte: 2 },
     },
     orderBy: { walletCount: "desc" },
-    take: 10,
+    take: 20,
   });
 
-  for (const p of hotProjects) {
-    const { quality, final, intent } = computeImportance({
+  for (const p of activeProjects) {
+    const { quality, final: importance, intent } = computeImportance({
       walletCount: p.walletCount,
       blobCount: p.blobCount,
       growthRate: p.growthRate,
@@ -417,80 +507,32 @@ export async function generateAlerts(): Promise<Alert[]> {
       fileTypes: p.fileTypes,
     });
 
-    // Skip media spam from alerts entirely
     if (intent === "MEDIA_SPAM") continue;
-    // Skip low-quality projects
     if (quality < 30) continue;
 
+    const stage = computeStage({ blobCount: p.blobCount, walletCount: p.walletCount, growthRate: p.growthRate, lastActive: p.lastActive });
+    const momentum = computeMomentum({ growthRate: p.growthRate, blobCount: p.blobCount, firstSeen: p.firstSeen, lastActive: p.lastActive });
+    const opportunity = computeOpportunity({ stage, quality, momentum, walletCount: p.walletCount, intent });
+
+    // Only alert on high-opportunity projects
+    if (opportunity < 40) continue;
+
+    const level = opportunity >= 70 ? "critical" : opportunity >= 55 ? "high" : "watch";
+    const stageEmoji = { EARLY: "🌱", EMERGING: "🚀", GROWING: "📈", SATURATED: "⚖️", DYING: "📉" };
+
     alerts.push({
-      id: `alert-project-${p.id}`,
-      level: final >= 60 ? "critical" : "high",
-      title: `🔥 ${p.label}`,
-      message: generateProjectInsight(p, "growing", intent),
+      id: `alert-${p.id}`,
+      level,
+      title: `${stageEmoji[stage]} ${p.label} [${stage}]`,
+      message: generateProjectInsight(p, "growing", intent, stage, momentum, opportunity),
       projectId: p.id,
-      importance: final,
+      importance,
+      opportunity,
       timestamp: p.lastActive.toISOString(),
     });
   }
 
-  // Alert 2: AI projects (these are always interesting)
-  const aiProjects = await prisma.project.findMany({
-    where: {
-      category: "ai",
-      lastActive: { gte: oneHourAgo },
-      blobCount: { gte: 3 },
-    },
-    orderBy: { blobCount: "desc" },
-    take: 3,
-  });
-
-  for (const p of aiProjects) {
-    if (alerts.some((a) => a.projectId === p.id)) continue;
-
-    const { final } = computeImportance({
-      walletCount: p.walletCount,
-      blobCount: p.blobCount,
-      growthRate: p.growthRate,
-      signals: p.signals,
-      tags: p.tags,
-      fileTypes: p.fileTypes,
-    });
-
-    alerts.push({
-      id: `alert-ai-${p.id}`,
-      level: "high",
-      title: `🤖 ${p.label}`,
-      message: `AI project with ${p.blobCount} files from ${p.walletCount} wallet(s). Signals: ${p.signals.join(", ")}`,
-      projectId: p.id,
-      importance: final,
-      timestamp: p.lastActive.toISOString(),
-    });
-  }
-
-  // Alert 3: High-score events (only truly unique signal types, deduped)
-  const highScoreEvents = await prisma.alphaEvent.findMany({
-    where: {
-      score: { gte: 9 },
-      createdAt: { gte: oneHourAgo },
-      signalType: { notIn: ["MULTI_WALLET_PROJECT"] }, // skip incremental wallet joins
-    },
-    orderBy: { score: "desc" },
-    take: 3,
-  });
-
-  for (const e of highScoreEvents) {
-    alerts.push({
-      id: `alert-event-${e.id}`,
-      level: "watch",
-      title: `⚡ ${e.signalType.replace(/_/g, " ")}`,
-      message: e.explanation,
-      projectId: null,
-      importance: e.score * 10,
-      timestamp: e.createdAt.toISOString(),
-    });
-  }
-
-  return alerts.sort((a, b) => b.importance - a.importance);
+  return alerts.sort((a, b) => b.opportunity - a.opportunity);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -526,78 +568,95 @@ interface ProjectLike {
   fileTypes: string[];
 }
 
-function generateProjectInsight(project: ProjectLike, status: string, intent: ProjectIntent): string {
-  // Intent-aware insight generation
+function generateProjectInsight(
+  project: ProjectLike,
+  status: string,
+  intent: ProjectIntent,
+  stage: ProjectStage,
+  momentum: number,
+  opportunity: number
+): string {
   if (intent === "MEDIA_SPAM") {
-    return `Low-value media collection — ${project.walletCount} wallets uploading ${project.fileTypes.join("/")} files with no structured content.`;
+    return `Low-value media spam — ${project.walletCount} wallets uploading ${project.fileTypes.join("/")} files.`;
   }
 
   const parts: string[] = [];
 
-  if (project.walletCount > 1) {
-    parts.push(`${project.walletCount} wallets collaborating`);
-  }
+  // Stage context
+  const stageDesc: Record<ProjectStage, string> = {
+    EARLY: "newly discovered",
+    EMERGING: "building momentum",
+    GROWING: "actively growing",
+    SATURATED: "mature/slowing",
+    DYING: "going quiet",
+  };
+  parts.push(`📍 ${stageDesc[stage]}`);
 
-  if (status === "growing") {
-    parts.push(`${project.growthRate} files/hour`);
-  }
+  if (project.walletCount > 1) parts.push(`${project.walletCount} wallets`);
+  if (status === "growing") parts.push(`${project.growthRate}/hr`);
 
-  // Domain-specific insight
+  // Momentum indicator
+  if (momentum >= 75) parts.push("⬆️ accelerating");
+  else if (momentum <= 25) parts.push("⬇️ decelerating");
+
+  // Domain signals
   const domainSignals = project.signals.filter((s) =>
     ["ai_interaction", "model_data", "trading_data", "agent_config"].includes(s)
   );
-  if (domainSignals.length > 0) {
-    parts.push(`detected ${domainSignals.join(" + ")} activity`);
-  }
+  if (domainSignals.length > 0) parts.push(domainSignals.join(" + "));
 
-  if (project.fileTypes.length > 2) {
-    parts.push(`${project.fileTypes.length} file types (${project.fileTypes.join(", ")})`);
-  }
+  if (project.fileTypes.length > 2) parts.push(`${project.fileTypes.length} file types`);
 
-  if (intent !== "UNKNOWN") {
-    const intentLabels: Record<ProjectIntent, string> = {
-      MEDIA_SPAM: "",
-      DATASET: "building a dataset",
-      AI_PIPELINE: "running an AI pipeline",
-      CONFIG_DEPLOYMENT: "deploying configurations",
-      MIXED_PROJECT: "multi-component project",
-      UNKNOWN: "",
-    };
-    if (intentLabels[intent]) parts.push(intentLabels[intent]);
-  }
+  // Opportunity summary
+  if (opportunity >= 60) parts.push(`🔥 high opportunity (${opportunity})`);
+  else if (opportunity >= 40) parts.push(`opportunity: ${opportunity}`);
 
-  return parts.length > 0 ? parts.join(" · ") + "." : "Monitoring for further activity.";
+  return parts.join(" · ") + ".";
 }
 
 function generateNarrative(
   event: { signalType: string; explanation: string; score: number },
   project: ProjectLike | null,
-  intent: ProjectIntent
+  intent: ProjectIntent,
+  stage: ProjectStage,
+  momentum: number,
+  opportunity: number
 ): { title: string; narrative: string; whyItMatters: string } {
   let title: string;
+  const stageTag = `[${stage}]`;
+
   if (intent === "MEDIA_SPAM") {
     title = "Media Upload Activity";
   } else if (project && project.walletCount > 1) {
-    title = project.label;
+    title = `${project.label} ${stageTag}`;
   } else {
-    title = event.signalType.replace(/_/g, " ");
+    title = `${event.signalType.replace(/_/g, " ")} ${stageTag}`;
   }
 
   const narrative = event.explanation;
 
-  const whyItMattersMap: Record<string, string> = {
-    MULTI_WALLET_PROJECT: "Multiple wallets converging on the same project indicates organized development — this rarely happens by coincidence.",
-    PROJECT_GROWTH: "Sustained file accumulation indicates real momentum — active building, not just testing.",
-    AI_TRAINING: "AI model training on decentralized storage indicates sophisticated ML workflows.",
-    AI_INFERENCE: "Real-time inference outputs suggest a live production AI system.",
-    AGENT_DEPLOYMENT: "Autonomous agent deployments represent cutting-edge on-chain automation.",
-    DATA_PIPELINE: "Sustained data upload rates indicate production ETL or automated data collection.",
-    DATASET_FORMATION: "Large datasets forming on-chain suggest training data preparation or research archives.",
-    RARE_FILE_TYPE: "Novel file formats expand the ecosystem and signal new use cases.",
-  };
+  // Why it matters — now includes stage + opportunity context
+  let whyItMatters: string;
 
-  const whyItMatters = whyItMattersMap[event.signalType]
-    ?? `Scored ${event.score}/10 — top-tier detected activity.`;
+  if (opportunity >= 60 && (stage === "EARLY" || stage === "EMERGING")) {
+    whyItMatters = `🔥 HIGH OPPORTUNITY — This is an ${stage.toLowerCase()}-stage project with strong quality (${project ? computeQuality({ fileTypes: project.fileTypes, tags: project.tags, signals: project.signals, blobCount: project.blobCount }) : 50}) and ${momentum >= 60 ? "accelerating" : "steady"} momentum. Early discovery of high-quality projects is where the real alpha is.`;
+  } else {
+    const baseReasons: Record<string, string> = {
+      MULTI_WALLET_PROJECT: "Multiple wallets converging on the same project indicates organized development.",
+      PROJECT_GROWTH: "Sustained file accumulation indicates real momentum.",
+      AI_TRAINING: "AI model training on decentralized storage indicates sophisticated ML workflows.",
+      AI_INFERENCE: "Real-time inference outputs suggest a live production AI system.",
+      AGENT_DEPLOYMENT: "Autonomous agent deployments represent cutting-edge on-chain automation.",
+      DATA_PIPELINE: "Sustained data upload rates indicate production ETL systems.",
+      DATASET_FORMATION: "Large datasets forming on-chain suggest training data preparation.",
+      RARE_FILE_TYPE: "Novel file formats expand the ecosystem and signal new use cases.",
+    };
+    whyItMatters = baseReasons[event.signalType] ?? `Scored ${event.score}/10 — top-tier activity.`;
+
+    if (stage === "SATURATED" || stage === "DYING") {
+      whyItMatters += ` Note: this project is ${stage.toLowerCase()} — less alpha opportunity remaining.`;
+    }
+  }
 
   return { title, narrative, whyItMatters };
 }
