@@ -4,20 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shelby Alpha Radar</title>
-  <meta name="description" content="Opportunity-based project intelligence from the Shelby network" />
+  <meta name="description" content="Temporal intelligence — what just became important on the Shelby network" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg-primary: #07070c;
       --bg-card: #0f0f17;
       --bg-card-hover: #16162222;
       --bg-surface: #111119;
       --border: #1a1a28;
-      --border-accent: #2a2a3a;
       --text: #e8e8ed;
       --text-muted: #8888a0;
       --text-dim: #55556a;
@@ -27,49 +25,52 @@
       --accent-green: #30d158;
       --accent-purple: #a855f7;
       --accent-emerald: #10b981;
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
       --radius: 14px;
       --radius-sm: 10px;
     }
-
     body { font-family: var(--font-sans); background: var(--bg-primary); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
     .app { max-width: 900px; margin: 0 auto; padding: 24px 20px 80px; }
 
-    /* ── Header ──────────────────────────────────── */
     .header { display: flex; align-items: center; justify-content: space-between; padding: 20px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
     .header-left { display: flex; align-items: center; gap: 14px; }
-    .logo { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #ff4d3a 0%, #ff6b35 50%, #ffb800 100%); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 20px rgba(255, 77, 58, 0.3); }
-    .header-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #fff 0%, #b0b0c0 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .logo { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #ff4d3a 0%, #ff6b35 50%, #ffb800 100%); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 20px rgba(255,77,58,0.3); }
+    .header-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #fff, #b0b0c0); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
     .header-subtitle { font-size: 11px; color: var(--text-dim); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
     .status-indicator { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted); }
     .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 8px rgba(48,209,88,0.5); animation: pulse 2s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
-    /* ── Tabs ────────────────────────────────────── */
     .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--bg-surface); border-radius: 12px; padding: 4px; border: 1px solid var(--border); }
     .tab { flex: 1; padding: 10px 16px; border: none; border-radius: 8px; background: transparent; color: var(--text-muted); font-family: var(--font-sans); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-align: center; }
     .tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
     .tab.active { background: rgba(255,77,58,0.12); color: var(--text); box-shadow: 0 2px 8px rgba(255,77,58,0.1); }
 
-    /* ── Alert Banner ───────────────────────────── */
-    .alert-banner { background: linear-gradient(135deg, rgba(255,77,58,0.08), rgba(255,184,0,0.06)); border: 1px solid rgba(255,77,58,0.2); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 20px; display: none; }
+    /* Alert Banner */
+    .alert-banner { background: linear-gradient(135deg, rgba(255,77,58,0.1), rgba(255,184,0,0.06)); border: 1px solid rgba(255,77,58,0.25); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; display: none; }
     .alert-banner.visible { display: block; animation: slideIn 0.4s ease-out; }
-    .alert-title { font-size: 13px; font-weight: 700; color: var(--accent-fire); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-    .alert-msg { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
-    .alert-count { font-size: 11px; color: var(--text-dim); margin-top: 6px; font-family: var(--font-mono); }
+    .alert-banner-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .alert-banner-title { font-size: 14px; font-weight: 700; color: var(--accent-fire); }
+    .act-badge { padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; background: rgba(255,77,58,0.25); color: var(--accent-fire); animation: urgentPulse 1.5s ease-in-out infinite; }
+    @keyframes urgentPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.05)} }
+    .alert-banner-msg { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+    .alert-banner-count { font-size: 11px; color: var(--text-dim); margin-top: 6px; font-family: var(--font-mono); }
 
-    /* ── Stats Bar ───────────────────────────────── */
+    /* Stats Bar */
     .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
     .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; text-align: center; }
     .stat-value { font-size: 20px; font-weight: 800; font-family: var(--font-mono); }
     .stat-label { font-size: 10px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
 
-    /* ── Insight Cards ───────────────────────────── */
+    /* Feed */
     .feed { display: flex; flex-direction: column; gap: 12px; }
     .feed-empty { text-align: center; padding: 60px 20px; color: var(--text-dim); }
     .feed-empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.4; }
 
+    @keyframes slideIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Insight Cards */
     .insight-card {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
       padding: 18px 20px; transition: all 0.3s ease; animation: slideIn 0.4s ease-out;
@@ -77,14 +78,12 @@
     }
     .insight-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
     .insight-card:hover { background: var(--bg-card-hover); transform: translateY(-1px); }
-
-    .insight-card.opp-high { border-color: rgba(255,77,58,0.25); }
-    .insight-card.opp-high::before { background: linear-gradient(180deg, #ff4d3a, #ff6b35); }
-    .insight-card.opp-med { border-color: rgba(255,184,0,0.2); }
+    .insight-card.act-now { border-color: rgba(255,77,58,0.4); box-shadow: 0 0 20px rgba(255,77,58,0.1), 0 0 40px rgba(255,77,58,0.05); animation: slideIn 0.4s ease-out, cardGlow 3s ease-in-out infinite; }
+    .insight-card.act-now::before { background: linear-gradient(180deg, #ff4d3a, #ff6b35); width: 4px; }
+    @keyframes cardGlow { 0%,100%{box-shadow:0 0 20px rgba(255,77,58,0.1)} 50%{box-shadow:0 0 30px rgba(255,77,58,0.2)} }
+    .insight-card.opp-high::before { background: var(--accent-fire); }
     .insight-card.opp-med::before { background: var(--accent-amber); }
     .insight-card.opp-low::before { background: var(--text-dim); }
-
-    @keyframes slideIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
 
     .insight-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
     .stage-badge { padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
@@ -93,38 +92,42 @@
     .stage-GROWING { background: rgba(0,212,255,0.12); color: var(--accent-cyan); }
     .stage-SATURATED { background: rgba(136,136,160,0.12); color: var(--text-muted); }
     .stage-DYING { background: rgba(85,85,106,0.1); color: var(--text-dim); }
-
     .intent-badge { padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 600; background: rgba(255,255,255,0.04); color: var(--text-muted); }
-    .opp-score { margin-left: auto; font-size: 18px; font-weight: 800; font-family: var(--font-mono); }
-    .opp-score.high { color: var(--accent-fire); }
-    .opp-score.med { color: var(--accent-amber); }
-    .opp-score.low { color: var(--text-dim); }
+    .trigger-badge { padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: rgba(255,184,0,0.12); color: var(--accent-amber); }
+    .freshness-badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; font-family: var(--font-mono); }
+    .freshness-hot { background: rgba(255,77,58,0.12); color: var(--accent-fire); }
+    .freshness-warm { background: rgba(255,184,0,0.1); color: var(--accent-amber); }
+    .freshness-cold { background: rgba(85,85,106,0.1); color: var(--text-dim); }
 
-    .insight-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text); line-height: 1.4; }
+    .temporal-score { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; }
+    .temporal-value { font-size: 22px; font-weight: 800; font-family: var(--font-mono); line-height: 1; }
+    .temporal-label { font-size: 9px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+    .score-fire { color: var(--accent-fire); }
+    .score-amber { color: var(--accent-amber); }
+    .score-dim { color: var(--text-dim); }
+
+    .insight-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; line-height: 1.4; }
     .insight-narrative { font-size: 13px; line-height: 1.6; color: var(--text-muted); margin-bottom: 8px; }
-    .insight-why { font-size: 12px; line-height: 1.5; color: var(--text-muted); padding: 10px 14px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 3px solid rgba(255,255,255,0.06); margin-bottom: 10px; }
+    .insight-why { font-size: 12px; line-height: 1.5; color: var(--text-muted); padding: 10px 14px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 3px solid rgba(255,255,255,0.06); margin-bottom: 6px; }
     .insight-why-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); margin-bottom: 4px; }
+    .insight-why-now { font-size: 12px; line-height: 1.5; color: var(--accent-amber); padding: 10px 14px; background: rgba(255,184,0,0.04); border-radius: 8px; border-left: 3px solid rgba(255,184,0,0.3); margin-bottom: 10px; }
 
-    .insight-meta { display: flex; align-items: center; gap: 14px; font-size: 11px; color: var(--text-dim); font-family: var(--font-mono); flex-wrap: wrap; }
+    .insight-meta { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--text-dim); font-family: var(--font-mono); flex-wrap: wrap; }
     .meta-pill { padding: 2px 8px; border-radius: 6px; background: rgba(255,255,255,0.03); }
 
-    /* ── Project Cards ──────────────────────────── */
-    .project-card {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 16px 20px; transition: all 0.3s ease; animation: slideIn 0.4s ease-out;
-    }
+    /* Project Cards */
+    .project-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; transition: all 0.3s ease; animation: slideIn 0.4s ease-out; }
     .project-card:hover { background: var(--bg-card-hover); transform: translateY(-1px); }
-    .project-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-    .project-label { font-size: 14px; font-weight: 700; color: var(--text); }
+    .project-card.act-now { border-color: rgba(255,77,58,0.35); }
+    .project-label { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
     .project-insight { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px; }
-    .project-stats { display: flex; gap: 12px; flex-wrap: wrap; }
+    .project-stats { display: flex; gap: 10px; flex-wrap: wrap; }
     .project-stat { font-size: 11px; font-family: var(--font-mono); color: var(--text-dim); padding: 3px 8px; background: rgba(255,255,255,0.02); border-radius: 6px; }
     .project-stat strong { color: var(--text-muted); }
 
     @media (max-width:640px) {
       .stats-bar { grid-template-columns: repeat(2,1fr); }
       .header { flex-direction: column; gap: 14px; align-items: flex-start; }
-      .tabs { flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -135,7 +138,7 @@
         <div class="logo">⚡</div>
         <div>
           <div class="header-title">Shelby Alpha Radar</div>
-          <div class="header-subtitle">Opportunity Intelligence</div>
+          <div class="header-subtitle">Temporal Intelligence</div>
         </div>
       </div>
       <div class="status-indicator">
@@ -145,16 +148,19 @@
     </header>
 
     <div class="alert-banner" id="alertBanner">
-      <div class="alert-title" id="alertTitle">🔥 Alert</div>
-      <div class="alert-msg" id="alertMsg"></div>
-      <div class="alert-count" id="alertCount"></div>
+      <div class="alert-banner-header">
+        <span class="alert-banner-title" id="alertTitle">🔥 Alert</span>
+        <span class="act-badge" id="actBadge" style="display:none">ACT NOW</span>
+      </div>
+      <div class="alert-banner-msg" id="alertMsg"></div>
+      <div class="alert-banner-count" id="alertCount"></div>
     </div>
 
-    <div class="stats-bar" id="statsBar">
-      <div class="stat-card"><div class="stat-value" style="color:var(--accent-green)" id="statProjects">—</div><div class="stat-label">Projects</div></div>
-      <div class="stat-card"><div class="stat-value" style="color:var(--accent-fire)" id="statAlerts">—</div><div class="stat-label">Alerts</div></div>
+    <div class="stats-bar">
+      <div class="stat-card"><div class="stat-value" style="color:var(--accent-fire)" id="statActNow">—</div><div class="stat-label">Act Now</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--accent-green)" id="statFresh">—</div><div class="stat-label">Fresh</div></div>
       <div class="stat-card"><div class="stat-value" style="color:var(--accent-amber)" id="statInsights">—</div><div class="stat-label">Insights</div></div>
-      <div class="stat-card"><div class="stat-value" style="color:var(--accent-cyan)" id="statEarly">—</div><div class="stat-label">Early-Stage</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--accent-cyan)" id="statProjects">—</div><div class="stat-label">Projects</div></div>
     </div>
 
     <div class="tabs">
@@ -164,10 +170,7 @@
     </div>
 
     <div class="feed" id="feed">
-      <div class="feed-empty">
-        <div class="feed-empty-icon">📡</div>
-        <div>Loading intelligence...</div>
-      </div>
+      <div class="feed-empty"><div class="feed-empty-icon">📡</div><div>Loading intelligence...</div></div>
     </div>
   </div>
 
@@ -176,170 +179,164 @@
     let currentTab = "insights";
     let data = { insights: [], projects: [], alerts: [] };
 
-    // ── Tab Control ─────────────────────────────────────────
     function setTab(tab) {
       currentTab = tab;
       document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      document.getElementById("tab" + capitalize(tab)).classList.add("active");
+      document.getElementById("tab" + cap(tab)).classList.add("active");
       renderFeed();
     }
 
-    // ── Data Loading ────────────────────────────────────────
     async function loadAll() {
       try {
-        const [insRes, projRes, alertRes] = await Promise.all([
+        const [i, p, a] = await Promise.all([
           fetch(`${API}/insights?limit=30`).then(r => r.json()),
           fetch(`${API}/projects?limit=20`).then(r => r.json()),
           fetch(`${API}/alerts`).then(r => r.json()),
         ]);
-
-        data.insights = insRes.insights || [];
-        data.projects = projRes.projects || [];
-        data.alerts = alertRes.alerts || [];
-
+        data.insights = i.insights || [];
+        data.projects = p.projects || [];
+        data.alerts = a.alerts || [];
         updateStats();
         updateAlertBanner();
         renderFeed();
-
-        document.getElementById("statusText").textContent = `Live · ${data.projects.length} projects tracked`;
-      } catch (err) {
-        console.error("Load failed:", err);
+        document.getElementById("statusText").textContent = `Live · ${data.projects.length} projects`;
+      } catch (e) {
+        console.error("Load failed:", e);
         document.getElementById("statusText").textContent = "Connection error";
       }
     }
 
-    // ── Stats ───────────────────────────────────────────────
     function updateStats() {
-      document.getElementById("statProjects").textContent = data.projects.length;
-      document.getElementById("statAlerts").textContent = data.alerts.length;
+      const actNowCount = data.insights.filter(i => i.actNow).length + data.projects.filter(p => p.actNow).length;
+      const freshCount = data.projects.filter(p => p.freshness >= 60).length;
+      document.getElementById("statActNow").textContent = actNowCount;
+      document.getElementById("statFresh").textContent = freshCount;
       document.getElementById("statInsights").textContent = data.insights.length;
-      const earlyCount = data.projects.filter(p => p.stage === "EARLY" || p.stage === "EMERGING").length;
-      document.getElementById("statEarly").textContent = earlyCount;
+      document.getElementById("statProjects").textContent = data.projects.length;
     }
 
-    // ── Alert Banner ────────────────────────────────────────
     function updateAlertBanner() {
       const banner = document.getElementById("alertBanner");
-      const critical = data.alerts.filter(a => a.level === "critical");
-      if (critical.length > 0) {
-        const top = critical[0];
-        document.getElementById("alertTitle").innerHTML = top.title;
-        document.getElementById("alertMsg").textContent = top.message;
-        document.getElementById("alertCount").textContent =
-          data.alerts.length > 1 ? `+ ${data.alerts.length - 1} more alert${data.alerts.length > 2 ? "s" : ""}` : "";
-        banner.classList.add("visible");
-      } else if (data.alerts.length > 0) {
-        const top = data.alerts[0];
-        document.getElementById("alertTitle").innerHTML = top.title;
-        document.getElementById("alertMsg").textContent = top.message;
-        document.getElementById("alertCount").textContent = "";
-        banner.classList.add("visible");
-      } else {
-        banner.classList.remove("visible");
-      }
+      const actNowAlerts = data.alerts.filter(a => a.actNow);
+      const top = actNowAlerts[0] || data.alerts[0];
+      if (!top) { banner.classList.remove("visible"); return; }
+      document.getElementById("alertTitle").innerHTML = top.title;
+      document.getElementById("alertMsg").textContent = top.message;
+      const actBadge = document.getElementById("actBadge");
+      actBadge.style.display = top.actNow ? "inline-block" : "none";
+      document.getElementById("alertCount").textContent =
+        data.alerts.length > 1 ? `+ ${data.alerts.length - 1} more` : "";
+      banner.classList.add("visible");
     }
 
-    // ── Rendering ───────────────────────────────────────────
     function renderFeed() {
       const feed = document.getElementById("feed");
-      let items = [];
-
-      if (currentTab === "insights") items = data.insights;
-      else if (currentTab === "projects") items = data.projects;
-      else if (currentTab === "alerts") items = data.alerts;
-
+      let items = currentTab === "insights" ? data.insights : currentTab === "projects" ? data.projects : data.alerts;
       if (!items.length) {
-        feed.innerHTML = `<div class="feed-empty"><div class="feed-empty-icon">${currentTab === "alerts" ? "✅" : "📡"}</div><div>${currentTab === "alerts" ? "No active alerts — all clear" : "No data yet"}</div></div>`;
+        feed.innerHTML = `<div class="feed-empty"><div class="feed-empty-icon">${currentTab === "alerts" ? "✅" : "📡"}</div><div>${currentTab === "alerts" ? "No active alerts" : "No data yet"}</div></div>`;
         return;
       }
-
-      if (currentTab === "insights") feed.innerHTML = items.map(renderInsightCard).join("");
-      else if (currentTab === "projects") feed.innerHTML = items.map(renderProjectCard).join("");
-      else if (currentTab === "alerts") feed.innerHTML = items.map(renderAlertCard).join("");
+      if (currentTab === "insights") feed.innerHTML = items.map(renderInsight).join("");
+      else if (currentTab === "projects") feed.innerHTML = items.map(renderProject).join("");
+      else feed.innerHTML = items.map(renderAlert).join("");
     }
 
-    // ── Insight Card ────────────────────────────────────────
-    function renderInsightCard(i) {
-      const oppClass = i.opportunity >= 60 ? "opp-high" : i.opportunity >= 35 ? "opp-med" : "opp-low";
-      const oppColor = i.opportunity >= 60 ? "high" : i.opportunity >= 35 ? "med" : "low";
-      const stageEmoji = { EARLY: "🌱", EMERGING: "🚀", GROWING: "📈", SATURATED: "⚖️", DYING: "📉" };
+    function renderInsight(i) {
+      const cardClass = i.actNow ? "act-now" : i.opportunity >= 60 ? "opp-high" : i.opportunity >= 35 ? "opp-med" : "opp-low";
+      const scoreClass = i.temporalScore >= 50 ? "score-fire" : i.temporalScore >= 30 ? "score-amber" : "score-dim";
+      const freshClass = i.freshness >= 60 ? "freshness-hot" : i.freshness >= 30 ? "freshness-warm" : "freshness-cold";
+      const stageEmoji = { EARLY:"🌱", EMERGING:"🚀", GROWING:"📈", SATURATED:"⚖️", DYING:"📉" };
+      const triggerBadge = i.trigger ? `<span class="trigger-badge">${fmtTrigger(i.trigger)}</span>` : "";
+      const actLabel = i.actNow ? `<span class="act-badge">ACT NOW</span>` : "";
+      const whyNow = i.whyNow ? `<div class="insight-why-now"><div class="insight-why-label">⏰ Why Now</div>${esc(i.whyNow)}</div>` : "";
 
-      return `<div class="insight-card ${oppClass}">
+      return `<div class="insight-card ${cardClass}">
         <div class="insight-header">
-          <span class="stage-badge stage-${i.stage}">${stageEmoji[i.stage] || ""} ${i.stage}</span>
-          <span class="intent-badge">${formatIntent(i.intent)}</span>
-          <span class="opp-score ${oppColor}">${i.opportunity}</span>
+          ${actLabel}
+          <span class="stage-badge stage-${i.stage}">${stageEmoji[i.stage]||""} ${i.stage}</span>
+          <span class="intent-badge">${fmtIntent(i.intent)}</span>
+          ${triggerBadge}
+          <span class="freshness-badge ${freshClass}">🕐 ${i.startedAgo}</span>
+          <div class="temporal-score"><span class="temporal-value ${scoreClass}">${i.temporalScore}</span><span class="temporal-label">priority</span></div>
         </div>
         <div class="insight-title">${esc(i.title)}</div>
         <div class="insight-narrative">${esc(i.narrative)}</div>
-        <div class="insight-why">
-          <div class="insight-why-label">💡 Why this matters</div>
-          ${esc(i.whyItMatters)}
-        </div>
+        ${whyNow}
+        <div class="insight-why"><div class="insight-why-label">💡 Why This Matters</div>${esc(i.whyItMatters)}</div>
         <div class="insight-meta">
-          <span class="meta-pill">quality: ${i.quality}</span>
-          <span class="meta-pill">momentum: ${i.momentum}</span>
-          <span class="meta-pill">👛 ${i.walletCount} wallet${i.walletCount !== 1 ? "s" : ""}</span>
-          <span class="meta-pill">📄 ${i.blobCount} file${i.blobCount !== 1 ? "s" : ""}</span>
-          <span class="meta-pill">🕐 ${i.timeAgo}</span>
+          <span class="meta-pill">opp: ${i.opportunity}</span>
+          <span class="meta-pill">fresh: ${i.freshness}</span>
+          <span class="meta-pill">mom: ${i.momentum}</span>
+          <span class="meta-pill">👛 ${i.walletCount}</span>
+          <span class="meta-pill">📄 ${i.blobCount}</span>
         </div>
       </div>`;
     }
 
-    // ── Project Card ────────────────────────────────────────
-    function renderProjectCard(p) {
-      const stageEmoji = { EARLY: "🌱", EMERGING: "🚀", GROWING: "📈", SATURATED: "⚖️", DYING: "📉" };
-      const oppColor = p.opportunity >= 60 ? "high" : p.opportunity >= 35 ? "med" : "low";
+    function renderProject(p) {
+      const cardClass = p.actNow ? "act-now" : "";
+      const scoreClass = p.temporalScore >= 50 ? "score-fire" : p.temporalScore >= 30 ? "score-amber" : "score-dim";
+      const freshClass = p.freshness >= 60 ? "freshness-hot" : p.freshness >= 30 ? "freshness-warm" : "freshness-cold";
+      const stageEmoji = { EARLY:"🌱", EMERGING:"🚀", GROWING:"📈", SATURATED:"⚖️", DYING:"📉" };
+      const actLabel = p.actNow ? `<span class="act-badge">ACT NOW</span> ` : "";
+      const triggerBadge = p.trigger ? `<span class="trigger-badge">${fmtTrigger(p.trigger)}</span>` : "";
 
-      return `<div class="project-card">
-        <div class="project-header">
-          <span class="stage-badge stage-${p.stage}">${stageEmoji[p.stage] || ""} ${p.stage}</span>
-          <span class="intent-badge">${formatIntent(p.intent)}</span>
-          <span class="opp-score ${oppColor}">${p.opportunity}</span>
+      return `<div class="project-card ${cardClass}">
+        <div class="insight-header">
+          ${actLabel ? `${actLabel}` : ""}
+          <span class="stage-badge stage-${p.stage}">${stageEmoji[p.stage]||""} ${p.stage}</span>
+          <span class="intent-badge">${fmtIntent(p.intent)}</span>
+          ${triggerBadge}
+          <span class="freshness-badge ${freshClass}">🕐 ${p.startedAgo}</span>
+          <div class="temporal-score"><span class="temporal-value ${scoreClass}">${p.temporalScore}</span><span class="temporal-label">priority</span></div>
         </div>
         <div class="project-label">${esc(p.label)}</div>
         <div class="project-insight">${esc(p.topInsight || "—")}</div>
         <div class="project-stats">
-          <span class="project-stat">👛 <strong>${p.walletCount}</strong> wallets</span>
-          <span class="project-stat">📄 <strong>${p.blobCount}</strong> files</span>
+          <span class="project-stat">👛 <strong>${p.walletCount}</strong></span>
+          <span class="project-stat">📄 <strong>${p.blobCount}</strong></span>
           <span class="project-stat">📈 <strong>${p.growthRate}</strong>/hr</span>
-          <span class="project-stat">✨ quality: <strong>${p.quality}</strong></span>
-          <span class="project-stat">⚡ momentum: <strong>${p.momentum}</strong></span>
+          <span class="project-stat">opp: <strong>${p.opportunity}</strong></span>
+          <span class="project-stat">fresh: <strong>${p.freshness}</strong></span>
+          <span class="project-stat">mom: <strong>${p.momentum}</strong></span>
           ${p.fileTypes.length ? `<span class="project-stat">🗂️ ${p.fileTypes.join(", ")}</span>` : ""}
         </div>
       </div>`;
     }
 
-    // ── Alert Card ──────────────────────────────────────────
-    function renderAlertCard(a) {
+    function renderAlert(a) {
       const levelColors = { critical: "var(--accent-fire)", high: "var(--accent-amber)", watch: "var(--accent-cyan)" };
       const levelEmoji = { critical: "🔴", high: "🟠", watch: "🔵" };
+      const actLabel = a.actNow ? `<span class="act-badge">ACT NOW</span>` : "";
 
-      return `<div class="insight-card opp-high" style="border-color: ${levelColors[a.level]}33">
+      return `<div class="insight-card ${a.actNow ? "act-now" : "opp-high"}" style="border-color:${levelColors[a.level]}33">
         <div class="insight-header">
+          ${actLabel}
           <span style="font-size:12px;font-weight:700;color:${levelColors[a.level]}">${levelEmoji[a.level]} ${a.level.toUpperCase()}</span>
-          <span class="opp-score" style="color:${levelColors[a.level]}">${a.opportunity}</span>
+          ${a.trigger ? `<span class="trigger-badge">${fmtTrigger(a.trigger)}</span>` : ""}
+          <div class="temporal-score"><span class="temporal-value" style="color:${levelColors[a.level]}">${a.opportunity}</span><span class="temporal-label">opportunity</span></div>
         </div>
         <div class="insight-title">${esc(a.title)}</div>
         <div class="insight-narrative">${esc(a.message)}</div>
         <div class="insight-meta">
-          <span class="meta-pill">opportunity: ${a.opportunity}</span>
-          <span class="meta-pill">importance: ${a.importance}</span>
+          <span class="meta-pill">opp: ${a.opportunity}</span>
+          <span class="meta-pill">fresh: ${a.freshness}</span>
         </div>
       </div>`;
     }
 
-    // ── Helpers ──────────────────────────────────────────────
+    // Helpers
     function esc(s) { if (!s) return ""; const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
-    function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); }
-    function formatIntent(i) {
-      const map = { MEDIA_SPAM: "📷 Media Spam", DATASET: "📊 Dataset", AI_PIPELINE: "🤖 AI Pipeline", CONFIG_DEPLOYMENT: "⚙️ Config Deploy", MIXED_PROJECT: "🔀 Mixed", UNKNOWN: "❓ Unknown" };
-      return map[i] || i;
+    function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); }
+    function fmtIntent(i) {
+      return { MEDIA_SPAM:"📷 Media Spam", DATASET:"📊 Dataset", AI_PIPELINE:"🤖 AI Pipeline", CONFIG_DEPLOYMENT:"⚙️ Config", MIXED_PROJECT:"🔀 Mixed", UNKNOWN:"❓ Unknown" }[i] || i;
+    }
+    function fmtTrigger(t) {
+      return { NEW_PROJECT:"🆕 New", STAGE_TRANSITION:"📈 Stage Up", MOMENTUM_SPIKE:"⚡ Spike", FIRST_MULTI_WALLET:"👥 Multi-Wallet", QUALITY_SURGE:"✨ Quality" }[t] || t;
     }
 
-    // ── Init + Polling ──────────────────────────────────────
     loadAll();
-    setInterval(loadAll, 30000); // refresh every 30s
+    setInterval(loadAll, 30000);
   </script>
 </body>
 </html>
