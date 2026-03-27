@@ -94,6 +94,10 @@
     .stage-DYING { background: rgba(85,85,106,0.1); color: var(--text-dim); }
     .intent-badge { padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 600; background: rgba(255,255,255,0.04); color: var(--text-muted); }
     .trigger-badge { padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; background: rgba(255,184,0,0.12); color: var(--accent-amber); }
+    .conf-badge { padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
+    .conf-HIGH { background: rgba(48,209,88,0.15); color: var(--accent-green); }
+    .conf-MEDIUM { background: rgba(255,184,0,0.1); color: var(--accent-amber); }
+    .conf-LOW { background: rgba(255,77,58,0.12); color: var(--accent-fire); }
     .freshness-badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; font-family: var(--font-mono); }
     .freshness-hot { background: rgba(255,77,58,0.12); color: var(--accent-fire); }
     .freshness-warm { background: rgba(255,184,0,0.1); color: var(--accent-amber); }
@@ -249,11 +253,14 @@
       const triggerBadge = i.trigger ? `<span class="trigger-badge">${fmtTrigger(i.trigger)}</span>` : "";
       const actLabel = i.actNow ? `<span class="act-badge">ACT NOW</span>` : "";
       const whyNow = i.whyNow ? `<div class="insight-why-now"><div class="insight-why-label">⏰ Why Now</div>${esc(i.whyNow)}</div>` : "";
+      const confIcon = {HIGH:"✅",MEDIUM:"⚡",LOW:"⚠️"}[i.confidenceLevel] || "";
+      const confBadge = i.confidenceLevel ? `<span class="conf-badge conf-${i.confidenceLevel}">${confIcon} ${i.confidenceLevel}</span>` : "";
 
       return `<div class="insight-card ${cardClass}">
         <div class="insight-header">
           ${actLabel}
           <span class="stage-badge stage-${i.stage}">${stageEmoji[i.stage]||""} ${i.stage}</span>
+          ${confBadge}
           <span class="intent-badge">${fmtIntent(i.intent)}</span>
           ${triggerBadge}
           <span class="freshness-badge ${freshClass}">🕐 ${i.startedAgo}</span>
@@ -265,9 +272,9 @@
         <div class="insight-why"><div class="insight-why-label">💡 Why This Matters</div>${esc(i.whyItMatters)}</div>
         <div class="insight-meta">
           <span class="meta-pill">opp: ${i.opportunity}</span>
+          <span class="meta-pill">conf: ${i.confidence || '—'}</span>
           <span class="meta-pill">fresh: ${i.freshness}</span>
           <span class="meta-pill">stale: ${i.staleness || '—'}</span>
-          <span class="meta-pill">mom: ${i.momentum}</span>
           <span class="meta-pill">👛 ${i.walletCount}</span>
           <span class="meta-pill">📄 ${i.blobCount}</span>
           <span class="meta-pill">last: ${i.lastActiveAgo || '—'}</span>
@@ -282,11 +289,14 @@
       const stageEmoji = { EARLY:"🌱", EMERGING:"🚀", GROWING:"📈", SATURATED:"⚖️", DYING:"📉" };
       const actLabel = p.actNow ? `<span class="act-badge">ACT NOW</span> ` : "";
       const triggerBadge = p.trigger ? `<span class="trigger-badge">${fmtTrigger(p.trigger)}</span>` : "";
+      const confIcon = {HIGH:"✅",MEDIUM:"⚡",LOW:"⚠️"}[p.confidenceLevel] || "";
+      const confBadge = p.confidenceLevel ? `<span class="conf-badge conf-${p.confidenceLevel}">${confIcon} ${p.confidenceLevel}</span>` : "";
 
       return `<div class="project-card ${cardClass}">
         <div class="insight-header">
           ${actLabel ? `${actLabel}` : ""}
           <span class="stage-badge stage-${p.stage}">${stageEmoji[p.stage]||""} ${p.stage}</span>
+          ${confBadge}
           <span class="intent-badge">${fmtIntent(p.intent)}</span>
           ${triggerBadge}
           <span class="freshness-badge ${freshClass}">🕐 ${p.startedAgo}</span>
@@ -299,8 +309,8 @@
           <span class="project-stat">📄 <strong>${p.blobCount}</strong></span>
           <span class="project-stat">📈 <strong>${p.growthRate}</strong>/hr</span>
           <span class="project-stat">opp: <strong>${p.opportunity}</strong></span>
+          <span class="project-stat">conf: <strong>${p.confidence || '—'}</strong></span>
           <span class="project-stat">fresh: <strong>${p.freshness}</strong></span>
-          <span class="project-stat">stale: <strong>${p.staleness || '—'}</strong></span>
           <span class="project-stat">last: <strong>${p.lastActiveAgo || '—'}</strong></span>
           ${p.fileTypes.length ? `<span class="project-stat">🗂️ ${p.fileTypes.join(", ")}</span>` : ""}
         </div>
@@ -312,10 +322,14 @@
       const levelEmoji = { critical: "🔴", high: "🟠", watch: "🔵" };
       const actLabel = a.actNow ? `<span class="act-badge">ACT NOW</span>` : "";
 
+      const confIcon = {HIGH:"✅",MEDIUM:"⚡",LOW:"⚠️"}[a.confidenceLevel] || "";
+      const confBadge = a.confidenceLevel ? `<span class="conf-badge conf-${a.confidenceLevel}">${confIcon} ${a.confidenceLevel}</span>` : "";
+
       return `<div class="insight-card ${a.actNow ? "act-now" : "opp-high"}" style="border-color:${levelColors[a.level]}33">
         <div class="insight-header">
           ${actLabel}
           <span style="font-size:12px;font-weight:700;color:${levelColors[a.level]}">${levelEmoji[a.level]} ${a.level.toUpperCase()}</span>
+          ${confBadge}
           ${a.trigger ? `<span class="trigger-badge">${fmtTrigger(a.trigger)}</span>` : ""}
           <div class="temporal-score"><span class="temporal-value" style="color:${levelColors[a.level]}">${a.opportunity}</span><span class="temporal-label">opportunity</span></div>
         </div>
@@ -323,6 +337,7 @@
         <div class="insight-narrative">${esc(a.message)}</div>
         <div class="insight-meta">
           <span class="meta-pill">opp: ${a.opportunity}</span>
+          <span class="meta-pill">conf: ${a.confidence || '—'}</span>
           <span class="meta-pill">fresh: ${a.freshness}</span>
         </div>
       </div>`;
