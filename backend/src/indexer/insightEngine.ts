@@ -1,23 +1,38 @@
 import { prisma } from "../database/db.js";
 
 /**
- * Insight Engine — Converts raw signals into actionable intelligence
+ * Insight Engine v2 — Intent-Aware Intelligence
  *
- * Transforms signal events into human-readable insights with:
- *  - importance scoring (multi-wallet, rarity, content value, growth rate)
- *  - narrative explanations ("what is happening" + "why it matters")
- *  - alert triggers for high-importance discoveries
+ * Quality scoring + project classification + diminishing returns
+ * to filter noise and surface genuinely interesting activity.
+ *
+ * Key changes from v1:
+ *  - Quality score (0-100) penalizes repetitive file types, rewards diversity
+ *  - Project classification: MEDIA_SPAM, DATASET, AI_PIPELINE, CONFIG_DEPLOYMENT, UNKNOWN
+ *  - Diminishing returns on wallet count (caps at 20, heavily after 50+)
+ *  - Final importance = raw importance × quality multiplier
+ *  - Alerts only fire on meaningful transitions, not incremental wallet joins
  */
 
 // ── Public Types ──────────────────────────────────────────────
+
+export type ProjectIntent =
+  | "MEDIA_SPAM"
+  | "DATASET"
+  | "AI_PIPELINE"
+  | "CONFIG_DEPLOYMENT"
+  | "MIXED_PROJECT"
+  | "UNKNOWN";
 
 export interface Insight {
   id: string;
   title: string;
   narrative: string;
   whyItMatters: string;
-  importance: number;        // 0-100 composite score
+  importance: number;        // 0-100 final (raw × quality)
+  quality: number;           // 0-100 content quality
   category: "project" | "ai" | "data" | "rare" | "alert";
+  intent: ProjectIntent;
   projectId: string | null;
   projectLabel: string | null;
   walletCount: number;
@@ -31,7 +46,9 @@ export interface ProjectSummary {
   projectId: string;
   label: string;
   category: string;
+  intent: ProjectIntent;
   status: "active" | "growing" | "dormant";
+  quality: number;
   wallets: string[];
   walletCount: number;
   blobCount: number;
@@ -56,16 +73,129 @@ export interface Alert {
   timestamp: string;
 }
 
-// ── Importance Calculator ─────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// QUALITY SCORING
+// ═══════════════════════════════════════════════════════════════
 
 /**
- * Compute a 0-100 importance score from project + signal data.
+ * Compute a 0-100 quality score for a project.
  *
- * Weights:
- *   - Multi-wallet: 0-40 pts  (most important signal)
- *   - Content value: 0-25 pts (AI/trading signals)
- *   - Growth rate:   0-20 pts (active development)
- *   - Rarity:        0-15 pts (novel formats/patterns)
+ * Rewards:
+ *  - File type diversity (mixed ecosystems)
+ *  - Structured content (JSON, CSV, configs)
+ *  - Domain-specific signals (AI, trading)
+ *
+ * Penalties:
+ *  - Single file type dominance (>80% same type)
+ *  - Pure media with no structured data
+ *  - No content signals at all
+ */
+export function computeQuality(params: {
+  fileTypes: string[];
+  tags: string[];
+  signals: string[];
+  blobCount: number;
+}): number {
+  let quality = 50; // baseline
+
+  // ── File type diversity ──────────────────────────
+  const typeCount = params.fileTypes.length;
+  if (typeCount >= 4) quality += 20;
+  else if (typeCount >= 3) quality += 15;
+  else if (typeCount >= 2) quality += 5;
+  else quality -= 10; // single type = penalty
+
+  // ── Structured content reward ────────────────────
+  const structured = new Set(["json", "csv", "yaml", "yml", "toml", "xml", "parquet", "arrow"]);
+  const hasStructured = params.fileTypes.some((t) => structured.has(t));
+  if (hasStructured) quality += 15;
+
+  // ── Config/code presence reward ──────────────────
+  const configTypes = new Set(["config", "logs", "ai_data", "dataset"]);
+  const configHits = params.tags.filter((t) => configTypes.has(t)).length;
+  quality += Math.min(15, configHits * 5);
+
+  // ── Domain signal reward ─────────────────────────
+  const domainSignals = new Set(["ai_interaction", "model_data", "agent_config", "trading_data"]);
+  const signalHits = params.signals.filter((s) => domainSignals.has(s)).length;
+  quality += Math.min(15, signalHits * 8);
+
+  // ── Media-only penalty ───────────────────────────
+  const mediaTypes = new Set(["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp", "ico", "mp3", "mp4", "wav", "avi", "mov"]);
+  const allMedia = params.fileTypes.length > 0 && params.fileTypes.every((t) => mediaTypes.has(t));
+  if (allMedia) {
+    quality -= 30;
+    // Extra penalty for high-volume pure media
+    if (params.blobCount > 20) quality -= 10;
+  }
+
+  // ── No signals penalty ───────────────────────────
+  if (params.signals.length === 0 && params.tags.length <= 2) {
+    quality -= 10;
+  }
+
+  return Math.max(0, Math.min(100, quality));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PROJECT CLASSIFICATION
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Classify project intent based on file types, tags, and signals.
+ */
+export function classifyProject(params: {
+  fileTypes: string[];
+  tags: string[];
+  signals: string[];
+  blobCount: number;
+  walletCount: number;
+}): ProjectIntent {
+  const mediaTypes = new Set(["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp", "ico", "mp3", "mp4", "wav", "avi", "mov"]);
+  const allMedia = params.fileTypes.length > 0 && params.fileTypes.every((t) => mediaTypes.has(t));
+
+  // MEDIA_SPAM: all media files, many wallets, no domain signals
+  if (allMedia && params.signals.length === 0 && params.walletCount > 5) {
+    return "MEDIA_SPAM";
+  }
+
+  // AI_PIPELINE: has AI-related signals
+  const aiSignals = ["ai_interaction", "model_data", "agent_config"];
+  if (params.signals.some((s) => aiSignals.includes(s))) {
+    return "AI_PIPELINE";
+  }
+
+  // CONFIG_DEPLOYMENT: has config tags + domain signals
+  if (params.tags.includes("config") && params.signals.length > 0) {
+    return "CONFIG_DEPLOYMENT";
+  }
+
+  // DATASET: has dataset tags or structured data files
+  const dataTypes = new Set(["csv", "parquet", "arrow", "json", "npy", "feather"]);
+  if (params.tags.includes("dataset") || params.fileTypes.some((t) => dataTypes.has(t))) {
+    return "DATASET";
+  }
+
+  // MIXED_PROJECT: multiple file types with some substance
+  if (params.fileTypes.length >= 3 && !allMedia) {
+    return "MIXED_PROJECT";
+  }
+
+  return "UNKNOWN";
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IMPORTANCE SCORING (v2 — with quality + diminishing returns)
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Compute final importance = raw importance × quality multiplier.
+ *
+ * Diminishing returns on wallet count:
+ *   1-5:   full credit (5pts each)
+ *   6-20:  2pts each
+ *   21-50: 0.5pts each
+ *   50+:   0pts (capped)
  */
 export function computeImportance(params: {
   walletCount: number;
@@ -73,53 +203,68 @@ export function computeImportance(params: {
   growthRate: number;
   signals: string[];
   tags: string[];
+  fileTypes: string[];
   signalScore?: number;
-}): number {
-  let score = 0;
+}): { raw: number; quality: number; final: number; intent: ProjectIntent } {
+  const quality = computeQuality({
+    fileTypes: params.fileTypes,
+    tags: params.tags,
+    signals: params.signals,
+    blobCount: params.blobCount,
+  });
 
-  // Multi-wallet: 0-40 pts
-  if (params.walletCount >= 5) score += 40;
-  else if (params.walletCount >= 3) score += 30;
-  else if (params.walletCount >= 2) score += 20;
-  else score += 5;
+  const intent = classifyProject({
+    fileTypes: params.fileTypes,
+    tags: params.tags,
+    signals: params.signals,
+    blobCount: params.blobCount,
+    walletCount: params.walletCount,
+  });
 
-  // Content value: 0-25 pts
+  let raw = 0;
+
+  // ── Multi-wallet with diminishing returns ────────
+  const wc = params.walletCount;
+  if (wc <= 5) raw += wc * 5;          // 1-5: full credit
+  else if (wc <= 20) raw += 25 + (wc - 5) * 2;  // 6-20: +2 each
+  else if (wc <= 50) raw += 55 + (wc - 20) * 0.5; // 21-50: +0.5 each
+  else raw += 70;                       // 50+: capped at 70
+
+  // ── Content value ────────────────────────────────
   const highValueSignals = new Set(["ai_interaction", "model_data", "agent_config", "trading_data"]);
   const contentHits = params.signals.filter((s) => highValueSignals.has(s)).length;
-  score += Math.min(25, contentHits * 10);
+  raw += Math.min(20, contentHits * 8);
 
-  // AI/trading tags add value
-  if (params.tags.includes("ai_data")) score += 5;
-  if (params.tags.includes("dataset") && params.blobCount >= 5) score += 5;
+  // ── Growth rate ──────────────────────────────────
+  if (params.growthRate >= 10) raw += 15;
+  else if (params.growthRate >= 5) raw += 10;
+  else if (params.growthRate >= 2) raw += 5;
 
-  // Growth rate: 0-20 pts
-  if (params.growthRate >= 10) score += 20;
-  else if (params.growthRate >= 5) score += 15;
-  else if (params.growthRate >= 2) score += 10;
-  else if (params.growthRate >= 0.5) score += 5;
+  // ── Signal score bonus ───────────────────────────
+  if (params.signalScore && params.signalScore >= 9) raw += 10;
+  else if (params.signalScore && params.signalScore >= 7) raw += 5;
 
-  // Rarity: 0-15 pts (rare file types or novel patterns)
-  if (params.signalScore && params.signalScore >= 9) score += 15;
-  else if (params.signalScore && params.signalScore >= 7) score += 10;
-  else score += 5;
+  raw = Math.min(100, raw);
 
-  return Math.min(100, score);
+  // ── Apply quality multiplier ─────────────────────
+  // quality 0-100 maps to multiplier 0.1-1.0
+  const qualityMultiplier = 0.1 + (quality / 100) * 0.9;
+  const final = Math.round(raw * qualityMultiplier);
+
+  return { raw, quality, final, intent };
 }
 
-// ── Insight Generator ─────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// INSIGHT GENERATOR
+// ═══════════════════════════════════════════════════════════════
 
-/**
- * Generate top insights from recent alpha events + projects.
- */
 export async function generateInsights(limit = 20): Promise<Insight[]> {
-  // Get recent high-value alpha events
   const recentEvents = await prisma.alphaEvent.findMany({
     where: { score: { gte: 7 } },
     orderBy: [{ score: "desc" }, { createdAt: "desc" }],
     take: limit * 2,
   });
 
-  // Get active projects for context
   const projects = await prisma.project.findMany({
     where: { blobCount: { gte: 2 } },
     orderBy: [{ walletCount: "desc" }, { blobCount: "desc" }],
@@ -131,35 +276,33 @@ export async function generateInsights(limit = 20): Promise<Insight[]> {
   // Deduplicate by project — keep highest-scored event per project
   const seen = new Map<string, typeof recentEvents[0]>();
   for (const event of recentEvents) {
-    // Try to find project context
     const projectId = findProjectForEvent(event, projects);
     const key = projectId ?? `standalone:${event.id}`;
-
     if (!seen.has(key) || event.score > (seen.get(key)?.score ?? 0)) {
       seen.set(key, event);
     }
   }
 
-  // Convert to insights
   const insights: Insight[] = [];
   for (const [key, event] of seen) {
     const projectId = key.startsWith("standalone:") ? null : key;
     const project = projectId ? projectMap.get(projectId) ?? null : null;
 
-    const importance = computeImportance({
+    const { quality, final: importance, intent } = computeImportance({
       walletCount: project?.walletCount ?? 1,
       blobCount: project?.blobCount ?? 1,
       growthRate: project?.growthRate ?? 0,
       signals: project?.signals ?? [],
       tags: project?.tags ?? [],
+      fileTypes: project?.fileTypes ?? [],
       signalScore: event.score,
     });
 
+    // Skip low-quality spam entirely
+    if (intent === "MEDIA_SPAM" && importance < 20) continue;
+
     const category = categorizeSignal(event.signalType);
-    const { title, narrative, whyItMatters } = generateNarrative(
-      event,
-      project
-    );
+    const { title, narrative, whyItMatters } = generateNarrative(event, project, intent);
 
     insights.push({
       id: `insight-${event.id}`,
@@ -167,7 +310,9 @@ export async function generateInsights(limit = 20): Promise<Insight[]> {
       narrative,
       whyItMatters,
       importance,
+      quality,
       category,
+      intent,
       projectId,
       projectLabel: project?.label ?? null,
       walletCount: project?.walletCount ?? 1,
@@ -178,27 +323,25 @@ export async function generateInsights(limit = 20): Promise<Insight[]> {
     });
   }
 
-  // Sort by importance desc, take limit
   return insights
     .sort((a, b) => b.importance - a.importance)
     .slice(0, limit);
 }
 
-// ── Project Summaries ─────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// PROJECT SUMMARIES
+// ═══════════════════════════════════════════════════════════════
 
-/**
- * Get all project summaries with status and importance.
- */
 export async function getProjectSummaries(limit = 20): Promise<ProjectSummary[]> {
   const projects = await prisma.project.findMany({
     where: { blobCount: { gte: 2 } },
     orderBy: [{ walletCount: "desc" }, { blobCount: "desc" }],
-    take: limit,
+    take: limit * 2, // fetch more, then filter/rank
   });
 
   const now = new Date();
 
-  return projects.map((p) => {
+  const summaries = projects.map((p) => {
     const hoursSinceActive = (now.getTime() - p.lastActive.getTime()) / 3_600_000;
 
     let status: "active" | "growing" | "dormant";
@@ -206,49 +349,54 @@ export async function getProjectSummaries(limit = 20): Promise<ProjectSummary[]>
     else if (hoursSinceActive < 6) status = "active";
     else status = "dormant";
 
-    const importance = computeImportance({
+    const { quality, final, intent } = computeImportance({
       walletCount: p.walletCount,
       blobCount: p.blobCount,
       growthRate: p.growthRate,
       signals: p.signals,
       tags: p.tags,
+      fileTypes: p.fileTypes,
     });
 
-    // Generate top insight text
-    const topInsight = generateProjectInsight(p, status);
+    const topInsight = generateProjectInsight(p, status, intent);
 
     return {
       projectId: p.id,
       label: p.label,
       category: p.category,
+      intent,
       status,
-      wallets: p.wallets.map((w) => `${w.slice(0, 8)}...${w.slice(-4)}`),
+      quality,
+      wallets: p.wallets.slice(0, 10).map((w) => `${w.slice(0, 8)}...${w.slice(-4)}`),
       walletCount: p.walletCount,
       blobCount: p.blobCount,
       growthRate: p.growthRate,
-      tags: p.tags,
+      tags: p.tags.filter((t) => !t.startsWith("account:")).slice(0, 10),
       signals: p.signals,
       fileTypes: p.fileTypes,
       firstSeen: p.firstSeen.toISOString(),
       lastActive: p.lastActive.toISOString(),
-      importance,
+      importance: final,
       topInsight,
-      recentSignals: [], // populated below in route if needed
+      recentSignals: [],
     };
-  }).sort((a, b) => b.importance - a.importance);
+  });
+
+  return summaries
+    .sort((a, b) => b.importance - a.importance)
+    .slice(0, limit);
 }
 
-// ── Alert Generation ──────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// ALERTS (v2 — meaningful transitions only)
+// ═══════════════════════════════════════════════════════════════
 
-/**
- * Generate alerts for high-importance projects and events.
- */
 export async function generateAlerts(): Promise<Alert[]> {
   const alerts: Alert[] = [];
   const now = new Date();
   const oneHourAgo = new Date(now.getTime() - 3_600_000);
 
-  // Alert 1: Multi-wallet projects with high activity
+  // Alert 1: Non-spam multi-wallet projects with high activity
   const hotProjects = await prisma.project.findMany({
     where: {
       walletCount: { gte: 3 },
@@ -256,30 +404,36 @@ export async function generateAlerts(): Promise<Alert[]> {
       growthRate: { gte: 2 },
     },
     orderBy: { walletCount: "desc" },
-    take: 5,
+    take: 10,
   });
 
   for (const p of hotProjects) {
-    const importance = computeImportance({
+    const { quality, final, intent } = computeImportance({
       walletCount: p.walletCount,
       blobCount: p.blobCount,
       growthRate: p.growthRate,
       signals: p.signals,
       tags: p.tags,
+      fileTypes: p.fileTypes,
     });
+
+    // Skip media spam from alerts entirely
+    if (intent === "MEDIA_SPAM") continue;
+    // Skip low-quality projects
+    if (quality < 30) continue;
 
     alerts.push({
       id: `alert-project-${p.id}`,
-      level: p.walletCount >= 5 ? "critical" : "high",
-      title: `🔥 ${p.label} — active multi-wallet project`,
-      message: `${p.walletCount} wallets are actively contributing to this project (${p.blobCount} files, ${p.growthRate}/hr). ${generateProjectInsight(p, "growing")}`,
+      level: final >= 60 ? "critical" : "high",
+      title: `🔥 ${p.label}`,
+      message: generateProjectInsight(p, "growing", intent),
       projectId: p.id,
-      importance,
+      importance: final,
       timestamp: p.lastActive.toISOString(),
     });
   }
 
-  // Alert 2: AI-related projects with recent activity
+  // Alert 2: AI projects (these are always interesting)
   const aiProjects = await prisma.project.findMany({
     where: {
       category: "ai",
@@ -291,30 +445,34 @@ export async function generateAlerts(): Promise<Alert[]> {
   });
 
   for (const p of aiProjects) {
-    if (hotProjects.some((hp) => hp.id === p.id)) continue; // skip duplicates
+    if (alerts.some((a) => a.projectId === p.id)) continue;
+
+    const { final } = computeImportance({
+      walletCount: p.walletCount,
+      blobCount: p.blobCount,
+      growthRate: p.growthRate,
+      signals: p.signals,
+      tags: p.tags,
+      fileTypes: p.fileTypes,
+    });
 
     alerts.push({
       id: `alert-ai-${p.id}`,
       level: "high",
-      title: `🤖 AI project active: ${p.label}`,
-      message: `AI-related project with ${p.blobCount} files from ${p.walletCount} wallet(s). Signals: ${p.signals.join(", ")}`,
+      title: `🤖 ${p.label}`,
+      message: `AI project with ${p.blobCount} files from ${p.walletCount} wallet(s). Signals: ${p.signals.join(", ")}`,
       projectId: p.id,
-      importance: computeImportance({
-        walletCount: p.walletCount,
-        blobCount: p.blobCount,
-        growthRate: p.growthRate,
-        signals: p.signals,
-        tags: p.tags,
-      }),
+      importance: final,
       timestamp: p.lastActive.toISOString(),
     });
   }
 
-  // Alert 3: High-score events in the last hour
+  // Alert 3: High-score events (only truly unique signal types, deduped)
   const highScoreEvents = await prisma.alphaEvent.findMany({
     where: {
       score: { gte: 9 },
       createdAt: { gte: oneHourAgo },
+      signalType: { notIn: ["MULTI_WALLET_PROJECT"] }, // skip incremental wallet joins
     },
     orderBy: { score: "desc" },
     take: 3,
@@ -335,10 +493,12 @@ export async function generateAlerts(): Promise<Alert[]> {
   return alerts.sort((a, b) => b.importance - a.importance);
 }
 
-// ── Internal Helpers ──────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// INTERNAL HELPERS
+// ═══════════════════════════════════════════════════════════════
 
 function findProjectForEvent(
-  event: { owner: string; blobName: string | null },
+  event: { owner: string },
   projects: { id: string; wallets: string[] }[]
 ): string | null {
   for (const p of projects) {
@@ -366,80 +526,78 @@ interface ProjectLike {
   fileTypes: string[];
 }
 
-function generateProjectInsight(project: ProjectLike, status: string): string {
+function generateProjectInsight(project: ProjectLike, status: string, intent: ProjectIntent): string {
+  // Intent-aware insight generation
+  if (intent === "MEDIA_SPAM") {
+    return `Low-value media collection — ${project.walletCount} wallets uploading ${project.fileTypes.join("/")} files with no structured content.`;
+  }
+
   const parts: string[] = [];
 
   if (project.walletCount > 1) {
-    parts.push(`${project.walletCount} wallets are collaborating on this ${project.category} project`);
+    parts.push(`${project.walletCount} wallets collaborating`);
   }
 
   if (status === "growing") {
-    parts.push(`uploading at ${project.growthRate} files/hour`);
+    parts.push(`${project.growthRate} files/hour`);
   }
 
-  if (project.signals.length > 0) {
-    const domainSignals = project.signals.filter((s) =>
-      ["ai_interaction", "model_data", "trading_data", "agent_config"].includes(s)
-    );
-    if (domainSignals.length > 0) {
-      parts.push(`detected ${domainSignals.join(" + ")} activity`);
-    }
+  // Domain-specific insight
+  const domainSignals = project.signals.filter((s) =>
+    ["ai_interaction", "model_data", "trading_data", "agent_config"].includes(s)
+  );
+  if (domainSignals.length > 0) {
+    parts.push(`detected ${domainSignals.join(" + ")} activity`);
   }
 
   if (project.fileTypes.length > 2) {
-    parts.push(`using ${project.fileTypes.length} different file types`);
+    parts.push(`${project.fileTypes.length} file types (${project.fileTypes.join(", ")})`);
   }
 
-  return parts.length > 0 ? parts.join(", ") + "." : "Monitoring for further activity.";
+  if (intent !== "UNKNOWN") {
+    const intentLabels: Record<ProjectIntent, string> = {
+      MEDIA_SPAM: "",
+      DATASET: "building a dataset",
+      AI_PIPELINE: "running an AI pipeline",
+      CONFIG_DEPLOYMENT: "deploying configurations",
+      MIXED_PROJECT: "multi-component project",
+      UNKNOWN: "",
+    };
+    if (intentLabels[intent]) parts.push(intentLabels[intent]);
+  }
+
+  return parts.length > 0 ? parts.join(" · ") + "." : "Monitoring for further activity.";
 }
 
 function generateNarrative(
-  event: { signalType: string; explanation: string; score: number; owner: string },
-  project: ProjectLike | null
+  event: { signalType: string; explanation: string; score: number },
+  project: ProjectLike | null,
+  intent: ProjectIntent
 ): { title: string; narrative: string; whyItMatters: string } {
-  const signalLabel = event.signalType.replace(/_/g, " ").toLowerCase();
-
-  // Title: short, punchy
   let title: string;
-  if (project && project.walletCount > 1) {
-    title = `${project.label}`;
+  if (intent === "MEDIA_SPAM") {
+    title = "Media Upload Activity";
+  } else if (project && project.walletCount > 1) {
+    title = project.label;
   } else {
     title = event.signalType.replace(/_/g, " ");
   }
 
-  // Narrative: what is happening
-  let narrative = event.explanation;
+  const narrative = event.explanation;
 
-  // Why it matters: the actionable takeaway
-  let whyItMatters: string;
-  switch (event.signalType) {
-    case "MULTI_WALLET_PROJECT":
-      whyItMatters = "Multiple independent wallets converging on the same project is the strongest signal of organized development activity. This rarely happens by coincidence.";
-      break;
-    case "PROJECT_GROWTH":
-      whyItMatters = "Sustained file accumulation indicates a project with real momentum — someone is actively building, not just testing.";
-      break;
-    case "AI_TRAINING":
-      whyItMatters = "AI model training on decentralized storage is advanced usage that indicates sophisticated ML workflows and potential alpha.";
-      break;
-    case "AI_INFERENCE":
-      whyItMatters = "Real-time AI inference outputs suggest a live production system, not just experiments.";
-      break;
-    case "AGENT_DEPLOYMENT":
-      whyItMatters = "Autonomous agent deployments represent the cutting edge of on-chain automation — these systems operate independently.";
-      break;
-    case "DATA_PIPELINE":
-      whyItMatters = "Sustained data upload rates indicate production ETL systems or automated data collection workflows.";
-      break;
-    case "DATASET_FORMATION":
-      whyItMatters = "Large datasets forming on-chain suggest training data preparation, research archives, or analytics infrastructure.";
-      break;
-    case "RARE_FILE_TYPE":
-      whyItMatters = "Novel file formats expand the ecosystem's capabilities and may signal new use cases entering Shelby.";
-      break;
-    default:
-      whyItMatters = `This ${signalLabel} event scored ${event.score}/10, placing it in the top tier of detected activity.`;
-  }
+  const whyItMattersMap: Record<string, string> = {
+    MULTI_WALLET_PROJECT: "Multiple wallets converging on the same project indicates organized development — this rarely happens by coincidence.",
+    PROJECT_GROWTH: "Sustained file accumulation indicates real momentum — active building, not just testing.",
+    AI_TRAINING: "AI model training on decentralized storage indicates sophisticated ML workflows.",
+    AI_INFERENCE: "Real-time inference outputs suggest a live production AI system.",
+    AGENT_DEPLOYMENT: "Autonomous agent deployments represent cutting-edge on-chain automation.",
+    DATA_PIPELINE: "Sustained data upload rates indicate production ETL or automated data collection.",
+    DATASET_FORMATION: "Large datasets forming on-chain suggest training data preparation or research archives.",
+    RARE_FILE_TYPE: "Novel file formats expand the ecosystem and signal new use cases.",
+  };
+
+  const whyItMatters = whyItMattersMap[event.signalType]
+    ?? `Scored ${event.score}/10 — top-tier detected activity.`;
 
   return { title, narrative, whyItMatters };
 }
