@@ -1,42 +1,23 @@
 import { prisma } from "../database/db.js";
 
 /**
- * Insight Engine v4 — Temporal Intelligence
+ * Insight Engine v5 — Real-Time Alpha Feed
  *
- * Adds to v3 (stages, momentum, opportunity):
- *  - Freshness score: how recently did this project start?
- *  - Trigger events: new project, stage transition, momentum spike, first multi-wallet
- *  - Temporal priority: opportunity × freshness × momentum
- *  - ACT_NOW flag: high opportunity + high freshness = immediate alpha
+ * Tuned for maximum urgency:
+ *  - Freshness is now DOMINANT signal (45% weight)
+ *  - Burst detection: rapid uploads in short windows
+ *  - Relaxed ACT NOW: triggers on freshness ≥ 50 + opportunity ≥ 35
+ *  - Staleness penalty: projects idle > 2hrs get penalized
+ *  - WhyNow narratives focus on sudden change + urgency
  *
- * The question this answers:
- * "What JUST became important?"
+ * The question: "What is happening RIGHT NOW that I should act on?"
  */
 
-// ── Public Types ──────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────
 
-export type ProjectIntent =
-  | "MEDIA_SPAM"
-  | "DATASET"
-  | "AI_PIPELINE"
-  | "CONFIG_DEPLOYMENT"
-  | "MIXED_PROJECT"
-  | "UNKNOWN";
-
-export type ProjectStage =
-  | "EARLY"
-  | "EMERGING"
-  | "GROWING"
-  | "SATURATED"
-  | "DYING";
-
-export type TriggerEvent =
-  | "NEW_PROJECT"
-  | "STAGE_TRANSITION"
-  | "MOMENTUM_SPIKE"
-  | "FIRST_MULTI_WALLET"
-  | "QUALITY_SURGE"
-  | null;
+export type ProjectIntent = "MEDIA_SPAM" | "DATASET" | "AI_PIPELINE" | "CONFIG_DEPLOYMENT" | "MIXED_PROJECT" | "UNKNOWN";
+export type ProjectStage = "EARLY" | "EMERGING" | "GROWING" | "SATURATED" | "DYING";
+export type TriggerEvent = "NEW_PROJECT" | "STAGE_TRANSITION" | "MOMENTUM_SPIKE" | "FIRST_MULTI_WALLET" | "BURST_DETECTED" | "QUALITY_SURGE" | null;
 
 export interface Insight {
   id: string;
@@ -50,6 +31,7 @@ export interface Insight {
   quality: number;
   opportunity: number;
   freshness: number;
+  staleness: number;
   temporalScore: number;
   stage: ProjectStage;
   momentum: number;
@@ -61,6 +43,7 @@ export interface Insight {
   blobCount: number;
   signals: string[];
   startedAgo: string;
+  lastActiveAgo: string;
   timestamp: string;
   timeAgo: string;
 }
@@ -76,6 +59,7 @@ export interface ProjectSummary {
   momentum: number;
   opportunity: number;
   freshness: number;
+  staleness: number;
   temporalScore: number;
   actNow: boolean;
   trigger: TriggerEvent;
@@ -89,6 +73,7 @@ export interface ProjectSummary {
   firstSeen: string;
   lastActive: string;
   startedAgo: string;
+  lastActiveAgo: string;
   importance: number;
   topInsight: string | null;
   recentSignals: { type: string; score: number; explanation: string }[];
@@ -109,41 +94,77 @@ export interface Alert {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// FRESHNESS SCORE (0-100)
+// FRESHNESS (0-100) — AGGRESSIVE DECAY
 // ═══════════════════════════════════════════════════════════════
 
-/**
- * How recently was this project first seen?
- *
- * 100 = just appeared (< 5 min ago)
- *  80 = very fresh (< 30 min)
- *  60 = recent (< 2 hours)
- *  40 = today (< 12 hours)
- *  20 = yesterday (< 24 hours)
- *  10 = old (> 24 hours)
- */
 export function computeFreshness(firstSeen: Date): number {
-  const minutesAgo = (Date.now() - firstSeen.getTime()) / 60_000;
-
-  if (minutesAgo < 5) return 100;
-  if (minutesAgo < 15) return 90;
-  if (minutesAgo < 30) return 80;
-  if (minutesAgo < 60) return 70;
-  if (minutesAgo < 120) return 60;
-  if (minutesAgo < 360) return 45;
-  if (minutesAgo < 720) return 30;
-  if (minutesAgo < 1440) return 20;
+  const min = (Date.now() - firstSeen.getTime()) / 60_000;
+  if (min < 2) return 100;
+  if (min < 5) return 95;
+  if (min < 10) return 90;
+  if (min < 20) return 85;
+  if (min < 30) return 75;
+  if (min < 60) return 65;
+  if (min < 120) return 50;
+  if (min < 240) return 35;
+  if (min < 480) return 25;
+  if (min < 720) return 15;
   return 10;
 }
 
 // ═══════════════════════════════════════════════════════════════
-// TRIGGER EVENT DETECTION
+// STALENESS (0-100) — PENALIZES INACTIVE PROJECTS
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * Detect what just happened to make this project interesting.
- * Returns the most significant trigger event.
+ * How recently was this project LAST active?
+ * 100 = active right now, 0 = dead
  */
+export function computeStaleness(lastActive: Date): number {
+  const min = (Date.now() - lastActive.getTime()) / 60_000;
+  if (min < 5) return 100;
+  if (min < 15) return 90;
+  if (min < 30) return 80;
+  if (min < 60) return 65;
+  if (min < 120) return 50;
+  if (min < 360) return 30;
+  if (min < 720) return 15;
+  return 5;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BURST DETECTION
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Detect rapid activity bursts.
+ * A burst = high growth rate relative to project age.
+ */
+export function detectBurst(params: {
+  blobCount: number;
+  growthRate: number;
+  firstSeen: Date;
+  lastActive: Date;
+}): boolean {
+  const ageMinutes = (Date.now() - params.firstSeen.getTime()) / 60_000;
+
+  // Young project with rapid uploads
+  if (ageMinutes < 60 && params.blobCount >= 3) return true;
+  if (ageMinutes < 30 && params.blobCount >= 2) return true;
+
+  // Any project with extreme growth rate
+  if (params.growthRate >= 5) return true;
+
+  // High velocity relative to age
+  if (ageMinutes > 0 && (params.blobCount / (ageMinutes / 60)) >= 4) return true;
+
+  return false;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TRIGGER DETECTION (v2 — with bursts)
+// ═══════════════════════════════════════════════════════════════
+
 export function detectTrigger(params: {
   firstSeen: Date;
   lastActive: Date;
@@ -152,81 +173,88 @@ export function detectTrigger(params: {
   growthRate: number;
   momentum: number;
   stage: ProjectStage;
+  isBurst: boolean;
 }): TriggerEvent {
-  const minutesSinceCreated = (Date.now() - params.firstSeen.getTime()) / 60_000;
+  const minSinceCreated = (Date.now() - params.firstSeen.getTime()) / 60_000;
 
-  // NEW_PROJECT: appeared in last 30 minutes
-  if (minutesSinceCreated < 30 && params.blobCount <= 5) {
-    return "NEW_PROJECT";
-  }
+  // BURST takes priority — it's the most urgent
+  if (params.isBurst) return "BURST_DETECTED";
 
-  // FIRST_MULTI_WALLET: exactly 2 wallets (just became multi-wallet)
-  if (params.walletCount === 2 && minutesSinceCreated < 120) {
-    return "FIRST_MULTI_WALLET";
-  }
+  // NEW_PROJECT
+  if (minSinceCreated < 30 && params.blobCount <= 5) return "NEW_PROJECT";
 
-  // MOMENTUM_SPIKE: growth rate significantly above baseline
-  if (params.momentum >= 85) {
-    return "MOMENTUM_SPIKE";
-  }
+  // FIRST_MULTI_WALLET
+  if (params.walletCount === 2 && minSinceCreated < 120) return "FIRST_MULTI_WALLET";
 
-  // STAGE_TRANSITION: emerging-stage projects that recently crossed threshold
-  if (params.stage === "EMERGING" && params.blobCount >= 4 && params.blobCount <= 6) {
-    return "STAGE_TRANSITION";
-  }
+  // MOMENTUM_SPIKE
+  if (params.momentum >= 85) return "MOMENTUM_SPIKE";
+
+  // STAGE_TRANSITION
+  if (params.stage === "EMERGING" && params.blobCount >= 4 && params.blobCount <= 6) return "STAGE_TRANSITION";
 
   return null;
 }
 
 // ═══════════════════════════════════════════════════════════════
-// TEMPORAL PRIORITY SCORE
+// TEMPORAL SCORE — FRESHNESS DOMINANT
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * temporalScore = opportunity × freshnessWeight × momentumWeight
+ * v5 formula: freshness^0.45 × opportunity^0.3 × recency^0.15 × momentum^0.1
  *
- * This answers: "What should I act on RIGHT NOW?"
- * Fresh + high-opportunity + accelerating = top priority.
+ * freshness = when did the project START (discovery freshness)
+ * recency = when was the project LAST ACTIVE (staleness inverse)
+ * opportunity = structural quality
+ * momentum = acceleration
+ *
+ * This heavily favors NEW things that are STILL ACTIVE.
  */
 export function computeTemporalScore(params: {
   opportunity: number;
   freshness: number;
+  staleness: number;
   momentum: number;
+  isBurst: boolean;
 }): number {
-  // Normalize to 0-1 scale
-  const opp = params.opportunity / 100;
-  const fresh = params.freshness / 100;
-  const mom = params.momentum / 100;
+  const opp = Math.max(0.01, params.opportunity / 100);
+  const fresh = Math.max(0.01, params.freshness / 100);
+  const stale = Math.max(0.01, params.staleness / 100);
+  const mom = Math.max(0.01, params.momentum / 100);
 
-  // Weighted geometric mean (opportunity dominant, freshness second, momentum third)
-  // opportunity: 50% weight, freshness: 30% weight, momentum: 20% weight
-  const score = Math.pow(opp, 0.5) * Math.pow(fresh, 0.3) * Math.pow(mom, 0.2);
+  let score = Math.pow(fresh, 0.45) * Math.pow(opp, 0.3) * Math.pow(stale, 0.15) * Math.pow(mom, 0.1);
 
-  return Math.round(score * 100);
+  // Burst bonus: +20% temporal score
+  if (params.isBurst) score *= 1.2;
+
+  return Math.min(100, Math.round(score * 100));
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ACT NOW DETECTION
+// ACT NOW — RELAXED THRESHOLDS
 // ═══════════════════════════════════════════════════════════════
 
 export function isActNow(params: {
   opportunity: number;
   freshness: number;
+  staleness: number;
   momentum: number;
   intent: ProjectIntent;
   trigger: TriggerEvent;
+  isBurst: boolean;
 }): boolean {
   if (params.intent === "MEDIA_SPAM") return false;
 
-  // ACT NOW = high opportunity + high freshness + has a trigger
-  if (params.opportunity >= 50 && params.freshness >= 60 && params.trigger !== null) {
-    return true;
-  }
+  // Burst + any reasonable opportunity = ACT NOW
+  if (params.isBurst && params.opportunity >= 30) return true;
 
-  // Also ACT NOW if extremely fresh with decent opportunity
-  if (params.freshness >= 80 && params.opportunity >= 40) {
-    return true;
-  }
+  // Fresh + decent opportunity = ACT NOW (relaxed from v4)
+  if (params.freshness >= 50 && params.opportunity >= 35) return true;
+
+  // Very fresh + any trigger = ACT NOW
+  if (params.freshness >= 70 && params.trigger !== null) return true;
+
+  // High staleness (still active) + high opportunity = ACT NOW
+  if (params.staleness >= 80 && params.opportunity >= 50) return true;
 
   return false;
 }
@@ -235,21 +263,13 @@ export function isActNow(params: {
 // PROJECT STAGE
 // ═══════════════════════════════════════════════════════════════
 
-export function computeStage(params: {
-  blobCount: number;
-  walletCount: number;
-  growthRate: number;
-  lastActive: Date;
-}): ProjectStage {
-  const hoursSinceActive = (Date.now() - params.lastActive.getTime()) / 3_600_000;
-  if (hoursSinceActive >= 12) return "DYING";
-  if (params.blobCount <= 3 && params.walletCount <= 2) return "EARLY";
-  if (params.blobCount <= 10) return "EMERGING";
-  if (params.blobCount <= 30) {
-    if (params.growthRate < 1 || hoursSinceActive > 3) return "SATURATED";
-    return "GROWING";
-  }
-  if (params.growthRate < 1 || hoursSinceActive > 3) return "SATURATED";
+export function computeStage(p: { blobCount: number; walletCount: number; growthRate: number; lastActive: Date }): ProjectStage {
+  const hrs = (Date.now() - p.lastActive.getTime()) / 3_600_000;
+  if (hrs >= 12) return "DYING";
+  if (p.blobCount <= 3 && p.walletCount <= 2) return "EARLY";
+  if (p.blobCount <= 10) return "EMERGING";
+  if (p.blobCount <= 30 && (p.growthRate >= 1 || hrs < 3)) return "GROWING";
+  if (p.growthRate < 1 || hrs > 3) return "SATURATED";
   return "GROWING";
 }
 
@@ -257,16 +277,11 @@ export function computeStage(params: {
 // MOMENTUM (0-100)
 // ═══════════════════════════════════════════════════════════════
 
-export function computeMomentum(params: {
-  growthRate: number;
-  blobCount: number;
-  firstSeen: Date;
-  lastActive: Date;
-}): number {
-  const totalHours = Math.max(1, (params.lastActive.getTime() - params.firstSeen.getTime()) / 3_600_000);
-  const historicalRate = params.blobCount / totalHours;
-  if (historicalRate === 0) return 50;
-  const ratio = params.growthRate / historicalRate;
+export function computeMomentum(p: { growthRate: number; blobCount: number; firstSeen: Date; lastActive: Date }): number {
+  const hrs = Math.max(0.1, (p.lastActive.getTime() - p.firstSeen.getTime()) / 3_600_000);
+  const historical = p.blobCount / hrs;
+  if (historical === 0) return 50;
+  const ratio = p.growthRate / historical;
   if (ratio >= 3) return 100;
   if (ratio >= 2) return 85;
   if (ratio >= 1.5) return 75;
@@ -280,56 +295,35 @@ export function computeMomentum(params: {
 // QUALITY (0-100)
 // ═══════════════════════════════════════════════════════════════
 
-export function computeQuality(params: {
-  fileTypes: string[];
-  tags: string[];
-  signals: string[];
-  blobCount: number;
-}): number {
-  let quality = 50;
-  const typeCount = params.fileTypes.length;
-  if (typeCount >= 4) quality += 20;
-  else if (typeCount >= 3) quality += 15;
-  else if (typeCount >= 2) quality += 5;
-  else quality -= 10;
-
-  const structured = new Set(["json", "csv", "yaml", "yml", "toml", "xml", "parquet", "arrow"]);
-  if (params.fileTypes.some((t) => structured.has(t))) quality += 15;
-
-  const configTypes = new Set(["config", "logs", "ai_data", "dataset"]);
-  quality += Math.min(15, params.tags.filter((t) => configTypes.has(t)).length * 5);
-
-  const domainSignals = new Set(["ai_interaction", "model_data", "agent_config", "trading_data"]);
-  quality += Math.min(15, params.signals.filter((s) => domainSignals.has(s)).length * 8);
-
-  const mediaTypes = new Set(["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp", "ico", "mp3", "mp4", "wav", "avi", "mov"]);
-  if (params.fileTypes.length > 0 && params.fileTypes.every((t) => mediaTypes.has(t))) {
-    quality -= 30;
-    if (params.blobCount > 20) quality -= 10;
-  }
-  if (params.signals.length === 0 && params.tags.length <= 2) quality -= 10;
-  return Math.max(0, Math.min(100, quality));
+export function computeQuality(p: { fileTypes: string[]; tags: string[]; signals: string[]; blobCount: number }): number {
+  let q = 50;
+  const tc = p.fileTypes.length;
+  if (tc >= 4) q += 20; else if (tc >= 3) q += 15; else if (tc >= 2) q += 5; else q -= 10;
+  const struct = new Set(["json","csv","yaml","yml","toml","xml","parquet","arrow"]);
+  if (p.fileTypes.some(t => struct.has(t))) q += 15;
+  const cfg = new Set(["config","logs","ai_data","dataset"]);
+  q += Math.min(15, p.tags.filter(t => cfg.has(t)).length * 5);
+  const dom = new Set(["ai_interaction","model_data","agent_config","trading_data"]);
+  q += Math.min(15, p.signals.filter(s => dom.has(s)).length * 8);
+  const media = new Set(["png","jpg","jpeg","gif","webp","svg","bmp","ico","mp3","mp4","wav","avi","mov"]);
+  if (p.fileTypes.length > 0 && p.fileTypes.every(t => media.has(t))) { q -= 30; if (p.blobCount > 20) q -= 10; }
+  if (p.signals.length === 0 && p.tags.length <= 2) q -= 10;
+  return Math.max(0, Math.min(100, q));
 }
 
 // ═══════════════════════════════════════════════════════════════
 // CLASSIFICATION
 // ═══════════════════════════════════════════════════════════════
 
-export function classifyProject(params: {
-  fileTypes: string[];
-  tags: string[];
-  signals: string[];
-  blobCount: number;
-  walletCount: number;
-}): ProjectIntent {
-  const mediaTypes = new Set(["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp", "ico", "mp3", "mp4", "wav", "avi", "mov"]);
-  const allMedia = params.fileTypes.length > 0 && params.fileTypes.every((t) => mediaTypes.has(t));
-  if (allMedia && params.signals.length === 0 && params.walletCount > 5) return "MEDIA_SPAM";
-  if (params.signals.some((s) => ["ai_interaction", "model_data", "agent_config"].includes(s))) return "AI_PIPELINE";
-  if (params.tags.includes("config") && params.signals.length > 0) return "CONFIG_DEPLOYMENT";
-  const dataTypes = new Set(["csv", "parquet", "arrow", "json", "npy", "feather"]);
-  if (params.tags.includes("dataset") || params.fileTypes.some((t) => dataTypes.has(t))) return "DATASET";
-  if (params.fileTypes.length >= 3 && !allMedia) return "MIXED_PROJECT";
+export function classifyProject(p: { fileTypes: string[]; tags: string[]; signals: string[]; blobCount: number; walletCount: number }): ProjectIntent {
+  const media = new Set(["png","jpg","jpeg","gif","webp","svg","bmp","ico","mp3","mp4","wav","avi","mov"]);
+  const allMedia = p.fileTypes.length > 0 && p.fileTypes.every(t => media.has(t));
+  if (allMedia && p.signals.length === 0 && p.walletCount > 5) return "MEDIA_SPAM";
+  if (p.signals.some(s => ["ai_interaction","model_data","agent_config"].includes(s))) return "AI_PIPELINE";
+  if (p.tags.includes("config") && p.signals.length > 0) return "CONFIG_DEPLOYMENT";
+  const data = new Set(["csv","parquet","arrow","json","npy","feather"]);
+  if (p.tags.includes("dataset") || p.fileTypes.some(t => data.has(t))) return "DATASET";
+  if (p.fileTypes.length >= 3 && !allMedia) return "MIXED_PROJECT";
   return "UNKNOWN";
 }
 
@@ -337,58 +331,67 @@ export function classifyProject(params: {
 // OPPORTUNITY (0-100)
 // ═══════════════════════════════════════════════════════════════
 
-export function computeOpportunity(params: {
-  stage: ProjectStage;
-  quality: number;
-  momentum: number;
-  walletCount: number;
-  intent: ProjectIntent;
-}): number {
-  if (params.intent === "MEDIA_SPAM") return 0;
-  let score = 0;
-  const stageBonus: Record<ProjectStage, number> = { EARLY: 30, EMERGING: 25, GROWING: 15, SATURATED: 5, DYING: 0 };
-  score += stageBonus[params.stage];
-  score += Math.round(params.quality * 0.3);
-  score += Math.round(params.momentum * 0.25);
-  if (params.walletCount >= 2 && (params.stage === "EARLY" || params.stage === "EMERGING")) score += 15;
-  else if (params.walletCount >= 2) score += 5;
-  return Math.min(100, score);
+export function computeOpportunity(p: { stage: ProjectStage; quality: number; momentum: number; walletCount: number; intent: ProjectIntent }): number {
+  if (p.intent === "MEDIA_SPAM") return 0;
+  let s = 0;
+  const bonus: Record<ProjectStage, number> = { EARLY: 30, EMERGING: 25, GROWING: 15, SATURATED: 5, DYING: 0 };
+  s += bonus[p.stage];
+  s += Math.round(p.quality * 0.3);
+  s += Math.round(p.momentum * 0.25);
+  if (p.walletCount >= 2 && (p.stage === "EARLY" || p.stage === "EMERGING")) s += 15;
+  else if (p.walletCount >= 2) s += 5;
+  return Math.min(100, s);
 }
 
 // ═══════════════════════════════════════════════════════════════
-// IMPORTANCE (with diminishing returns)
+// IMPORTANCE
 // ═══════════════════════════════════════════════════════════════
 
-export function computeImportance(params: {
-  walletCount: number;
-  blobCount: number;
-  growthRate: number;
-  signals: string[];
-  tags: string[];
-  fileTypes: string[];
-  signalScore?: number;
+export function computeImportance(p: {
+  walletCount: number; blobCount: number; growthRate: number;
+  signals: string[]; tags: string[]; fileTypes: string[]; signalScore?: number;
 }): { quality: number; final: number; intent: ProjectIntent } {
-  const quality = computeQuality({ fileTypes: params.fileTypes, tags: params.tags, signals: params.signals, blobCount: params.blobCount });
-  const intent = classifyProject({ fileTypes: params.fileTypes, tags: params.tags, signals: params.signals, blobCount: params.blobCount, walletCount: params.walletCount });
-
+  const quality = computeQuality(p);
+  const intent = classifyProject(p);
   let raw = 0;
-  const wc = params.walletCount;
-  if (wc <= 5) raw += wc * 5;
-  else if (wc <= 20) raw += 25 + (wc - 5) * 2;
-  else if (wc <= 50) raw += 55 + (wc - 20) * 0.5;
-  else raw += 70;
-
-  const hvs = new Set(["ai_interaction", "model_data", "agent_config", "trading_data"]);
-  raw += Math.min(20, params.signals.filter((s) => hvs.has(s)).length * 8);
-  if (params.growthRate >= 10) raw += 15;
-  else if (params.growthRate >= 5) raw += 10;
-  else if (params.growthRate >= 2) raw += 5;
-  if (params.signalScore && params.signalScore >= 9) raw += 10;
-  else if (params.signalScore && params.signalScore >= 7) raw += 5;
-
+  const wc = p.walletCount;
+  if (wc <= 5) raw += wc * 5; else if (wc <= 20) raw += 25 + (wc - 5) * 2;
+  else if (wc <= 50) raw += 55 + (wc - 20) * 0.5; else raw += 70;
+  const hvs = new Set(["ai_interaction","model_data","agent_config","trading_data"]);
+  raw += Math.min(20, p.signals.filter(s => hvs.has(s)).length * 8);
+  if (p.growthRate >= 10) raw += 15; else if (p.growthRate >= 5) raw += 10; else if (p.growthRate >= 2) raw += 5;
+  if (p.signalScore && p.signalScore >= 9) raw += 10; else if (p.signalScore && p.signalScore >= 7) raw += 5;
   raw = Math.min(100, raw);
-  const qualityMultiplier = 0.1 + (quality / 100) * 0.9;
-  return { quality, final: Math.round(raw * qualityMultiplier), intent };
+  const qm = 0.1 + (quality / 100) * 0.9;
+  return { quality, final: Math.round(raw * qm), intent };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COMPUTE ALL SIGNALS FOR A PROJECT
+// ═══════════════════════════════════════════════════════════════
+
+interface ProjectRow {
+  id: string; label: string; category: string; walletCount: number; blobCount: number;
+  growthRate: number; signals: string[]; tags: string[]; fileTypes: string[];
+  wallets: string[]; firstSeen: Date; lastActive: Date;
+}
+
+function computeAllSignals(p: ProjectRow, signalScore?: number) {
+  const { quality, final: importance, intent } = computeImportance({
+    walletCount: p.walletCount, blobCount: p.blobCount, growthRate: p.growthRate,
+    signals: p.signals, tags: p.tags, fileTypes: p.fileTypes, signalScore,
+  });
+  const stage = computeStage(p);
+  const momentum = computeMomentum(p);
+  const opportunity = computeOpportunity({ stage, quality, momentum, walletCount: p.walletCount, intent });
+  const freshness = computeFreshness(p.firstSeen);
+  const staleness = computeStaleness(p.lastActive);
+  const isBurst = detectBurst({ blobCount: p.blobCount, growthRate: p.growthRate, firstSeen: p.firstSeen, lastActive: p.lastActive });
+  const trigger = detectTrigger({ firstSeen: p.firstSeen, lastActive: p.lastActive, blobCount: p.blobCount, walletCount: p.walletCount, growthRate: p.growthRate, momentum, stage, isBurst });
+  const temporalScore = computeTemporalScore({ opportunity, freshness, staleness, momentum, isBurst });
+  const actNow = isActNow({ opportunity, freshness, staleness, momentum, intent, trigger, isBurst });
+
+  return { quality, importance, intent, stage, momentum, opportunity, freshness, staleness, isBurst, trigger, temporalScore, actNow };
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -408,54 +411,46 @@ export async function generateInsights(limit = 20): Promise<Insight[]> {
     take: 50,
   });
 
-  const projectMap = new Map(projects.map((p) => [p.id, p]));
+  const projectMap = new Map(projects.map(p => [p.id, p]));
 
-  // Deduplicate by project
+  // Dedup by project
   const seen = new Map<string, typeof recentEvents[0]>();
-  for (const event of recentEvents) {
-    const projectId = findProjectForEvent(event, projects);
-    const key = projectId ?? `standalone:${event.id}`;
-    if (!seen.has(key) || event.score > (seen.get(key)?.score ?? 0)) {
-      seen.set(key, event);
-    }
+  for (const ev of recentEvents) {
+    const pid = findProject(ev, projects);
+    const key = pid ?? `solo:${ev.id}`;
+    if (!seen.has(key) || ev.score > (seen.get(key)?.score ?? 0)) seen.set(key, ev);
   }
 
   const insights: Insight[] = [];
   for (const [key, event] of seen) {
-    const projectId = key.startsWith("standalone:") ? null : key;
+    const projectId = key.startsWith("solo:") ? null : key;
     const project = projectId ? projectMap.get(projectId) ?? null : null;
 
-    const { quality, final: importance, intent } = computeImportance({
-      walletCount: project?.walletCount ?? 1, blobCount: project?.blobCount ?? 1,
-      growthRate: project?.growthRate ?? 0, signals: project?.signals ?? [],
-      tags: project?.tags ?? [], fileTypes: project?.fileTypes ?? [], signalScore: event.score,
-    });
+    const sigs = project
+      ? computeAllSignals(project, event.score)
+      : { quality: 50, importance: event.score * 5, intent: "UNKNOWN" as ProjectIntent, stage: "EARLY" as ProjectStage, momentum: 50, opportunity: 30, freshness: computeFreshness(event.createdAt), staleness: 100, isBurst: false, trigger: null as TriggerEvent, temporalScore: 30, actNow: false };
 
-    const stage = project ? computeStage({ blobCount: project.blobCount, walletCount: project.walletCount, growthRate: project.growthRate, lastActive: project.lastActive }) : "EARLY";
-    const momentum = project ? computeMomentum({ growthRate: project.growthRate, blobCount: project.blobCount, firstSeen: project.firstSeen, lastActive: project.lastActive }) : 50;
-    const opportunity = computeOpportunity({ stage, quality, momentum, walletCount: project?.walletCount ?? 1, intent });
-    const freshness = project ? computeFreshness(project.firstSeen) : computeFreshness(event.createdAt);
-    const temporalScore = computeTemporalScore({ opportunity, freshness, momentum });
-    const trigger = project ? detectTrigger({ firstSeen: project.firstSeen, lastActive: project.lastActive, blobCount: project.blobCount, walletCount: project.walletCount, growthRate: project.growthRate, momentum, stage }) : null;
-    const actNow = isActNow({ opportunity, freshness, momentum, intent, trigger });
+    if (sigs.intent === "MEDIA_SPAM" && sigs.importance < 20) continue;
 
-    if (intent === "MEDIA_SPAM" && importance < 20) continue;
-
-    const category = categorizeSignal(event.signalType);
-    const { title, narrative, whyItMatters, whyNow } = generateNarrative(event, project, intent, stage, momentum, opportunity, freshness, trigger, actNow);
-    const startedAgo = project ? getTimeAgo(project.firstSeen) : getTimeAgo(event.createdAt);
+    const cat = categorize(event.signalType);
+    const { title, narrative, whyItMatters, whyNow } = buildNarrative(event, project, sigs);
+    const startedAgo = project ? timeAgo(project.firstSeen) : timeAgo(event.createdAt);
+    const lastActiveAgo = project ? timeAgo(project.lastActive) : timeAgo(event.createdAt);
 
     insights.push({
-      id: `insight-${event.id}`, title, narrative, whyItMatters, whyNow, actNow, trigger,
-      importance, quality, opportunity, freshness, temporalScore, stage, momentum, category, intent,
+      id: `insight-${event.id}`, title, narrative, whyItMatters, whyNow,
+      actNow: sigs.actNow, trigger: sigs.trigger,
+      importance: sigs.importance, quality: sigs.quality, opportunity: sigs.opportunity,
+      freshness: sigs.freshness, staleness: sigs.staleness, temporalScore: sigs.temporalScore,
+      stage: sigs.stage, momentum: sigs.momentum, category: cat, intent: sigs.intent,
       projectId, projectLabel: project?.label ?? null,
       walletCount: project?.walletCount ?? 1, blobCount: project?.blobCount ?? 1,
       signals: project?.signals ?? [event.signalType],
-      startedAgo, timestamp: event.createdAt.toISOString(), timeAgo: getTimeAgo(event.createdAt),
+      startedAgo, lastActiveAgo,
+      timestamp: event.createdAt.toISOString(), timeAgo: timeAgo(event.createdAt),
     });
   }
 
-  // Sort by TEMPORAL SCORE (the ultimate decision signal)
   return insights.sort((a, b) => b.temporalScore - a.temporalScore || b.opportunity - a.opportunity).slice(0, limit);
 }
 
@@ -471,90 +466,70 @@ export async function getProjectSummaries(limit = 20): Promise<ProjectSummary[]>
   });
 
   const now = new Date();
-  const summaries = projects.map((p) => {
-    const hoursSinceActive = (now.getTime() - p.lastActive.getTime()) / 3_600_000;
-    let status: "active" | "growing" | "dormant";
-    if (hoursSinceActive < 1 && p.growthRate >= 1) status = "growing";
-    else if (hoursSinceActive < 6) status = "active";
-    else status = "dormant";
-
-    const { quality, final: importance, intent } = computeImportance({
-      walletCount: p.walletCount, blobCount: p.blobCount, growthRate: p.growthRate,
-      signals: p.signals, tags: p.tags, fileTypes: p.fileTypes,
-    });
-
-    const stage = computeStage({ blobCount: p.blobCount, walletCount: p.walletCount, growthRate: p.growthRate, lastActive: p.lastActive });
-    const momentum = computeMomentum({ growthRate: p.growthRate, blobCount: p.blobCount, firstSeen: p.firstSeen, lastActive: p.lastActive });
-    const opportunity = computeOpportunity({ stage, quality, momentum, walletCount: p.walletCount, intent });
-    const freshness = computeFreshness(p.firstSeen);
-    const temporalScore = computeTemporalScore({ opportunity, freshness, momentum });
-    const trigger = detectTrigger({ firstSeen: p.firstSeen, lastActive: p.lastActive, blobCount: p.blobCount, walletCount: p.walletCount, growthRate: p.growthRate, momentum, stage });
-    const actNow = isActNow({ opportunity, freshness, momentum, intent, trigger });
-
-    const topInsight = generateProjectInsight(p, status, intent, stage, momentum, opportunity, freshness, trigger, actNow);
+  const summaries = projects.map(p => {
+    const hrs = (now.getTime() - p.lastActive.getTime()) / 3_600_000;
+    const status: "active" | "growing" | "dormant" = hrs < 1 && p.growthRate >= 1 ? "growing" : hrs < 6 ? "active" : "dormant";
+    const sigs = computeAllSignals(p);
+    const topInsight = buildProjectInsight(p, status, sigs);
 
     return {
-      projectId: p.id, label: p.label, category: p.category, intent, stage, status,
-      quality, momentum, opportunity, freshness, temporalScore, actNow, trigger,
-      wallets: p.wallets.slice(0, 10).map((w) => `${w.slice(0, 8)}...${w.slice(-4)}`),
+      projectId: p.id, label: p.label, category: p.category,
+      intent: sigs.intent, stage: sigs.stage, status,
+      quality: sigs.quality, momentum: sigs.momentum, opportunity: sigs.opportunity,
+      freshness: sigs.freshness, staleness: sigs.staleness, temporalScore: sigs.temporalScore,
+      actNow: sigs.actNow, trigger: sigs.trigger,
+      wallets: p.wallets.slice(0, 10).map(w => `${w.slice(0, 8)}...${w.slice(-4)}`),
       walletCount: p.walletCount, blobCount: p.blobCount, growthRate: p.growthRate,
-      tags: p.tags.filter((t) => !t.startsWith("account:")).slice(0, 10),
+      tags: p.tags.filter(t => !t.startsWith("account:")).slice(0, 10),
       signals: p.signals, fileTypes: p.fileTypes,
       firstSeen: p.firstSeen.toISOString(), lastActive: p.lastActive.toISOString(),
-      startedAgo: getTimeAgo(p.firstSeen), importance, topInsight, recentSignals: [],
+      startedAgo: timeAgo(p.firstSeen), lastActiveAgo: timeAgo(p.lastActive),
+      importance: sigs.importance, topInsight, recentSignals: [],
     };
   });
 
-  return summaries.sort((a, b) => b.temporalScore - a.temporalScore || b.opportunity - a.opportunity).slice(0, limit);
+  return summaries.sort((a, b) => {
+    if (a.actNow && !b.actNow) return -1;
+    if (!a.actNow && b.actNow) return 1;
+    return b.temporalScore - a.temporalScore || b.opportunity - a.opportunity;
+  }).slice(0, limit);
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ALERTS (v4 — temporal)
+// ALERTS
 // ═══════════════════════════════════════════════════════════════
 
 export async function generateAlerts(): Promise<Alert[]> {
   const alerts: Alert[] = [];
-  const now = new Date();
-  const twoHoursAgo = new Date(now.getTime() - 7_200_000);
+  const threeHoursAgo = new Date(Date.now() - 10_800_000);
 
-  const activeProjects = await prisma.project.findMany({
-    where: { lastActive: { gte: twoHoursAgo }, blobCount: { gte: 2 } },
+  const active = await prisma.project.findMany({
+    where: { lastActive: { gte: threeHoursAgo }, blobCount: { gte: 2 } },
     orderBy: { walletCount: "desc" },
-    take: 20,
+    take: 30,
   });
 
-  for (const p of activeProjects) {
-    const { quality, final: importance, intent } = computeImportance({
-      walletCount: p.walletCount, blobCount: p.blobCount, growthRate: p.growthRate,
-      signals: p.signals, tags: p.tags, fileTypes: p.fileTypes,
-    });
-    if (intent === "MEDIA_SPAM" || quality < 30) continue;
+  for (const p of active) {
+    const sigs = computeAllSignals(p);
+    if (sigs.intent === "MEDIA_SPAM" || sigs.quality < 30) continue;
 
-    const stage = computeStage({ blobCount: p.blobCount, walletCount: p.walletCount, growthRate: p.growthRate, lastActive: p.lastActive });
-    const momentum = computeMomentum({ growthRate: p.growthRate, blobCount: p.blobCount, firstSeen: p.firstSeen, lastActive: p.lastActive });
-    const opportunity = computeOpportunity({ stage, quality, momentum, walletCount: p.walletCount, intent });
-    const freshness = computeFreshness(p.firstSeen);
-    const temporalScore = computeTemporalScore({ opportunity, freshness, momentum });
-    const trigger = detectTrigger({ firstSeen: p.firstSeen, lastActive: p.lastActive, blobCount: p.blobCount, walletCount: p.walletCount, growthRate: p.growthRate, momentum, stage });
-    const actNow = isActNow({ opportunity, freshness, momentum, intent, trigger });
+    // Alert on ACT NOW or high temporal score
+    if (!sigs.actNow && sigs.temporalScore < 25) continue;
 
-    // Only alert on meaningful temporal events
-    if (temporalScore < 30 && !actNow) continue;
-
-    const level = actNow ? "critical" : temporalScore >= 50 ? "high" : "watch";
-    const stageEmoji: Record<ProjectStage, string> = { EARLY: "🌱", EMERGING: "🚀", GROWING: "📈", SATURATED: "⚖️", DYING: "📉" };
-    const triggerLabel = trigger ? ` — ${formatTrigger(trigger)}` : "";
+    const level = sigs.actNow ? "critical" : sigs.temporalScore >= 40 ? "high" : "watch";
+    const emoji: Record<ProjectStage, string> = { EARLY: "🌱", EMERGING: "🚀", GROWING: "📈", SATURATED: "⚖️", DYING: "📉" };
+    const burstTag = sigs.isBurst ? " ⚡BURST" : "";
 
     alerts.push({
       id: `alert-${p.id}`, level,
-      title: `${actNow ? "🔥 ACT NOW: " : ""}${stageEmoji[stage]} ${p.label} [${stage}]`,
-      message: generateProjectInsight(p, "growing", intent, stage, momentum, opportunity, freshness, trigger, actNow) + triggerLabel,
-      projectId: p.id, importance, opportunity, freshness, actNow, trigger,
+      title: `${sigs.actNow ? "🔥 ACT NOW: " : ""}${emoji[sigs.stage]} ${p.label} [${sigs.stage}]${burstTag}`,
+      message: buildProjectInsight(p, "growing", sigs),
+      projectId: p.id, importance: sigs.importance, opportunity: sigs.opportunity,
+      freshness: sigs.freshness, actNow: sigs.actNow, trigger: sigs.trigger,
       timestamp: p.lastActive.toISOString(),
     });
   }
 
-  // Sort: ACT NOW first, then by temporal score
   return alerts.sort((a, b) => {
     if (a.actNow && !b.actNow) return -1;
     if (!a.actNow && b.actNow) return 1;
@@ -563,135 +538,126 @@ export async function generateAlerts(): Promise<Alert[]> {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// INTERNAL HELPERS
+// HELPERS
 // ═══════════════════════════════════════════════════════════════
 
-function findProjectForEvent(event: { owner: string }, projects: { id: string; wallets: string[] }[]): string | null {
-  for (const p of projects) { if (p.wallets.includes(event.owner)) return p.id; }
+function findProject(ev: { owner: string }, projects: { id: string; wallets: string[] }[]): string | null {
+  for (const p of projects) { if (p.wallets.includes(ev.owner)) return p.id; }
   return null;
 }
 
-function categorizeSignal(signalType: string): Insight["category"] {
-  if (signalType.includes("WALLET") || signalType.includes("PROJECT") || signalType.includes("GROWTH")) return "project";
-  if (signalType.includes("AI") || signalType.includes("AGENT")) return "ai";
-  if (signalType.includes("DATA") || signalType.includes("DATASET")) return "data";
-  if (signalType.includes("RARE")) return "rare";
+function categorize(st: string): Insight["category"] {
+  if (st.includes("WALLET") || st.includes("PROJECT") || st.includes("GROWTH")) return "project";
+  if (st.includes("AI") || st.includes("AGENT")) return "ai";
+  if (st.includes("DATA") || st.includes("DATASET")) return "data";
+  if (st.includes("RARE")) return "rare";
   return "project";
 }
 
-function formatTrigger(trigger: TriggerEvent): string {
-  const map: Record<string, string> = {
-    NEW_PROJECT: "🆕 New project detected",
-    STAGE_TRANSITION: "📈 Stage transition",
-    MOMENTUM_SPIKE: "⚡ Momentum spike",
-    FIRST_MULTI_WALLET: "👥 First multi-wallet",
-    QUALITY_SURGE: "✨ Quality surge",
+function formatTrigger(t: TriggerEvent): string {
+  const m: Record<string, string> = {
+    NEW_PROJECT: "🆕 New project", STAGE_TRANSITION: "📈 Stage up",
+    MOMENTUM_SPIKE: "⚡ Momentum spike", FIRST_MULTI_WALLET: "👥 Multi-wallet",
+    BURST_DETECTED: "💥 Burst detected", QUALITY_SURGE: "✨ Quality surge",
   };
-  return trigger ? map[trigger] ?? trigger : "";
+  return t ? m[t] ?? t : "";
 }
 
-interface ProjectLike {
-  label: string; walletCount: number; blobCount: number; growthRate: number;
-  category: string; signals: string[]; tags: string[]; fileTypes: string[];
-  firstSeen: Date;
+interface AllSigs {
+  quality: number; importance: number; intent: ProjectIntent; stage: ProjectStage;
+  momentum: number; opportunity: number; freshness: number; staleness: number;
+  isBurst: boolean; trigger: TriggerEvent; temporalScore: number; actNow: boolean;
 }
 
-function generateProjectInsight(
-  project: ProjectLike, status: string, intent: ProjectIntent,
-  stage: ProjectStage, momentum: number, opportunity: number,
-  _freshness: number, trigger: TriggerEvent, actNow: boolean
+function buildProjectInsight(
+  project: { label: string; walletCount: number; blobCount: number; growthRate: number; fileTypes: string[]; signals: string[]; firstSeen: Date; lastActive: Date },
+  _status: string, sigs: AllSigs
 ): string {
-  if (intent === "MEDIA_SPAM") return `Low-value media spam — ${project.walletCount} wallets uploading ${project.fileTypes.join("/")}.`;
+  if (sigs.intent === "MEDIA_SPAM") return `Media spam — ${project.walletCount} wallets uploading ${project.fileTypes.join("/")}.`;
 
   const parts: string[] = [];
+  if (sigs.actNow) parts.push("🔥 ACT NOW");
+  if (sigs.isBurst) parts.push("💥 BURST");
 
-  if (actNow) parts.push("🔥 ACT NOW");
+  parts.push(`started ${timeAgo(project.firstSeen)}`);
+  parts.push(`active ${timeAgo(project.lastActive)}`);
 
-  // Time context
-  const startedAgo = getTimeAgo(project.firstSeen);
-  parts.push(`started ${startedAgo}`);
+  const desc: Record<ProjectStage, string> = { EARLY: "new", EMERGING: "building", GROWING: "growing", SATURATED: "slowing", DYING: "quiet" };
+  parts.push(`📍 ${desc[sigs.stage]}`);
 
-  const stageDesc: Record<ProjectStage, string> = {
-    EARLY: "newly discovered", EMERGING: "building momentum", GROWING: "actively growing",
-    SATURATED: "mature/slowing", DYING: "going quiet",
-  };
-  parts.push(`📍 ${stageDesc[stage]}`);
-
-  if (project.walletCount > 1) parts.push(`${project.walletCount} wallets`);
-  if (status === "growing") parts.push(`${project.growthRate}/hr`);
-  if (momentum >= 75) parts.push("⬆️ accelerating");
-  else if (momentum <= 25) parts.push("⬇️ decelerating");
-
-  if (trigger) parts.push(formatTrigger(trigger));
-
-  if (opportunity >= 60) parts.push(`🔥 opp: ${opportunity}`);
-  else if (opportunity >= 40) parts.push(`opp: ${opportunity}`);
+  if (project.walletCount > 1) parts.push(`${project.walletCount}w`);
+  if (project.growthRate >= 2) parts.push(`${project.growthRate}/hr`);
+  if (sigs.momentum >= 75) parts.push("⬆️ accel");
+  if (sigs.trigger) parts.push(formatTrigger(sigs.trigger));
+  if (sigs.opportunity >= 50) parts.push(`🔥 opp:${sigs.opportunity}`);
 
   return parts.join(" · ") + ".";
 }
 
-function generateNarrative(
+function buildNarrative(
   event: { signalType: string; explanation: string; score: number },
-  project: ProjectLike | null, intent: ProjectIntent,
-  stage: ProjectStage, momentum: number, opportunity: number,
-  _freshness: number, trigger: TriggerEvent, actNow: boolean
+  project: { label: string; walletCount: number; blobCount: number; fileTypes: string[]; tags: string[]; signals: string[]; firstSeen: Date; lastActive: Date } | null,
+  sigs: AllSigs
 ): { title: string; narrative: string; whyItMatters: string; whyNow: string | null } {
 
-  // Title with ACT NOW prefix
-  let title: string;
-  const stageTag = `[${stage}]`;
-  const actNowPrefix = actNow ? "🔥 ACT NOW: " : "";
+  const prefix = sigs.actNow ? "🔥 " : sigs.isBurst ? "💥 " : "";
+  const stageTag = `[${sigs.stage}]`;
 
-  if (intent === "MEDIA_SPAM") title = "Media Upload Activity";
-  else if (project && project.walletCount > 1) title = `${actNowPrefix}${project.label} ${stageTag}`;
-  else title = `${actNowPrefix}${event.signalType.replace(/_/g, " ")} ${stageTag}`;
+  let title: string;
+  if (sigs.intent === "MEDIA_SPAM") title = "Media Upload Activity";
+  else if (project && project.walletCount > 1) title = `${prefix}${project.label} ${stageTag}`;
+  else title = `${prefix}${event.signalType.replace(/_/g, " ")} ${stageTag}`;
 
   const narrative = event.explanation;
 
-  // Why it matters (static)
+  // WHY IT MATTERS
   let whyItMatters: string;
-  if (opportunity >= 60 && (stage === "EARLY" || stage === "EMERGING")) {
-    const q = project ? computeQuality({ fileTypes: project.fileTypes, tags: project.tags, signals: project.signals, blobCount: project.blobCount }) : 50;
-    whyItMatters = `🔥 HIGH OPPORTUNITY — ${stage.toLowerCase()}-stage project with quality ${q} and ${momentum >= 60 ? "accelerating" : "steady"} momentum. Early discovery = real alpha.`;
+  if (sigs.opportunity >= 60 && (sigs.stage === "EARLY" || sigs.stage === "EMERGING")) {
+    whyItMatters = `🔥 HIGH OPPORTUNITY — ${sigs.stage.toLowerCase()}-stage, quality ${sigs.quality}, ${sigs.momentum >= 60 ? "accelerating" : "steady"} momentum. Early discovery = real alpha.`;
   } else {
     const base: Record<string, string> = {
-      MULTI_WALLET_PROJECT: "Multiple wallets converging indicates organized development.",
-      PROJECT_GROWTH: "Sustained file accumulation indicates real momentum.",
-      AI_TRAINING: "AI training on decentralized storage indicates sophisticated ML workflows.",
-      AGENT_DEPLOYMENT: "Autonomous agent deployments = cutting-edge on-chain automation.",
-      DATA_PIPELINE: "Sustained data uploads indicate production ETL systems.",
-      DATASET_FORMATION: "Large datasets forming suggest training data preparation.",
-      RARE_FILE_TYPE: "Novel file formats signal new use cases.",
+      MULTI_WALLET_PROJECT: "Multiple wallets converging = organized development.",
+      PROJECT_GROWTH: "Sustained growth = real momentum.",
+      AI_TRAINING: "AI training on decentralized storage = advanced ML.",
+      AGENT_DEPLOYMENT: "Agent deployment = cutting-edge automation.",
+      DATA_PIPELINE: "Production-grade data pipeline detected.",
+      DATASET_FORMATION: "Dataset accumulation = training data preparation.",
+      RARE_FILE_TYPE: "Novel file format = new use case.",
     };
-    whyItMatters = base[event.signalType] ?? `Scored ${event.score}/10 — top-tier activity.`;
-    if (stage === "SATURATED" || stage === "DYING") whyItMatters += ` Note: project is ${stage.toLowerCase()}.`;
+    whyItMatters = base[event.signalType] ?? `Score ${event.score}/10 — top-tier signal.`;
+    if (sigs.stage === "SATURATED" || sigs.stage === "DYING") whyItMatters += ` ⚠️ Project is ${sigs.stage.toLowerCase()}.`;
   }
 
-  // WHY NOW (temporal — the new signal)
+  // WHY NOW — URGENCY FOCUSED
   let whyNow: string | null = null;
-  if (trigger === "NEW_PROJECT") {
-    const startedAgo = project ? getTimeAgo(project.firstSeen) : "just now";
-    whyNow = `🆕 This project appeared ${startedAgo}. You're seeing it at the earliest possible moment.`;
-  } else if (trigger === "FIRST_MULTI_WALLET") {
-    whyNow = `👥 A second wallet just joined — this shifted from solo activity to collaborative. This is the strongest early signal.`;
-  } else if (trigger === "MOMENTUM_SPIKE") {
-    whyNow = `⚡ Growth rate just spiked dramatically. Something activated this project.`;
-  } else if (trigger === "STAGE_TRANSITION") {
-    whyNow = `📈 This project just crossed into ${stage} stage. It has enough data to evaluate but is still early.`;
-  } else if (actNow) {
-    whyNow = `This is a fresh, high-quality opportunity that won't stay early-stage for long.`;
+
+  if (sigs.isBurst) {
+    const rate = project ? `${project.blobCount} files in ${timeAgo(project.firstSeen).replace(" ago", "")}` : "rapid upload burst";
+    whyNow = `💥 BURST — ${rate}. This is happening RIGHT NOW. Growth rate suggests automated or coordinated activity.`;
+  } else if (sigs.trigger === "NEW_PROJECT") {
+    whyNow = `🆕 JUST APPEARED — first seen ${project ? timeAgo(project.firstSeen) : "moments ago"}. You're catching this at the absolute earliest moment.`;
+  } else if (sigs.trigger === "FIRST_MULTI_WALLET") {
+    whyNow = `👥 SECOND WALLET JUST JOINED — this shifted from solo to collaborative. This is the single strongest early signal of genuine project activity.`;
+  } else if (sigs.trigger === "MOMENTUM_SPIKE") {
+    whyNow = `⚡ SUDDEN ACCELERATION — growth rate spiked dramatically. Something just activated this project. Watch closely.`;
+  } else if (sigs.trigger === "STAGE_TRANSITION") {
+    whyNow = `📈 STAGE CHANGE — just crossed into ${sigs.stage}. Enough data to evaluate, still early enough to matter.`;
+  } else if (sigs.actNow) {
+    whyNow = `⏳ WINDOW CLOSING — this is fresh and high-quality but won't stay ${sigs.stage.toLowerCase()}-stage for long. Act before it matures.`;
+  } else if (sigs.staleness <= 30) {
+    whyNow = `⚠️ GOING STALE — last activity was ${project ? timeAgo(project.lastActive) : "a while ago"}. May be losing momentum.`;
   }
 
   return { title, narrative, whyItMatters, whyNow };
 }
 
-function getTimeAgo(date: Date): string {
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (seconds < 60) return `${seconds}s ago`;
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+function timeAgo(d: Date): string {
+  const s = Math.floor((Date.now() - d.getTime()) / 1000);
+  if (s < 10) return "just now";
+  if (s < 60) return `${s}s ago`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
 }

@@ -266,9 +266,11 @@
         <div class="insight-meta">
           <span class="meta-pill">opp: ${i.opportunity}</span>
           <span class="meta-pill">fresh: ${i.freshness}</span>
+          <span class="meta-pill">stale: ${i.staleness || '—'}</span>
           <span class="meta-pill">mom: ${i.momentum}</span>
           <span class="meta-pill">👛 ${i.walletCount}</span>
           <span class="meta-pill">📄 ${i.blobCount}</span>
+          <span class="meta-pill">last: ${i.lastActiveAgo || '—'}</span>
         </div>
       </div>`;
     }
@@ -298,7 +300,8 @@
           <span class="project-stat">📈 <strong>${p.growthRate}</strong>/hr</span>
           <span class="project-stat">opp: <strong>${p.opportunity}</strong></span>
           <span class="project-stat">fresh: <strong>${p.freshness}</strong></span>
-          <span class="project-stat">mom: <strong>${p.momentum}</strong></span>
+          <span class="project-stat">stale: <strong>${p.staleness || '—'}</strong></span>
+          <span class="project-stat">last: <strong>${p.lastActiveAgo || '—'}</strong></span>
           ${p.fileTypes.length ? `<span class="project-stat">🗂️ ${p.fileTypes.join(", ")}</span>` : ""}
         </div>
       </div>`;
