@@ -97,3 +97,36 @@ model AlphaEvent {
   @@index([createdAt])
   @@map("alpha_events")
 }
+
+/// Structured dataset built from a project's blobs.
+model Dataset {
+  id        String   @id @default(cuid())
+  projectId String   @map("project_id")
+  type      String   @default("unknown") // classification | rag | timeseries | unknown
+  status    String   @default("building") // building | ready | failed
+  schema    Json?
+  rowCount  Int      @default(0) @map("row_count")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  versions  DatasetVersion[]
+
+  @@index([projectId])
+  @@map("datasets")
+}
+
+/// Immutable snapshot of a dataset at a point in time.
+model DatasetVersion {
+  id        String   @id @default(cuid())
+  datasetId String   @map("dataset_id")
+  version   Int
+  blobIds   String[] @default([]) @map("blob_ids")
+  schema    Json?
+  rowCount  Int      @default(0) @map("row_count")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  dataset   Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+
+  @@index([datasetId])
+  @@map("dataset_versions")
+}

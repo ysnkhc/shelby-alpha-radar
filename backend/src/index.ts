@@ -68,7 +68,36 @@ async function ensureContentIntelligenceSchema(): Promise<void> {
     await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS projects_blob_count_idx ON projects(blob_count)`);
     await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS projects_last_active_idx ON projects(last_active)`);
 
-    console.log("[DB] ✅ Schema verified (content intelligence + global project clustering)");
+    // Create datasets table
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS datasets (
+        id TEXT PRIMARY KEY,
+        project_id TEXT NOT NULL,
+        type TEXT NOT NULL DEFAULT 'unknown',
+        status TEXT NOT NULL DEFAULT 'building',
+        schema JSONB,
+        row_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS datasets_project_id_idx ON datasets(project_id)`);
+
+    // Create dataset_versions table
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS dataset_versions (
+        id TEXT PRIMARY KEY,
+        dataset_id TEXT NOT NULL REFERENCES datasets(id) ON DELETE CASCADE,
+        version INTEGER NOT NULL,
+        blob_ids TEXT[] DEFAULT '{}',
+        schema JSONB,
+        row_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS dataset_versions_dataset_id_idx ON dataset_versions(dataset_id)`);
+
+    console.log("[DB] ✅ Schema verified (content intelligence + global project clustering + dataset layer)");
   } catch (error) {
     console.error(
       "[DB] ⚠️ Schema migration warning:",

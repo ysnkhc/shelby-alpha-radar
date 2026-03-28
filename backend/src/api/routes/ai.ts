@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { prisma } from "../../database/db.js";
+import { createOrUpdateDataset } from "../../datasets/datasetService.js";
 import {
   computeConfidence,
   computeStage,
@@ -769,5 +770,41 @@ export async function aiRoutes(app: FastifyInstance): Promise<void> {
       total: matches.length,
       nextCheckUrl: `/subscriptions/check?id=${sub.id}`,
     });
+  });
+
+  // ── POST /dataset/build ──────────────────────────────────────
+  app.post<{ Body: { projectId: string; type?: string } }>("/dataset/build", async (request, reply) => {
+    const { projectId: rawId, type } = request.body ?? {} as { projectId?: string; type?: string };
+    if (!rawId || typeof rawId !== "string") return reply.status(400).send({ error: "Missing 'projectId' string" });
+
+    const projectId = decodeURIComponent(rawId);
+    try {
+      const result = await createOrUpdateDataset(projectId, type);
+      return reply.send({
+        dataset: {
+          id: result.dataset.id,
+          projectId: result.dataset.projectId,
+          type: result.dataset.type,
+          status: result.dataset.status,
+          schema: result.dataset.schema,
+          rowCount: result.dataset.rowCount,
+          createdAt: result.dataset.createdAt.toISOString(),
+          updatedAt: result.dataset.updatedAt.toISOString(),
+        },
+        version: {
+          id: result.version.id,
+          datasetId: result.version.datasetId,
+          version: result.version.version,
+          blobIds: result.version.blobIds,
+          schema: result.version.schema,
+          rowCount: result.version.rowCount,
+          createdAt: result.version.createdAt.toISOString(),
+        },
+      });
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
+      if (msg.includes("not found")) return reply.status(404).send({ error: msg });
+      return reply.status(500).send({ error: "Dataset build failed", detail: msg });
+    }
   });
 }
